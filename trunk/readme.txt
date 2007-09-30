@@ -58,4 +58,4 @@ Your hosting may not support the PHP command 'curl_exec()'
 == A brief Markdown Example ==
 
 
-`<?php code(); // goes in backticks ?>`
+no code required. Automatic after activation.
