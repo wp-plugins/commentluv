@@ -3,7 +3,7 @@ Contributors: Andy Bailey
 Tags: comments, linkluv
 Requires at least: 2.2
 Tested up to: 2.1
-Stable tag: 0.9.1
+Stable tag: 0.9.2
 
 Appends a titled link to the authors last blog post on their comment giving back some luv to the people that join your discussion.
 Only needs activating. It can parse a feed held at a Wordpress, blogspot or typepad. Also blogs with a feedbuner link on it's page.

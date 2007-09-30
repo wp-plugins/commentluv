@@ -2,11 +2,12 @@
 Plugin Name: Commentluv
 Plugin URI: http://www.fiddyp.co.uk/commentluv-wordpress-plugin/
 Description: Plugin to show a link to the last post from the commenters blog in their comment. Just activate and it's ready. Currently works with wordpress, blogspot, typepad and blogs that have a feedburner feed link somewhere on their page.
-Version: 0.91
+Version: 0.92
 Author: Andy Bailey
 Author URI: http://www.fiddyp.co.uk/
 
 updates:
+0.92 - comment update
 0.91 - fix: compatibility with some other comment enhancing plugins so the link isn't repeated
 0.9 - now wont output emptry string if no last post found (blogspot blog with own domain)
 0.8 - now prevents parsing on a trackback, pingback or admin comment
@@ -23,7 +24,7 @@ feedburner.
 0.4 - try and find users feed if they don't have a default wordpress/blogger/typepad blog
 0.3 - works with typepad blogs feed, default and feedburner
 0.2 - works with feedburner feed for wordpress and blogger default location
-0.1 - works with wordpress default feed at default location
+0.1 - works with wordpress default feed at default location 
 
 
 */
