@@ -2,12 +2,13 @@
 Plugin Name: Commentluv
 Plugin URI: http://www.fiddyp.co.uk/commentluv-wordpress-plugin/
 Description: Plugin to show a link to the last post from the commenters blog in their comment. Just activate and it's ready. Currently works with wordpress, blogspot, typepad and blogs that have a feedburner feed link somewhere on their page.
-Version: 0.92
+Version: 0.93
 Author: Andy Bailey
 Author URI: http://www.fiddyp.co.uk/
 
 updates:
-0.92 - comment update
+0.93 - use wp internal function to parse feed and improve find feed location
+0.92 - update comments
 0.91 - fix: compatibility with some other comment enhancing plugins so the link isn't repeated
 0.9 - now wont output emptry string if no last post found (blogspot blog with own domain)
 0.8 - now prevents parsing on a trackback, pingback or admin comment
@@ -24,7 +25,7 @@ feedburner.
 0.4 - try and find users feed if they don't have a default wordpress/blogger/typepad blog
 0.3 - works with typepad blogs feed, default and feedburner
 0.2 - works with feedburner feed for wordpress and blogger default location
-0.1 - works with wordpress default feed at default location 
+0.1 - works with wordpress default feed at default location
 
 
 */
@@ -44,24 +45,10 @@ function LL_TextBetween($s1,$s2,$s){
 	}
 	return '';
 }
-// blogger atom parse function (special function for the crappy atom feed on blogspot)
-function blogger_parse($string){
-	// first, grab everything after the first </title> tag
-	$substring=stristr($string[0],'</title>');
-	// now grab section that relates to title and neaten it up
-	$temptitle=LL_TextBetween("<title","/title>",$substring);
-	$title=LL_TextBetween(">","<",$temptitle);
-	// now need to grab link to that post, grab everything after first <link tag
-	$substring=stristr($substring,"<link");
-	$link=LL_TextBetween("href='","'",$substring);
-	// got everthing, put results into array to pass back
-	$last_post[0]=$title;
-	$last_post[1]=$link;
-	return $last_post;
-}
-// find feedburner feed function (parses a users page for a feedburner link)
+
+// find feedburner feed function (parses a users page for a feed link)
 function findfeedburner($page_url){
-	// can't open default wordpress feed, use curl to parse users page for feedburner feed
+	// can't open default wordpress feed, use curl to parse users page for a relative link feed
 	if(function_exists(curl_init)) {
 		$ch=curl_init();
 		$timeout = 10; // set to zero for no timeout
@@ -73,20 +60,17 @@ function findfeedburner($page_url){
 		$lines=explode("\n",$data);
 		// look for feedburner url
 		foreach($lines as $line){
-			if(strstr($line,"feeds.feedburner.com")){
-				if(strstr($line,"script")) { // found script version
-					$feedburner_user=LL_TextBetween("feeds.feedburner.com/","?",$line);
-					$feedburner_user=LL_TextBetween("/","",$feedburner_user);
-				}else {
-					$feedburner_user=LL_TextBetween("feeds.feedburner.com/","\"",$line);
-				}
-				$feed_url="http://feeds.feedburner.com/$feedburner_user";
+			if(strstr($line,"title=\"RSS")){
+				$pos=strpos($line,"title=\"RSS");
+				$cut=substr($line,$pos+5);					
+				$feed_url=LL_TextBetween("href=\"","\"",$cut);
 				break;
 			}
 		}
 	}
 	return $feed_url;
 }
+
 
 // hooks, call comment_luv function just before comment is posted . gets passed array of comment fields
 // hooks, call add_text when comment form is shown, gets passed id of post
@@ -108,72 +92,58 @@ function comment_luv($comment_data){
 	if ($user_level > 7 || $comment_data['comment_type'] == 'pingback' || $incoming_comment['comment_type'] == 'trackback' || strstr($comment_data['comment_content'],"'s last blog post")) {
 		return $comment_data;
 	}
-
+	// use wp internal rss.php function (wp 2.1+ only)
+	include_once(ABSPATH . WPINC . '/rss.php');
 	// get url of comment authors site
 	$author_url=$comment_data['comment_author_url'];
 
-	// set flags
-	$bloggerdefault=0;
-	$title_count=0;
-
 	// get url of author and determine type of blog platform for feed parsing
 	$bareurl=explode("/",$author_url);
-	if(strstr($author_url,"blogspot")){
+	if(strstr($author_url,"blogspot")){					// blogspot blog
 		$feed_url=$bareurl[2]."/feeds/posts/default/";
-		$bloggerdefault=1;
-	}elseif(strstr($author_url,"typepad")){
-		$feed_url=$bareurl[2]."/".$bareurl[3]."/atom.xml";
-	} else {
+	}elseif(strstr($author_url,"typepad")){				// typepad blog
+		if($bareurl[3]){									// check for subdirectory in url
+			$feed_url=$bareurl[2]."/".$bareurl[3]."/atom.xml";
+		} else {											// doesn't have subdirectory
+			$feed_url=$bareurl[2]."/atom.xml";
+		}
+	}else {												// must be wordpress or own domain blog
 		if(!$bareurl[3]){ 			// check if blog is in subdirectory of domain
 			$feed_url=$bareurl[2]."/feed/"; // use normal
+// debug
+//$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (wp_norm) ',strlen($comment_data['comment_content']),0);
+
 		} else {
 			$feed_url=$bareurl[2]."/".$bareurl[3]."/feed/"; // add the subdirectory
+// debug
+//$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (wp_sub) ',strlen($comment_data['comment_content']),0);
+
 		}
 	}
 
 	// parse the authors url for feed
 	if ($author_url){								// only do it if there is a url to parse
-		$feed_array=@file("http://$feed_url"); 		// open authors feed and store as array
-		if(!$feed_array){							// if feed not found, try and parse users page
-			$feed_array=@file(findfeedburner($author_url));// for feedburner feed
+		$rss=fetch_rss("http://$feed_url"); 		// open authors feed and store as array
+		if(!$rss){							// if feed not found, try and parse users page
+			
+// debug
+//$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (curl) ',strlen($comment_data['comment_content']),0);
+			$rss=fetch_rss(findfeedburner($author_url));// for feedburner feed
 		}
 
-		// check to see if blogspot feed is default atom (1 line array) or feedburner (multi line array)
-		if($bloggerdefault){
-			if(!$feed_array[1]){					// second cell is empty, set flag to 0 so blogger_parse function used
-				$bloggerdefault=1;
-			} else {
-				$bloggerdefault=0;
-			}
-		}
 		// check to see if it found a feed
-		if (!$feed_array){
+		if (!$rss){
+			
+// debug
+//$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (notfound) ',strlen($comment_data['comment_content']),0);
 			return $comment_data;
 			//exit gracefully if no feed found
 		}
-		// step through feed for last post title and link (only for non blogspot default feeds)
-		if(!$bloggerdefault){
-			foreach($feed_array as $feed_line){
-				$stop=1;
-				if(strstr($feed_line, "<title>")){	// search for title tag
-					$title_count++;					// increase flag so we can skip first title
-					if ($title_count > 1){			// only do if first title is passed
-						$feed_title=LL_TextBetween("<title>","</title>",$feed_line);
-					}
-				}
-				if ($title_count > 1){				// only do if post title has been parsed
-					if (strstr($feed_line,"<link>")){	// look for post content
-						$feed_post=LL_TextBetween("<link>","</link>",$feed_line);
-						break;
-					}
-				}
-			}
-			// must be a blogger default atom feed
-		}else {
-			// do blogger parse
-			$bloggerpost=blogger_parse($feed_array);
-			$feed_title=$bloggerpost[0];
-			$feed_post=$bloggerpost[1];
+		// step through feed for last post title and link
+		$items= array_slice($rss->items,0,1);
+		foreach($items as $item){
+			$feed_title=$item['title'];
+			$feed_post=$item['link'];
 		}
 		if($feed_title && $feed_post){	// only output if last post found
 			// now need to insert what we got into the comment content

@@ -1,12 +1,11 @@
 === CommentLuv ===
 Contributors: Andy Bailey
 Tags: comments, linkluv
-Requires at least: 2.2
-Tested up to: 2.1
-Stable tag: 0.9.2
+Requires at least: 2.1
+Tested up to: 2.2.3
+Stable tag: 0.9.3
 
 Appends a titled link to the authors last blog post on their comment giving back some luv to the people that join your discussion.
-Only needs activating. It can parse a feed held at a Wordpress, blogspot or typepad. Also blogs with a feedbuner link on it's page.
 
 == Description ==
 
@@ -16,7 +15,11 @@ It has short timeouts so the user isn't waiting for too long to see their commen
 
 
 ChangeLog:
-
+0.93 - replaced feed parsing function with WP internal (rss.php)
+	updated findfeedburner function to look for any feed link in <head> of authors page (for better typepad parsing)
+	removed parse blogger default function (not needed)
+	removed all instances of file and fopen
+0.92 - update comments
 0.91 - fix: compatibility with some other comment enhancing plugins so the link isn't repeated
 0.9 - now wont output emptry string if no last post found (blogspot blog with own domain)
 0.8 - now prevents parsing on a trackback, pingback or admin comment
@@ -39,6 +42,7 @@ feedburner.
 
 1. Upload `commentluv.php` to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
+3. No template editing required
 
 == Frequently Asked Questions ==
 
