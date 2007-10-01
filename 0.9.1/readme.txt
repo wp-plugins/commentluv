@@ -9,7 +9,7 @@ Appends a titled link to the authors last blog post on their comment.
 
 == Description ==
 
-Pass a bit of luv onto your commenters by providing a titled link to their last blog post. This plugin attempts to parse the feed of the comment author by visiting their site and looking in the standard locations for a feed. (wordpress - /feed/ , Blogspot - /feeds/posts/default , TypePad - /atom.xml) If no default feed is found, it will attempt to parse the users page for a feedburner link. 
+Pass a bit of luv onto your commenters by providing a titled link to their last blog post. This plugin attempts to parse the feed of the comment author by visiting their site and looking in the standard locations for a feed. (wordpress - /feed/ , Blogspot - /feeds/posts/default , TypePad - /atom.xml) If no default feed is found, it will attempt to parse the users page for a feedburner link.
 
 It has short timeouts so the user isn't waiting for too long to see their comment appear.
 
