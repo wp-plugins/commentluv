@@ -10,13 +10,18 @@ Appends a titled link to the authors last blog post on their comment giving back
 == Description ==
 
 Pass a bit of luv onto your commenters by providing a titled link to their last blog post. This plugin attempts to parse the feed of the comment author by visiting their site and looking in the standard locations for a feed. (wordpress - /feed/ , Blogspot - /feeds/posts/default , TypePad - /atom.xml) If no default feed is found, it will attempt to parse the users page for a feed link and parse that instead.
+
 It will start to work with any new comments posted after installation (it will not add last post links to comments made before CommentLuv has been activated)
+
+It will not add your own last post if you are logged in as admin or use your own blog url as the comment author url. You can test it by adding a comment to one of your posts (after loggin out) and using a different URL for the author site field (use http://www.fiddyp.co.u if you want!)
 
 == Installation ==
 
 1. Upload `commentluv.php` to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. No template editing required
+
+You may want to test it after activation by logging out and adding a comment to one of your posts but use a different URL as the comment author site. you can use http://www.fiddyp.co.uk if you want and see if it apends my last blog post.
 
 == Frequently Asked Questions ==
 
