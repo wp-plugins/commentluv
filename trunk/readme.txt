@@ -20,10 +20,15 @@ It will start to work with any new comments posted after installation (it will n
 
 == Frequently Asked Questions ==
 
+= All my comments are now being held in moderation, why? =
+
+You probably have your wordpress set to hold comments in moderation if they contain a link.
+Go to your wordpress dashboard and go to Options/discussion and change the comment moderation option to "Hold a comment in the queue if it contains 2 links"
+
 = Why doesn't my plugin show anyone's last post? =
 
 You might be having a compatibility issue with one of your other comment plugins. This version of CommentLuv currently works with AJAX edit comments, subscribe to comments and SpamKarma 2. 
-If your commentluv plugin isn't working for you, please send me an email to andy@teamplaylotto.com with a list of your other comment type plugins and I'll do what I can to fix it!
+If your commentluv plugin isn't working for you, please send me an email to andy <at> teamplaylotto.com with a list of your other comment type plugins and I'll do what I can to fix it!
 
 = I know a blog has a feedburner link on it's page but a last post link doesn't appear, why? =
 
