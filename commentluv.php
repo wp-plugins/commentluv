@@ -2,11 +2,14 @@
 Plugin Name: Commentluv
 Plugin URI: http://www.fiddyp.co.uk/commentluv-wordpress-plugin/
 Description: Plugin to show a link to the last post from the commenters blog in their comment. Just activate and it's ready. Currently works with wordpress, blogspot, typepad and blogs that have a feedburner feed link somewhere on their page.
-Version: 0.93
+Version: 0.96
 Author: Andy Bailey
 Author URI: http://www.fiddyp.co.uk/
 
 updates:
+0.96 - handle the author url more efficiently
+0.95 - rewrite of feed finding and parsing and added a timout increase to the magpie rss parsing function
+0.94 - fix: not parsing some feedburner feeds that have an extra subdomain on the url
 0.93 - use wp internal function to parse feed and improve find feed location
 0.92 - update comments
 0.91 - fix: compatibility with some other comment enhancing plugins so the link isn't repeated
@@ -60,17 +63,16 @@ function findfeedburner($page_url){
 		$lines=explode("\n",$data);
 		// look for feedburner url
 		foreach($lines as $line){
-			if(strstr($line,"title=\"RSS")){
-				$pos=strpos($line,"title=\"RSS");
-				$cut=substr($line,$pos+5);					
-				$feed_url=LL_TextBetween("href=\"","\"",$cut);
+			if(strstr($line,"alternate")&& strstr($line,"rss")){
+				$pos=strpos($line,"href");
+				$cut=substr($line,$pos+5);
+				$feed_url=LL_TextBetween("\"","\"",$cut);
 				break;
 			}
 		}
 	}
 	return $feed_url;
 }
-
 
 // hooks, call comment_luv function just before comment is posted . gets passed array of comment fields
 // hooks, call add_text when comment form is shown, gets passed id of post
@@ -86,71 +88,129 @@ function add_text($id){
 // this is the magic part.
 // function to parse the users feed and add a link to last post after the rest of the comment content
 function comment_luv($comment_data){
-	// don't parse for admin posting comment reply or trackback
+	$debug=0; // for my own debugging, shows a breadcrumb of what is tried for parsing
+	$manual_feed=0;
+
+	// don't parse for admin posting comment reply,pingback or trackback and checks if last post already added
 	get_currentuserinfo() ;
 	global $user_level;
-	if ($user_level > 7 || $comment_data['comment_type'] == 'pingback' || $incoming_comment['comment_type'] == 'trackback' || strstr($comment_data['comment_content'],"'s last blog post")) {
+	if ($user_level > 7 || $comment_data['comment_type'] == 'pingback' || $comment_data['comment_type'] == 'trackback' || strstr($comment_data['comment_content'],"'s last blog post")) {
 		return $comment_data;
+	}
+
+	// get author url
+	$author_url=$comment_data['comment_author_url'];
+	// if no author url given, return
+	if(!$author_url){
+		return $comment_data;
+	}
+// ***********************
+// *** fun starts here ***
+// ***********************
+	// check for magpie timeout constant
+	if(!defined('MAGPIE_FETCH_TIME_OUT')){
+		define('MAGPIE_FETCH_TIME_OUT',5);
 	}
 	// use wp internal rss.php function (wp 2.1+ only)
 	include_once(ABSPATH . WPINC . '/rss.php');
-	// get url of comment authors site
-	$author_url=$comment_data['comment_author_url'];
 
-	// get url of author and determine type of blog platform for feed parsing
-	$bareurl=explode("/",$author_url);
-	if(strstr($author_url,"blogspot")){					// blogspot blog
-		$feed_url=$bareurl[2]."/feeds/posts/default/";
-	}elseif(strstr($author_url,"typepad")){				// typepad blog
-		if($bareurl[3]){									// check for subdirectory in url
-			$feed_url=$bareurl[2]."/".$bareurl[3]."/atom.xml";
-		} else {											// doesn't have subdirectory
-			$feed_url=$bareurl[2]."/atom.xml";
+// **************************
+// *** identify blog type ***
+// **************************
+	// try and determine blog type and locate default location for feed.
+	if(strstr($author_url,"blogspot")){						// blogspot blog
+		$feed_url="$author_url/feeds/posts/default/";
+		// debug
+		if($debug) {
+			$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (blogspot) ',strlen($comment_data['comment_content']),0);
 		}
-	}else {												// must be wordpress or own domain blog
-		if(!$bareurl[3]){ 			// check if blog is in subdirectory of domain
-			$feed_url=$bareurl[2]."/feed/"; // use normal
-// debug
-//$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (wp_norm) ',strlen($comment_data['comment_content']),0);
 
-		} else {
-			$feed_url=$bareurl[2]."/".$bareurl[3]."/feed/"; // add the subdirectory
-// debug
-//$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (wp_sub) ',strlen($comment_data['comment_content']),0);
-
+	} elseif(strstr($author_url,"typepad")){				// typepad blog
+		$feed_url="$author_url/atom.xml";
+	} else {
+		$feed_url="$author_url/feed/";						// own domain or wordpress blog
+		// debug
+		if($debug) {
+			$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (wp_norm) ',strlen($comment_data['comment_content']),0);
 		}
+
 	}
 
-	// parse the authors url for feed
-	if ($author_url){								// only do it if there is a url to parse
-		$rss=fetch_rss("http://$feed_url"); 		// open authors feed and store as array
-		if(!$rss){							// if feed not found, try and parse users page
-			
-// debug
-//$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (curl) ',strlen($comment_data['comment_content']),0);
-			$rss=fetch_rss(findfeedburner($author_url));// for feedburner feed
+// ***************************
+// *** detect manual entry ***
+// ***************************
+// here we see if user manually entered their own feed url
+	if(strstr($comment_data['comment_content'],"[feed]")){
+		$feed_url=LL_TextBetween("[feed]","[/feed]",$comment_data['comment_content']);
+		// now strip feed bit from comment
+		$manual_feed_pos_start=strpos($comment_data['comment_content'],"[feed]");
+		$comment_data['comment_content']=substr($comment_data['comment_content'],0,$manual_feed_pos_start);		
+		$manual_feed=1;
+		// debug
+		if($debug) {
+			$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (manual feed specified) ',strlen($comment_data['comment_content']),0);
 		}
 
-		// check to see if it found a feed
-		if (!$rss){
-			
-// debug
-//$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (notfound) ',strlen($comment_data['comment_content']),0);
-			return $comment_data;
-			//exit gracefully if no feed found
-		}
-		// step through feed for last post title and link
-		$items= array_slice($rss->items,0,1);
-		foreach($items as $item){
-			$feed_title=$item['title'];
-			$feed_post=$item['link'];
-		}
-		if($feed_title && $feed_post){	// only output if last post found
-			// now need to insert what we got into the comment content
-			$author_excerpt="\n\n<em>".$comment_data['comment_author']."'s last blog post..</em><a href='$feed_post'>$feed_title</a>";
-			$comment_data['comment_content']=substr_replace($comment_data['comment_content'], $author_excerpt,strlen($comment_data['comment_content']),0);
-		}
 	}
-	return $comment_data; // return what we got sent or modified version if feed found
-}
-?>
+	
+// *******************************
+// *** time to do the fetching ***
+// *******************************
+	// fetch feed with WP function
+	$rss=fetch_rss("$feed_url");
+
+	// couldn't find it! look in other places
+	if(!$rss && !$manual_feed){
+		// debug
+		if($debug) {
+			$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (try alternate) ',strlen($comment_data['comment_content']),0);
+		}
+		$feed_url="$author_url/?feed=rss";
+		$rss=fetch_rss("$feed_url");
+	}
+
+	// couldn't find it there either! try to parse users page
+	if(!$rss && !$manual_feed){
+		// debug
+		if($debug) {
+			$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (try parsing) ',strlen($comment_data['comment_content']),0);
+		}
+		$feed_url=findfeedburner($author_url);
+		$rss=fetch_rss("$feed_url");
+	}
+	// couldn't find it at all, just return with a sad face
+	if(!$rss) {
+		// debug
+		if($debug) {
+			$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (failed) ',strlen($comment_data['comment_content']),0);
+		}
+		return $comment_data;
+	}
+
+	// for compatibility with other comment plugins remove the wp_rel_nofollow functon call
+	remove_filter('pre_comment_content', 'wp_rel_nofollow');
+
+// **************************
+// *** do the parse dance ***
+// **************************
+	// now we must have a feed to parse, get last post title and link
+	$items= array_slice($rss->items,0,1);
+	foreach($items as $item){
+		$feed_title=$item['title'];
+		$feed_post=$item['link'];
+	}
+
+// ****************************
+// *** append the last post ***
+// ****************************
+	// insert last post data onto the end of the comment content
+	if($feed_title && $feed_post){	// only output if last post found
+		$author_excerpt="\n\n<em>".$comment_data['comment_author']."'s last blog post..</em><a href='$feed_post'>$feed_title</a>";
+		$comment_data['comment_content']=substr_replace($comment_data['comment_content'], $author_excerpt,strlen($comment_data['comment_content']),0);
+	}
+
+	// thats it! pass back the new comment data to wordpress
+	return $comment_data;
+
+
+} // end function
