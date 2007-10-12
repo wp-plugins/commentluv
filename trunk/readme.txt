@@ -45,7 +45,7 @@ In most cases it will, unless you have other dofollow plugins that use a high pr
 
 = How can a user help CommentLuv find their feed? =
 They can either manually add their feed url to the comment (see above) or they can make sure that they have an entry in the blog <head> section like this:
-<link rel="alternate" type="application/rss+xml" href="http://www.fiddyp.co.uk/feed/" title="FiddyP Posts RSS feed" />
+&lt;link rel="alternate" type="application/rss+xml" href="http://www.fiddyp.co.uk/feed/" title="FiddyP Posts RSS feed" /&gt;
 
 
 == Screenshots ==
