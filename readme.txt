@@ -9,7 +9,7 @@ Appends a titled link to the authors last blog post on their comment giving back
 
 == Description ==
 
-Pass a bit of luv onto your commenters by providing a titled link to their last blog post. This plugin attempts to parse the feed of the comment author by visiting their site and looking in the standard locations for a feed. (wordpress - /feed/ , Blogspot - /feeds/posts/default , TypePad - /atom.xml) If no default feed is found, it will attempt to parse the users page for a feed link and parse that instead.
+Pass a bit of luv onto your commenters by providing a titled link to their last blog post. This plugin attempts to parse the feed of the comment author by visiting their site and looking in the standard locations for a feed.  If no default feed is found, it will attempt to parse the users page for a feed link and parse that instead.
 
 It will start to work with any new comments posted after installation (it will not add last post links to comments made before CommentLuv has been activated)
 
@@ -57,6 +57,9 @@ In most cases it will, unless you have other dofollow plugins that use a high pr
 They can either manually add their feed url to the comment (see above) or they can make sure that they have an entry in the blog <head> section like this:
 &lt;link rel="alternate" type="application/rss+xml" href="http://www.fiddyp.co.uk/feed/" title="FiddyP Posts RSS feed" /&gt;
 
+= I am having problems, what do I do? =
+You can switcht the debug option on by including "[debugon]" in the comment (no quotes) and the plugin will output the things that it tried to locate the feed. Copy and paste the debug output in to an email to me (along with the author's url) and I'll look into it for you.
+
 
 == Screenshots ==
 
@@ -68,3 +71,9 @@ They can either manually add their feed url to the comment (see above) or they c
 
 
 no code required. Automatic after activation.
+
+to specify a feed, use this at the end of the comment content
+[feed]http://www.feedburner.com/yourfeed[/feed]
+
+to switch on debug, use this somewhere in the comment content
+[debugon]
