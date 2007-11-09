@@ -13,7 +13,7 @@ Pass a bit of luv onto your commenters by providing a titled link to their last 
 
 It will start to work with any new comments posted after installation (it will not add last post links to comments made before CommentLuv has been activated)
 
-It will not add your own last post if you are logged in as admin or use your own blog url as the comment author url. You can test it by adding a comment to one of your posts (after loggin out) and using a different URL for the author site field (use http://www.fiddyp.co.u if you want!)
+It will not add your own last post if you are logged in as admin or use your own blog url as the comment author url. You can test it by adding a comment to one of your posts (after loggin out) and using a different URL for the author site field (use http://www.fiddyp.co.uk if you want!)
 
 == Installation ==
 
