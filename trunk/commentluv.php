@@ -2,20 +2,24 @@
 Plugin Name: Commentluv
 Plugin URI: http://www.fiddyp.co.uk/commentluv-wordpress-plugin/
 Description: Plugin to show a link to the last post from the commenters blog in their comment. Just activate and it's ready. Currently parses with wordpress, blogspot, typepad and blogs that have a feed link in the head section of their page.
-Version: 0.98
+Version: 0.992
 Author: Andy Bailey
 Author URI: http://www.fiddyp.co.uk/
 
 updates:
+0.993 - added check for web-log: addition by Edward De Leau of http://edward.de.leau.net/
+0.992 - detect trailing slash on author url and act accordingly
+0.991 - move curl check to higher up the process so the plugin doesn't take longer than necessary
+0.99 - allow for styles to be applied to last blog post text
 0.98 - added ability to allow commenter to switch debug on within comments by putting [debugon] in the content
 0.97 - add support for typepad and blogspt own domain blogs and more header alternate links and raised the priority on action so other plugins can play with the comment afterwards for nofollow
 0.96 - handle the author url more efficiently
-0.95 - rewrite of feed finding and parsing and added a timeout increase to the magpie rss parsing function
+0.95 - rewrite of feed finding and parsing and added a timout increase to the magpie rss parsing function
 0.94 - fix: not parsing some feedburner feeds that have an extra subdomain on the url
 0.93 - use wp internal function to parse feed and improve find feed location
 0.92 - update comments
 0.91 - fix: compatibility with some other comment enhancing plugins so the link isn't repeated
-0.9 - now wont output empty string if no last post found (blogspot blog with own domain)
+0.9 - now wont output emptry string if no last post found (blogspot blog with own domain)
 0.8 - now prevents parsing on a trackback, pingback or admin comment
 0.71 - trying to prevent showing last post on trackbacks
 0.7 - prevented admin from having feed parsed when replying to comments
@@ -99,16 +103,24 @@ function comment_luv($comment_data){
 	if ($user_level > 7 || $comment_data['comment_type'] == 'pingback' || $comment_data['comment_type'] == 'trackback' || strstr($comment_data['comment_content'],"'s last blog post")) {
 		return $comment_data;
 	}
-// check for debug command
-if(strstr($comment_data['comment_content'],"[debugon]")){
-$debug=1;
-}
+	// check for debug command
+	if(strstr($comment_data['comment_content'],"[debugon]")){
+		$debug=1;
+	}
 	// get author url
 	$author_url=$comment_data['comment_author_url'];
 	// if no author url given, return
 	if(!$author_url){
 		return $comment_data;
 	}
+	// clean up author url if it has a trailing forward slash
+	if(substr($author_url,-1)=="/") {
+		$author_url = substr($author_url, 0, -1);  // remove trailing slash
+		if($debug) {
+			$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (remove slash) ',strlen($comment_data['comment_content']),0);
+		}
+	}
+
 	// ***********************
 	// *** fun starts here ***
 	// ***********************
@@ -116,10 +128,10 @@ $debug=1;
 	if(!defined('MAGPIE_FETCH_TIME_OUT')){
 		define('MAGPIE_FETCH_TIME_OUT',5);
 	}
-// set cache age to 5 minutes so it doesn't show an old last post if a commenter makes a new post and returns to comment again
-if(!defined('MAGPIE_CACHE_AGE')){
-define('MAGPIE_CACHE_AGE',300);
-}
+	// set cache age to 5 minutes so it doesn't show an old last post if a commenter makes a new post and returns to comment again
+	if(!defined('MAGPIE_CACHE_AGE')){
+		define('MAGPIE_CACHE_AGE',300);
+	}
 
 	// use wp internal rss.php function (wp 2.1+ only)
 	include_once(ABSPATH . WPINC . '/rss.php');
@@ -137,6 +149,18 @@ define('MAGPIE_CACHE_AGE',300);
 
 	} elseif(strstr($author_url,"typepad")){				// typepad blog
 		$feed_url="$author_url/atom.xml";
+		if($debug) {
+			$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (typepad) ',strlen($comment_data['comment_content']),0);
+		}
+	} elseif(strstr($author_url,"livejournal")){			// livejournal
+		$feed_url="$author_url/data/rss";
+		if($debug) {
+			$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (livejournal) ',strlen($comment_data['comment_content']),0);
+		}
+	} elseif(strstr($author_url,"web-log")){ // web-log blog
+		// take only the name of the author of http://xxx.web-log.nl
+		preg_match('|http://(.*?).web-log.nl|is', $author_url, $authorid);
+		$feed_url = $author_url . "/" . $authorid[1] . "/rss.xml";
 	} else {
 		$feed_url="$author_url/feed/";						// own domain or wordpress blog
 		// debug
@@ -169,6 +193,16 @@ define('MAGPIE_CACHE_AGE',300);
 	// fetch feed with WP function
 	$rss=fetch_rss("$feed_url");
 
+	// couldn't find it try to parse users page if curl enabled
+	if(!$rss && !$manual_feed){
+		// debug
+		if($debug) {
+			$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (try parsing) ',strlen($comment_data['comment_content']),0);
+		}
+		$feed_url=findfeedburner($author_url);
+		$rss=fetch_rss("$feed_url");
+	}
+
 	// couldn't find it! look in other places
 	if(!$rss && !$manual_feed){
 		// debug
@@ -179,31 +213,23 @@ define('MAGPIE_CACHE_AGE',300);
 		$rss=fetch_rss("$feed_url");
 		// try own domain blogspot
 		if(!$rss){
-if($debug) {
-			$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (try blogspot location) ',strlen($comment_data['comment_content']),0);
-		}
+			if($debug) {
+				$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (try blogspot location) ',strlen($comment_data['comment_content']),0);
+			}
 			$feed_url="$author_url/feeds/posts/default";
 			$rss=fetch_rss("$feed_url");
 		}
 		// try typepad own domain
 		if(!$rss) {
-if($debug) {
-			$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (try typepad) ',strlen($comment_data['comment_content']),0);
-		}
+			if($debug) {
+				$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (try typepad) ',strlen($comment_data['comment_content']),0);
+			}
 			$feed_url="$author_url/atom.xml";
 			$rss=fetch_rss("$feed_url");
 		}
 	}
 
-	// couldn't find it there either! try to parse users page
-	if(!$rss && !$manual_feed){
-		// debug
-		if($debug) {
-			$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (try parsing) ',strlen($comment_data['comment_content']),0);
-		}
-		$feed_url=findfeedburner($author_url);
-		$rss=fetch_rss("$feed_url");
-	}
+
 	// couldn't find it at all, just return with a sad face
 	if(!$rss) {
 		// debug
@@ -231,7 +257,7 @@ if($debug) {
 	// ****************************
 	// insert last post data onto the end of the comment content
 	if($feed_title && $feed_post){	// only output if last post found
-		$author_excerpt="\n\n<em>".$comment_data['comment_author']."'s last blog post..</em><a href='$feed_post'>$feed_title</a>";
+		$author_excerpt="\n\n<em>".$comment_data['comment_author']."'s last blog post..<a href='$feed_post'>$feed_title</a></em>";
 		$comment_data['comment_content']=substr_replace($comment_data['comment_content'], $author_excerpt,strlen($comment_data['comment_content']),0);
 	}
 
