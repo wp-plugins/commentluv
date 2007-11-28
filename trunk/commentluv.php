@@ -2,7 +2,7 @@
 Plugin Name: Commentluv
 Plugin URI: http://www.fiddyp.co.uk/commentluv-wordpress-plugin/
 Description: Plugin to show a link to the last post from the commenters blog in their comment. Just activate and it's ready. Currently parses with wordpress, blogspot, typepad and blogs that have a feed link in the head section of their page.
-Version: 0.992
+Version: 0.993
 Author: Andy Bailey
 Author URI: http://www.fiddyp.co.uk/
 
