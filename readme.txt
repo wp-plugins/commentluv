@@ -3,7 +3,7 @@ Contributors: Andy Bailey
 Tags: comments, linkluv
 Requires at least: 2.1
 Tested up to: 2.3
-Stable tag: 0.9.8
+Stable tag: 0.9.9.3
 
 Appends a titled link to the authors last blog post on their comment giving back some luv to the people that join your discussion.
 
@@ -53,6 +53,10 @@ ie. "great point! I'll add that too.. [feed]http://feeds.feedburner.com/Fiddyp[/
 
 In most cases it will, unless you have other dofollow plugins that use a high priority and therefore act before CommentLuv adds the last post link
 
+= I still see rel="nofollow" in the last blog post links when I am notified by Admin = 
+Wordpress puts in the nofollow when it sends you an email about comments made, if you look at the source of the page, you should see that the nofollow isn't there. Let me know if it is!
+
+
 = How can a user help CommentLuv find their feed? =
 They can either manually add their feed url to the comment (see above) or they can make sure that they have an entry in the blog <head> section like this:
 &lt;link rel="alternate" type="application/rss+xml" href="http://www.fiddyp.co.uk/feed/" title="FiddyP Posts RSS feed" /&gt;
@@ -62,7 +66,7 @@ You can switcht the debug option on by including "[debugon]" in the comment (no 
 
 
 == Screenshots ==
-
+http://www.fiddyp.co.uk/wp-content/uploads/2007/09/commentluvinaction.gif
 
 == Arbitrary section ==
 
