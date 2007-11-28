@@ -66,7 +66,7 @@ You can switcht the debug option on by including "[debugon]" in the comment (no 
 
 
 == Screenshots ==
-http://www.fiddyp.co.uk/wp-content/uploads/2007/09/commentluvinaction.gif
+<img src="http://www.fiddyp.co.uk/wp-content/uploads/2007/09/commentluvinaction.gif"/>
 
 == Arbitrary section ==
 
