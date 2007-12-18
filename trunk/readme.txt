@@ -3,7 +3,7 @@ Contributors: Andy Bailey
 Tags: comments, linkluv
 Requires at least: 2.1
 Tested up to: 2.3
-Stable tag: 0.9.9.3
+Stable tag: 0.9.9.7
 
 Appends a titled link to the authors last blog post on their comment giving back some luv to the people that join your discussion.
 
@@ -14,6 +14,8 @@ Pass a bit of luv onto your commenters by providing a titled link to their last 
 It will start to work with any new comments posted after installation (it will not add last post links to comments made before CommentLuv has been activated)
 
 It will not add your own last post if you are logged in as admin or use your own blog url as the comment author url. You can test it by adding a comment to one of your posts (after loggin out) and using a different URL for the author site field (use http://www.fiddyp.co.uk if you want!)
+
+This plugin now uses a remote script to do the parsing if your hosting cannot do it.
 
 == Installation ==
 
@@ -63,6 +65,9 @@ They can either manually add their feed url to the comment (see above) or they c
 
 = I am having problems, what do I do? =
 You can switcht the debug option on by including "[debugon]" in the comment (no quotes) and the plugin will output the things that it tried to locate the feed. Copy and paste the debug output in to an email to me (along with the author's url) and I'll look into it for you.
+
+= I don't want my last blog post showing on my comment =
+Uncheck the box for "enable commentluv" below the message
 
 
 == Screenshots ==

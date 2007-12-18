@@ -2,11 +2,18 @@
 Plugin Name: Commentluv
 Plugin URI: http://www.fiddyp.co.uk/commentluv-wordpress-plugin/
 Description: Plugin to show a link to the last post from the commenters blog in their comment. Just activate and it's ready. Currently parses with wordpress, blogspot, typepad and blogs that have a feed link in the head section of their page.
-Version: 0.993
+Version: 0.997
 Author: Andy Bailey
 Author URI: http://www.fiddyp.co.uk/
 
+*********************************************************************
+You can change the message that is displayed under this change log...
+*********************************************************************
 updates:
+0.997 - add bit to allow user to change message by editing source code
+0.996 - removed [noluv] and replaced with checkbox on form
+0.995 - add option to not get feed if user enters [noluv] (thanks http://www.blogherald.com)
+0.994 - added an option to read the feed output by my own routine to curl the users page
 0.993 - added check for web-log: addition by Edward De Leau of http://edward.de.leau.net/
 0.992 - detect trailing slash on author url and act accordingly
 0.991 - move curl check to higher up the process so the plugin doesn't take longer than necessary
@@ -38,7 +45,15 @@ feedburner.
 
 
 */
+// *****************************************************************************
+//************ you can edit the message that is displayed here ******************
+//************ but be careful! only use single (') quotes not (") double ********
+// *****************************************************************************
 
+$cl_message="<em>Enable <a href='http://www.fiddyp.co.uk/commentluv-wordpress-plugin'>CommentLuv</a> which will try and get your last blog post, please be patient while it finds it for you</em>";
+
+
+//************ you shouldn't edit below this line!*******************************
 
 // text between function (to make it easy to parse different types of feeds and streams)
 function LL_TextBetween($s1,$s2,$s){
@@ -77,6 +92,15 @@ function findfeedburner($page_url){
 			}
 		}
 	}
+	else // no curl here, borrow mine!
+	{
+		$rss=fetch_rss("http://www.fiddyp.co.uk/wp-content/plugins/commentluvinc/cl_feedfind.php?url=$page_url");
+		$items= array_slice($rss->items,0,1);
+		foreach($items as $item){
+			$feed_post=$item['link'];
+		}
+		return $feed_post;
+	}
 	return $feed_url;
 }
 
@@ -87,25 +111,31 @@ add_action('comment_form','add_text');
 
 // function to add text to bottom of form field
 function add_text($id){
-	echo "<br><em>This blog uses the <a href='http://www.fiddyp.co.uk/commentluv-wordpress-plugin'>CommentLuv plugin</a> which will try and parse your sites feed and display a link to your last post, please be patient while it tries to find it for you.</em>";
+	global $cl_message;
+	echo "<input name='luv' id='luv' value='luv' type='checkbox' style='width: auto;' checked='checked'>";
+	echo "<label for='luv'><!-- Added by CommentLuv Plugin v0.997 - Andy Bailey @ www.fiddyp.co.uk-->".$cl_message;
 	return $id; // need to return what we got sent
 }
 
 // this is the magic part.
 // function to parse the users feed and add a link to last post after the rest of the comment content
 function comment_luv($comment_data){
-	$debug=0; // for my own debugging, shows a breadcrumb of what is tried for parsing
 	$manual_feed=0;
-
-	// don't parse for admin posting comment reply,pingback or trackback and checks if last post already added
-	get_currentuserinfo() ;
-	global $user_level;
-	if ($user_level > 7 || $comment_data['comment_type'] == 'pingback' || $comment_data['comment_type'] == 'trackback' || strstr($comment_data['comment_content'],"'s last blog post")) {
-		return $comment_data;
-	}
+	$debug=0; // for my own debugging, shows a breadcrumb of what is tried for parsing
+	$luv = $_POST['luv']; // get checkbox value for commentluv
 	// check for debug command
 	if(strstr($comment_data['comment_content'],"[debugon]")){
 		$debug=1;
+	}
+	if($luv=='luv' && $debug) {
+		$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (noluv) ',strlen($comment_data['comment_content']),0);
+	}
+
+	// don't parse for admin posting comment reply,pingback or trackback and checks if last post already added and check for luv box checked
+	get_currentuserinfo() ;
+	global $user_level;
+	if ($luv!='luv' || $user_level > 7 || $comment_data['comment_type'] == 'pingback' || $comment_data['comment_type'] == 'trackback' || strstr($comment_data['comment_content'],"'s last blog post")) {
+		return $comment_data;
 	}
 	// get author url
 	$author_url=$comment_data['comment_author_url'];
