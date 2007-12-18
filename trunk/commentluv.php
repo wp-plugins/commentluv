@@ -94,7 +94,7 @@ function findfeedburner($page_url){
 	}
 	else // no curl here, borrow mine!
 	{
-		$rss=fetch_rss("http://www.fiddyp.co.uk/wp-content/plugins/commentluvinc/cl_feedfind.php?url=$page_url");
+		$rss=fetch_rss("http://www.commentluv.com/commentluvinc/cl_feedfind.php?url=$page_url");
 		$items= array_slice($rss->items,0,1);
 		foreach($items as $item){
 			$feed_post=$item['link'];
