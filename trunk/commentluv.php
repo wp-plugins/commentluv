@@ -2,7 +2,7 @@
 Plugin Name: Commentluv
 Plugin URI: http://www.fiddyp.co.uk/commentluv-wordpress-plugin/
 Description: Plugin to show a link to the last post from the commenters blog in their comment. Just activate and it's ready. Currently parses with wordpress, blogspot, typepad and blogs that have a feed link in the head section of their page.
-Version: 0.997
+Version: 0.998
 Author: Andy Bailey
 Author URI: http://www.fiddyp.co.uk/
 
@@ -10,6 +10,7 @@ Author URI: http://www.fiddyp.co.uk/
 You can change the message that is displayed under this change log...
 *********************************************************************
 updates:
+0.998 - try to make compatible with Shifter Theme System - http://www.jaynedarcy.us/
 0.997 - add bit to allow user to change message by editing source code
 0.996 - removed [noluv] and replaced with checkbox on form
 0.995 - add option to not get feed if user enters [noluv] (thanks http://www.blogherald.com)
@@ -112,8 +113,8 @@ add_action('comment_form','add_text');
 // function to add text to bottom of form field
 function add_text($id){
 	global $cl_message;
-	echo "<input name='luv' id='luv' value='luv' type='checkbox' style='width: auto;' checked='checked'>";
-	echo "<label for='luv'><!-- Added by CommentLuv Plugin v0.997 - Andy Bailey @ www.fiddyp.co.uk-->".$cl_message;
+	echo "<input name='luv' id='luv' value='luv' type='checkbox' style='width: auto;' checked='checked'/>";
+	echo "<label for='luv'><!-- Added by CommentLuv Plugin v0.998 - Andy Bailey @ www.fiddyp.co.uk-->".$cl_message."</label>";
 	return $id; // need to return what we got sent
 }
 
@@ -128,7 +129,7 @@ function comment_luv($comment_data){
 		$debug=1;
 	}
 	if($luv=='luv' && $debug) {
-		$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (noluv) ',strlen($comment_data['comment_content']),0);
+		$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (luv) ',strlen($comment_data['comment_content']),0);
 	}
 
 	// don't parse for admin posting comment reply,pingback or trackback and checks if last post already added and check for luv box checked
