@@ -2,7 +2,7 @@
 Plugin Name: Commentluv
 Plugin URI: http://www.fiddyp.co.uk/commentluv-wordpress-plugin/
 Description: Plugin to show a link to the last post from the commenters blog in their comment. Just activate and it's ready. Currently parses with wordpress, blogspot, typepad and blogs that have a feed link in the head section of their page.
-Version: 0.998
+Version: 0.999
 Author: Andy Bailey
 Author URI: http://www.fiddyp.co.uk/
 
@@ -10,6 +10,7 @@ Author URI: http://www.fiddyp.co.uk/
 You can change the message that is displayed under this change log...
 *********************************************************************
 updates:
+0.999 - try and change the wrong use of ? in post titles.. - http://www.tarheelramblings.com
 0.998 - try to make compatible with Shifter Theme System - http://www.jaynedarcy.us/
 0.997 - add bit to allow user to change message by editing source code
 0.996 - removed [noluv] and replaced with checkbox on form
@@ -282,6 +283,11 @@ function comment_luv($comment_data){
 		$feed_title=$item['title'];
 		$feed_post=$item['link'];
 	}
+	
+	// try and fix any single quotes that got changed to question marks
+	$search = array("?s", "?t", "?l", "?v", "?m", "?d");
+	$replace = array("'s", "'t", "'l", "'v", "'m", "'d");
+	$feed_title=str_replace($search,$replace,$feed_title);
 
 	// ****************************
 	// *** append the last post ***
