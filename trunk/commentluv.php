@@ -115,7 +115,7 @@ add_action('comment_form','add_text');
 function add_text($id){
 	global $cl_message;
 	echo "<input name='luv' id='luv' value='luv' type='checkbox' style='width: auto;' checked='checked'/>";
-	echo "<label for='luv'><!-- Added by CommentLuv Plugin v0.998 - Andy Bailey @ www.fiddyp.co.uk-->".$cl_message."</label>";
+	echo "<label for='luv'><!-- Added by CommentLuv Plugin v0.999 - Andy Bailey @ www.fiddyp.co.uk-->".$cl_message."</label>";
 	return $id; // need to return what we got sent
 }
 
