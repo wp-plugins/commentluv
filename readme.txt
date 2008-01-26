@@ -58,7 +58,6 @@ In most cases it will, unless you have other dofollow plugins that use a high pr
 = I still see rel="nofollow" in the last blog post links when I am notified by Admin = 
 Wordpress puts in the nofollow when it sends you an email about comments made, if you look at the source of the page, you should see that the nofollow isn't there. Let me know if it is!
 
-
 = How can a user help CommentLuv find their feed? =
 They can either manually add their feed url to the comment (see above) or they can make sure that they have an entry in the blog <head> section like this:
 &lt;link rel="alternate" type="application/rss+xml" href="http://www.fiddyp.co.uk/feed/" title="FiddyP Posts RSS feed" /&gt;
@@ -77,7 +76,6 @@ Uncheck the box for "enable commentluv" below the message
 
 
 == A brief Markdown Example ==
-
 
 no code required. Automatic after activation.
 
