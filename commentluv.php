@@ -2,7 +2,7 @@
 Plugin Name: Commentluv
 Plugin URI: http://www.fiddyp.co.uk/commentluv-wordpress-plugin/
 Description: Plugin to show a link to the last post from the commenters blog in their comment. Just activate and it's ready. Currently parses with wordpress, blogspot, typepad and blogs that have a feed link in the head section of their page.
-Version: 1.2
+Version: 1.3
 Author: Andy Bailey
 Author URI: http://www.fiddyp.co.uk/
 
@@ -10,6 +10,7 @@ Author URI: http://www.fiddyp.co.uk/
 You can change the message that is displayed under this change log...
 *********************************************************************
 updates:
+1.3 - clean returned link so it can't be used for msql injection
 1.2 - add option for styling... thanks Jenny from http://thesocalledme.net
 1.1 - add options page to allow for user to change displayed messages etc
 1.0 - took ajax off and moved to remote find feed on commentluv.com
@@ -68,7 +69,7 @@ function show_cl_options() {
     // Add a new submenu under Options:
     add_options_page('CommentLuv', 'CommentLuv', 8, 'commentluv', 'cl_options_page');
     add_option('cl_comment_text','[name]s last blog post..[lastpost]');
-    add_option('cl_under_comment','Enable [commentluv] v1.2 which will try and parse your last blog post, please be patient while it finds it for you');
+    add_option('cl_under_comment','Enable [commentluv] v1.3 which will try and parse your last blog post, please be patient while it finds it for you');
     add_option('cl_default_on','TRUE');
     add_option('cl_style','border:1px solid; display:block; padding:4px;');
         
@@ -280,7 +281,7 @@ function comment_luv($comment_data){
 	// ****************************
 	// *** append the last post ***
 	// ****************************
-	
+	$content=mysql_real_escape_string($content);
 	
 	$cl_comment_text=get_option('cl_comment_text');
 	$cl_default_on=get_option('cl_default_on');
