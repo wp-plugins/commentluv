@@ -2,7 +2,7 @@
 Plugin Name: Commentluv
 Plugin URI: http://www.fiddyp.co.uk/commentluv-wordpress-plugin/
 Description: Plugin to show a link to the last post from the commenters blog in their comment. Just activate and it's ready. Currently parses with wordpress, blogspot, typepad and blogs that have a feed link in the head section of their page.
-Version: 0.999
+Version: 1.2
 Author: Andy Bailey
 Author URI: http://www.fiddyp.co.uk/
 
@@ -10,8 +10,11 @@ Author URI: http://www.fiddyp.co.uk/
 You can change the message that is displayed under this change log...
 *********************************************************************
 updates:
-0.999 - try and change the wrong use of ? in post titles.. - http://www.tarheelramblings.com
-0.998 - try to make compatible with Shifter Theme System - http://www.jaynedarcy.us/
+1.2 - add option for styling... thanks Jenny from http://thesocalledme.net
+1.1 - add options page to allow for user to change displayed messages etc
+1.0 - took ajax off and moved to remote find feed on commentluv.com
+0.999 - need to take off internal feed parser due to excessive use of wp_options table
+0.998 - gimme some AJAX! added div id "here" to below checkbox for showing the last post found by ajax
 0.997 - add bit to allow user to change message by editing source code
 0.996 - removed [noluv] and replaced with checkbox on form
 0.995 - add option to not get feed if user enters [noluv] (thanks http://www.blogherald.com)
@@ -47,77 +50,104 @@ feedburner.
 
 
 */
-// *****************************************************************************
-//************ you can edit the message that is displayed here ******************
-//************ but be careful! only use single (') quotes not (") double ********
-// *****************************************************************************
 
-$cl_message="<em>Enable <a href='http://www.fiddyp.co.uk/commentluv-wordpress-plugin'>CommentLuv</a> which will try and get your last blog post, please be patient while it finds it for you</em>";
 
 
 //************ you shouldn't edit below this line!*******************************
-
-// text between function (to make it easy to parse different types of feeds and streams)
-function LL_TextBetween($s1,$s2,$s){
-	$s1 = strtolower($s1);
-	$s2 = strtolower($s2);
-	$L1 = strlen($s1);
-	$scheck = strtolower($s);
-	if($L1>0){$pos1 = strpos($scheck,$s1);} else {$pos1=0;}
-	if($pos1 !== false){
-		if($s2 == '') return substr($s,$pos1+$L1);
-		$pos2 = strpos(substr($scheck,$pos1+$L1),$s2);
-		if($pos2!==false) return substr($s,$pos1+$L1,$pos2);
-	}
-	return '';
-}
-
-// find feedburner feed function (parses a users page for a feed link)
-function findfeedburner($page_url){
-	// can't open default wordpress feed, use curl to parse users page for a relative link feed
-	if(function_exists(curl_init)) {
-		$ch=curl_init();
-		$timeout = 10; // set to zero for no timeout
-		curl_setopt ($ch, CURLOPT_URL, $page_url );
-		curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
-		$data=curl_exec($ch);
-		curl_close($ch);
-		$lines=explode("\n",$data);
-		// look for feedburner url
-		foreach($lines as $line){
-			if(strstr($line,"alternate")&&(strstr($line,"rss")||strstr($line,"xml"))){
-				$pos=strpos($line,"href");
-				$cut=substr($line,$pos+5);
-				$feed_url=LL_TextBetween("\"","\"",$cut);
-				break;
-			}
-		}
-	}
-	else // no curl here, borrow mine!
-	{
-		$rss=fetch_rss("http://www.commentluv.com/commentluvinc/cl_feedfind.php?url=$page_url");
-		$items= array_slice($rss->items,0,1);
-		foreach($items as $item){
-			$feed_post=$item['link'];
-		}
-		return $feed_post;
-	}
-	return $feed_url;
-}
 
 // hooks, call comment_luv function just before comment is posted . gets passed array of comment fields
 // hooks, call add_text when comment form is shown, gets passed id of post
 add_filter('preprocess_comment','comment_luv',0);
 add_action('comment_form','add_text');
+add_action('admin_menu', 'show_cl_options');
+add_action('wp_head','cl_style');
 
+
+//function for menu
+function show_cl_options() {
+    // Add a new submenu under Options:
+    add_options_page('CommentLuv', 'CommentLuv', 8, 'commentluv', 'cl_options_page');
+    add_option('cl_comment_text','[name]s last blog post..[lastpost]');
+    add_option('cl_under_comment','Enable [commentluv] v1.2 which will try and parse your last blog post, please be patient while it finds it for you');
+    add_option('cl_default_on','TRUE');
+    add_option('cl_style','border:1px solid; display:block; padding:4px;');
+        
+}
+
+// add style to head
+function cl_style(){
+	echo '<!-- Styling added by CommentLuv http://www.fiddyp.co.uk -->';
+	echo '<style>.commentlist abbr{'.get_option('cl_style').'}</style>';
+}
+// function to add menu page under options
+
+function cl_options_page(){
+	?>
+	<div class="wrap">
+	<form method="post" action="options.php" id="options">
+	<?php wp_nonce_field('update-options') ?>
+	<h2>CommentLuv Wordpress Plugin</h2>
+	<em>Beta testing version</em>
+	<p>This plugin takes the url from the comment form and tries to parse the feed of the site and display the last entry made</p>
+	<p>If you have any questions or comment, please visit <a href="http://www.fiddyp.co.uk" target="_blank">FiddyP Blog</a> and leave a comment</p>
+	
+	<p><strong>Enter the text you want displayed in the comment. &lt;abbr> &lt;/abbr> allows you to style the display.</strong>
+	<input class="form-table" name="cl_comment_text" value="<?php echo get_option('cl_comment_text');?>"></input>
+	<p>You can use:
+	<br/>[name] to display author name
+	<br/>[site] to display their site url
+	<br />[lastpost] to display the named link to their last post</p></p>
+	
+	<p><strong>Enter the text to appear beneath the comment form informing the user that you are using CommentLuv</strong>
+	<input class="form-table" name="cl_under_comment" value="<?php echo get_option('cl_under_comment');?>"></input></p>
+	<p>Choose to have CommentLuv on by default?</p>
+	<select name="cl_default_on">
+	<option <?php if(get_option('cl_default_on')=="TRUE") {echo "selected=selected";}?> >TRUE</option>
+	<option <?php if(get_option('cl_default_on')=="FALSE") { echo "selected=selected";}?> >FALSE</option>
+	</select>
+	<p>Enter css styling to apply to &lt;abbr> tag</p>
+	<input class="form-table" name="cl_style" value="<?php echo get_option('cl_style');?>"></input>
+	
+	<input type="hidden" name="page_options" value="cl_comment_text,cl_under_comment,cl_default_on" />
+	
+	<input type="hidden" name="action" value="update" />
+	<p class="submit"><input type="submit" name="Submit" value="<?php _e('Update Options') ?>" /></p>
+	</form></div>
+ <?php }
+ 
+ 
 // function to add text to bottom of form field
 function add_text($id){
-	global $cl_message;
-	echo "<input name='luv' id='luv' value='luv' type='checkbox' style='width: auto;' checked='checked'/>";
-	echo "<label for='luv'><!-- Added by CommentLuv Plugin v0.999 - Andy Bailey @ www.fiddyp.co.uk-->".$cl_message."</label>";
+$cl_under_comment=get_option('cl_under_comment');
+$cl_under_comment=str_replace('[commentluv]','<a href="http://www.fiddyp.co.uk/commentluv-wordpress-plugin/">CommentLuv</a>',$cl_under_comment);	
+
+	echo "<input name='luv' id='luv' value='luv' type='checkbox' style='width: auto;'";
+	if(get_option('cl_default_on')=="TRUE") { echo "checked=checked />";}
+	echo "<label for='luv'><!-- Added by CommentLuv Plugin v1.0 - Andy Bailey @ www.fiddyp.co.uk-->".$cl_under_comment;
 	return $id; // need to return what we got sent
 }
+
+if (!function_exists('file_get_contents')) {
+      		function file_get_contents($filename, $incpath = false, $resource_context = null) {
+          		if (false === $fh = fopen($filename, 'rb', $incpath)) {
+              		trigger_error('file_get_contents() failed to open stream: No such file or directory', E_USER_WARNING);
+		              return false;
+        		}
+ 
+          	clearstatcache();
+          	if ($fsize = @filesize($filename)) {
+              $data = fread($fh, $fsize);
+          	} else {
+              $data = '';
+              while (!feof($fh)) {
+                  $data .= fread($fh, 8192);
+            	}
+          	}
+ 
+          	fclose($fh);
+          	return $data;
+      		}
+  		}	
 
 // this is the magic part.
 // function to parse the users feed and add a link to last post after the rest of the comment content
@@ -130,7 +160,7 @@ function comment_luv($comment_data){
 		$debug=1;
 	}
 	if($luv=='luv' && $debug) {
-		$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (luv) ',strlen($comment_data['comment_content']),0);
+		$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (noluv) ',strlen($comment_data['comment_content']),0);
 	}
 
 	// don't parse for admin posting comment reply,pingback or trackback and checks if last post already added and check for luv box checked
@@ -156,17 +186,7 @@ function comment_luv($comment_data){
 	// ***********************
 	// *** fun starts here ***
 	// ***********************
-	// check for magpie timeout constant
-	if(!defined('MAGPIE_FETCH_TIME_OUT')){
-		define('MAGPIE_FETCH_TIME_OUT',5);
-	}
-	// set cache age to 5 minutes so it doesn't show an old last post if a commenter makes a new post and returns to comment again
-	if(!defined('MAGPIE_CACHE_AGE')){
-		define('MAGPIE_CACHE_AGE',300);
-	}
 
-	// use wp internal rss.php function (wp 2.1+ only)
-	include_once(ABSPATH . WPINC . '/rss.php');
 
 	// **************************
 	// *** identify blog type ***
@@ -222,80 +242,57 @@ function comment_luv($comment_data){
 	// *******************************
 	// *** time to do the fetching ***
 	// *******************************
-	// fetch feed with WP function
-	$rss=fetch_rss("$feed_url");
-
-	// couldn't find it try to parse users page if curl enabled
-	if(!$rss && !$manual_feed){
+	$url="http://www.commentluv.com/commentluvinc/remoteCL4.php5?type=single&url=".$author_url;
+	// try curl if it is enabled
+	if(extension_loaded('curl') ){
 		// debug
 		if($debug) {
-			$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (try parsing) ',strlen($comment_data['comment_content']),0);
+			$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (using curl) ',strlen($comment_data['comment_content']),0);
 		}
-		$feed_url=findfeedburner($author_url);
-		$rss=fetch_rss("$feed_url");
-	}
-
-	// couldn't find it! look in other places
-	if(!$rss && !$manual_feed){
+		$curl=curl_init();
+		curl_setopt($curl,CURLOPT_URL,$url);
+		curl_setopt($curl,CURLOPT_HEADER,0);
+		curl_setopt($curl,CURLOPT_RETURNTRANSFER,TRUE);
+		curl_setopt($curl,CURLOPT_TIMEOUT,5);
+		$content=curl_exec($curl);
+		curl_close($curl);		
+	} else { 
+		// try file instead
 		// debug
 		if($debug) {
-			$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (try alternate) ',strlen($comment_data['comment_content']),0);
+			$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (using filegetcontents) ',strlen($comment_data['comment_content']),0);
 		}
-		$feed_url="$author_url/?feed=rss";
-		$rss=fetch_rss("$feed_url");
-		// try own domain blogspot
-		if(!$rss){
-			if($debug) {
-				$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (try blogspot location) ',strlen($comment_data['comment_content']),0);
-			}
-			$feed_url="$author_url/feeds/posts/default";
-			$rss=fetch_rss("$feed_url");
-		}
-		// try typepad own domain
-		if(!$rss) {
-			if($debug) {
-				$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (try typepad) ',strlen($comment_data['comment_content']),0);
-			}
-			$feed_url="$author_url/atom.xml";
-			$rss=fetch_rss("$feed_url");
-		}
-	}
-
-
-	// couldn't find it at all, just return with a sad face
-	if(!$rss) {
-		// debug
-		if($debug) {
-			$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (failed) ',strlen($comment_data['comment_content']),0);
-		}
-		return $comment_data;
+		$content=file_get_contents($url);
 	}
 
 	// for compatibility with other comment plugins remove the wp_rel_nofollow functon call
 	remove_filter('pre_comment_content', 'wp_rel_nofollow');
 
-	// **************************
-	// *** do the parse dance ***
-	// **************************
-	// now we must have a feed to parse, get last post title and link
-	$items= array_slice($rss->items,0,1);
-	foreach($items as $item){
-		$feed_title=$item['title'];
-		$feed_post=$item['link'];
+	// try and fix any single quotes that got changed to question marks
+	if(strstr($content,"?")){
+		$search = array("?s", "?t", "?l", "?v", "?m", "?d");
+		$replace = array("'s", "'t", "'l", "'v", "'m", "'d");
+		$newcontent=str_replace($search,$replace,$content);
+		$content=$newcontent;
 	}
 	
-	// try and fix any single quotes that got changed to question marks
-	$search = array("?s", "?t", "?l", "?v", "?m", "?d");
-	$replace = array("'s", "'t", "'l", "'v", "'m", "'d");
-	$feed_title=str_replace($search,$replace,$feed_title);
 
 	// ****************************
 	// *** append the last post ***
 	// ****************************
+	
+	
+	$cl_comment_text=get_option('cl_comment_text');
+	$cl_default_on=get_option('cl_default_on');
+	
+	$search=array('[name]','[site]','[lastpost]');
+	$replace=array($comment_data['comment_author'],$author_url,$content);
+	
+	$cl_comment_text=str_replace($search,$replace,$cl_comment_text);
+		
 	// insert last post data onto the end of the comment content
-	if($feed_title && $feed_post){	// only output if last post found
-		$author_excerpt="\n\n<em>".$comment_data['comment_author']."'s last blog post..<a href='$feed_post'>$feed_title</a></em>";
-		$comment_data['comment_content']=substr_replace($comment_data['comment_content'], $author_excerpt,strlen($comment_data['comment_content']),0);
+	if(strstr($content,"href")){	// only output if last post found
+		$comment_data['comment_content']=substr_replace($comment_data['comment_content'], "\n\n".$cl_comment_text,strlen($comment_data['comment_content']),0);
 	}
 
 	// thats it! pass back the new comment data to wordpress
