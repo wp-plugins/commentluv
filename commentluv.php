@@ -2,7 +2,7 @@
 Plugin Name: Commentluv
 Plugin URI: http://www.fiddyp.co.uk/commentluv-wordpress-plugin/
 Description: Plugin to show a link to the last post from the commenters blog in their comment. Just activate and it's ready. Currently parses with wordpress, blogspot, typepad and blogs that have a feed link in the head section of their page.
-Version: 1.3
+Version: 1.4
 Author: Andy Bailey
 Author URI: http://www.fiddyp.co.uk/
 
@@ -10,6 +10,8 @@ Author URI: http://www.fiddyp.co.uk/
 You can change the message that is displayed under this change log...
 *********************************************************************
 updates:
+1.4 - some reports of code being passed back so check for more than 250 characters in returned string (quick fix only) thanks mama druid (http://www.mamadruid.com
+found the problem! it was new server not executing php5 files... had to change url in plugin and upload standard php file to server
 1.3 - clean returned link so it can't be used for msql injection
 1.2 - add option for styling... thanks Jenny from http://thesocalledme.net
 1.1 - add options page to allow for user to change displayed messages etc
@@ -243,7 +245,7 @@ function comment_luv($comment_data){
 	// *******************************
 	// *** time to do the fetching ***
 	// *******************************
-	$url="http://www.commentluv.com/commentluvinc/remoteCL4.php5?type=single&url=".$author_url;
+	$url=urlencode("http://www.commentluv.com/commentluvinc/remoteCL4.php?type=single&url=".$author_url);
 	// try curl if it is enabled
 	if(extension_loaded('curl') ){
 		// debug
@@ -281,6 +283,15 @@ function comment_luv($comment_data){
 	// ****************************
 	// *** append the last post ***
 	// ****************************
+	// quick fix to see if it has passed back code or the actual post, 
+	
+	
+		if(strlen($content)>250)
+		{
+			return $comment_data;
+		}
+	
+	
 	$content=mysql_real_escape_string($content);
 	
 	$cl_comment_text=get_option('cl_comment_text');
