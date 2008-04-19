@@ -7,7 +7,7 @@ Author: Andy Bailey
 Author URI: http://www.fiddyp.co.uk/
 
 *********************************************************************
-You can change the message that is displayed under this change log...
+You can now edit the options from the dashboard
 *********************************************************************
 updates:
 1.5 - stupid urlencode.. pah
@@ -170,7 +170,7 @@ function comment_luv($comment_data){
 	// don't parse for admin posting comment reply,pingback or trackback and checks if last post already added and check for luv box checked
 	get_currentuserinfo() ;
 	global $user_level;
-	if ($luv!='luv' || $user_level > 7 || $comment_data['comment_type'] == 'pingback' || $comment_data['comment_type'] == 'trackback' || strstr($comment_data['comment_content'],"'s last blog post")) {
+	if ($luv!='luv' || $user_level > 7 || $comment_data['comment_type'] == 'pingback' || $comment_data['comment_type'] == 'trackback' || strstr($comment_data['comment_content'],"<abbr>")) {
 		return $comment_data;
 	}
 	// get author url
