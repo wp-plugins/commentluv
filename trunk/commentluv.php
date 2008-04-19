@@ -72,7 +72,7 @@ function show_cl_options() {
     // Add a new submenu under Options:
     add_options_page('CommentLuv', 'CommentLuv', 8, 'commentluv', 'cl_options_page');
     add_option('cl_comment_text','[name]s last blog post..[lastpost]');
-    add_option('cl_under_comment','Enable [commentluv] v1.3 which will try and parse your last blog post, please be patient while it finds it for you');
+    add_option('cl_under_comment','Enable [commentluv] v1.5 which will try and parse your last blog post, please be patient while it finds it for you');
     add_option('cl_default_on','TRUE');
     add_option('cl_style','border:1px solid; display:block; padding:4px;');
         
