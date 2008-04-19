@@ -72,7 +72,7 @@ function show_cl_options() {
     // Add a new submenu under Options:
     add_options_page('CommentLuv', 'CommentLuv', 8, 'commentluv', 'cl_options_page');
     add_option('cl_comment_text','[name]s last blog post..[lastpost]');
-    add_option('cl_under_comment','Enable [commentluv] v1.5 which will try and parse your last blog post, please be patient while it finds it for you');
+    add_option('cl_under_comment','Enable [commentluv] which will try and parse your last blog post, please be patient while it finds it for you');
     add_option('cl_default_on','TRUE');
     add_option('cl_style','border:1px solid; display:block; padding:4px;');
         
@@ -127,7 +127,7 @@ $cl_under_comment=str_replace('[commentluv]','<a href="http://www.fiddyp.co.uk/c
 
 	echo "<input name='luv' id='luv' value='luv' type='checkbox' style='width: auto;'";
 	if(get_option('cl_default_on')=="TRUE") { echo "checked=checked />";}
-	echo "<label for='luv'><!-- Added by CommentLuv Plugin v1.0 - Andy Bailey @ www.fiddyp.co.uk-->".$cl_under_comment;
+	echo "<label for='luv'><!-- Added by CommentLuv Plugin v1.5 - Andy Bailey @ www.fiddyp.co.uk-->".$cl_under_comment;
 	return $id; // need to return what we got sent
 }
 
