@@ -3,7 +3,7 @@ Contributors: Andy Bailey
 Tags: comments, linkluv
 Requires at least: 2.1
 Tested up to: 2.5
-Stable tag: 1.6
+Stable tag: 1.7
 
 Appends a titled link to the authors last blog post on their comment giving back some luv to the people that join your discussion.
 
@@ -15,7 +15,7 @@ It will start to work with any new comments posted after installation (it will n
 
 It will not add your own last post if you are logged in as admin or use your own blog url as the comment author url. You can test it by adding a comment to one of your posts (after loggin out) and using a different URL for the author site field (use http://www.fiddyp.co.uk if you want!)
 
-This plugin now uses a remote script to do the parsing if your hosting cannot do it and has it's own options page.
+This plugin now uses a remote script to do the parsing for much wider compatibility
 
 == Installation ==
 
@@ -33,12 +33,17 @@ You may want to test it after activation by logging out and adding a comment to 
 You probably have your wordpress set to hold comments in moderation if they contain a link.
 Go to your wordpress dashboard and go to Options/discussion and change the comment moderation option to "Hold a comment in the queue if it contains 2 links"
 
+= I can see the settings in the dashboard but there isn't any text below the comment form, why?
+
+The text gets added when the commentform action is called, your theme needs to have this code just before the </form> tag in your comments.php file...
+<?php do_action('comment_form', $post->ID); ?>
+
 = Why doesn't my plugin show anyone's last post? =
 
 You might be having a compatibility issue with one of your other comment plugins. This version of CommentLuv currently works with AJAX edit comments, subscribe to comments and SpamKarma 2. 
 If your commentluv plugin isn't working for you, please send me an email to andy <at> teamplaylotto.com with a list of your other comment type plugins and I'll do what I can to fix it!
 
-There is also the situation where your hosting does not allow access to external files, if this is the case... ask your hosting provider to whitelist this URL - http://www.commentluv.com 
+There is also the situation where your hosting does not allow access to external files, if this is the case... ask your hosting provider to whitelist this domain - http://www.commentluv.com 
 
 = I know a blog has a feedburner link on it's page but a last post link doesn't appear, why? =
 
@@ -67,7 +72,7 @@ Uncheck the box for "enable commentluv" below the message
 
 
 == Screenshots ==
-<img src="http://www.fiddyp.co.uk/wp-content/uploads/2007/09/commentluvinaction.gif"/>
+
 
 == Arbitrary section ==
 
