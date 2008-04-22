@@ -2,7 +2,7 @@
 Plugin Name: Commentluv
 Plugin URI: http://www.fiddyp.co.uk/commentluv-wordpress-plugin/
 Description: Plugin to show a link to the last post from the commenters blog in their comment. Just activate and it's ready. Currently parses with wordpress, blogspot, typepad and blogs that have a feed link in the head section of their page.
-Version: 1.6
+Version: 1.7
 Author: Andy Bailey
 Author URI: http://www.fiddyp.co.uk/
 
@@ -10,6 +10,9 @@ Author URI: http://www.fiddyp.co.uk/
 You can now edit the options from the dashboard
 *********************************************************************
 updates:
+1.7 - added steroids to the feed fetching routine, now no need to do all the fandangles of trying
+to determine feed location and tidying up crappy characters. Now, output is in utf-8 with all
+special characters staying put! thanks http://blog.mukispace.com
 1.6 - make under comment and style in head xhtml valid - thanks http://www.untwistedvortex.com
 1.5 - stupid urlencode.. pah
 1.4 - some reports of code being passed back so check for more than 250 characters in returned string (quick fix only) thanks mama druid (http://www.mamadruid.com
@@ -128,7 +131,7 @@ $cl_under_comment=str_replace('[commentluv]','<a href="http://www.fiddyp.co.uk/c
 
 	echo "<input name='luv' id='luv' value='luv' type='checkbox' style='width: auto;'";
 	if(get_option('cl_default_on')=="TRUE") { echo ' checked="checked" ';}
-	echo "/><label for='luv'><!-- Added by CommentLuv Plugin v1.6 - Andy Bailey @ www.fiddyp.co.uk-->".$cl_under_comment."</label>";
+	echo "/><label for='luv'><!-- Added by CommentLuv Plugin v1.7 - Andy Bailey @ www.fiddyp.co.uk-->".$cl_under_comment."</label>";
 	return $id; // need to return what we got sent
 }
 
@@ -193,46 +196,14 @@ function comment_luv($comment_data){
 	// ***********************
 
 
-	// **************************
-	// *** identify blog type ***
-	// **************************
-	// try and determine blog type and locate default location for feed.
-	if(strstr($author_url,"blogspot")){						// blogspot blog
-		$feed_url="$author_url/feeds/posts/default/";
-		// debug
-		if($debug) {
-			$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (blogspot) ',strlen($comment_data['comment_content']),0);
-		}
-
-	} elseif(strstr($author_url,"typepad")){				// typepad blog
-		$feed_url="$author_url/atom.xml";
-		if($debug) {
-			$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (typepad) ',strlen($comment_data['comment_content']),0);
-		}
-	} elseif(strstr($author_url,"livejournal")){			// livejournal
-		$feed_url="$author_url/data/rss";
-		if($debug) {
-			$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (livejournal) ',strlen($comment_data['comment_content']),0);
-		}
-	} elseif(strstr($author_url,"web-log")){ // web-log blog
-		// take only the name of the author of http://xxx.web-log.nl
-		preg_match('|http://(.*?).web-log.nl|is', $author_url, $authorid);
-		$feed_url = $author_url . "/" . $authorid[1] . "/rss.xml";
-	} else {
-		$feed_url="$author_url/feed/";						// own domain or wordpress blog
-		// debug
-		if($debug) {
-			$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (wp_norm) ',strlen($comment_data['comment_content']),0);
-		}
-
-	}
+	
 
 	// ***************************
 	// *** detect manual entry ***
 	// ***************************
 	// here we see if user manually entered their own feed url
 	if(strstr($comment_data['comment_content'],"[feed]")){
-		$feed_url=LL_TextBetween("[feed]","[/feed]",$comment_data['comment_content']);
+		$author_url=LL_TextBetween("[feed]","[/feed]",$comment_data['comment_content']);
 		// now strip feed bit from comment
 		$manual_feed_pos_start=strpos($comment_data['comment_content'],"[feed]");
 		$comment_data['comment_content']=substr($comment_data['comment_content'],0,$manual_feed_pos_start);
@@ -247,7 +218,7 @@ function comment_luv($comment_data){
 	// *******************************
 	// *** time to do the fetching ***
 	// *******************************
-	$url="http://www.commentluv.com/commentluvinc/remoteCL4.php?type=single&url=".$author_url;
+	$url="http://www.commentluv.com/commentluvinc/remoteCL5.php?type=single&url=".$author_url;
 	// try curl if it is enabled
 	if(extension_loaded('curl') ){
 		// debug
@@ -273,15 +244,6 @@ function comment_luv($comment_data){
 	// for compatibility with other comment plugins remove the wp_rel_nofollow functon call
 	remove_filter('pre_comment_content', 'wp_rel_nofollow');
 
-	// try and fix any single quotes that got changed to question marks
-	if(strstr($content,"?")){
-		$search = array("?s", "?t", "?l", "?v", "?m", "?d");
-		$replace = array("'s", "'t", "'l", "'v", "'m", "'d");
-		$newcontent=str_replace($search,$replace,$content);
-		$content=$newcontent;
-	}
-	
-
 	// ****************************
 	// *** append the last post ***
 	// ****************************
@@ -299,7 +261,7 @@ function comment_luv($comment_data){
 	$cl_comment_text=str_replace($search,$replace,$cl_comment_text);
 		
 	// insert last post data onto the end of the comment content
-	if(strstr($content,"href")){	// only output if last post found
+	if($content){	// only output if last post found
 		$comment_data['comment_content']=substr_replace($comment_data['comment_content'], "\n\n".$cl_comment_text,strlen($comment_data['comment_content']),0);
 	}
 
