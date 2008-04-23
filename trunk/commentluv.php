@@ -10,6 +10,7 @@ Author URI: http://www.fiddyp.co.uk/
 You can now edit the options from the dashboard
 *********************************************************************
 updates:
+1.91 - fix option change for character encoding (forgot to add extra option to hidden field in option page html)
 1.9 - changed retrieve url to fiddyp.com site because of hosting problem with commentluv.com
 1.8 - added option to specify encoding of output - thanks 
 1.7 - added steroids to the feed fetching routine, now no need to do all the fandangles of trying
@@ -80,8 +81,9 @@ function show_cl_options() {
     add_option('cl_comment_text','[name]s last blog post..[lastpost]');
     add_option('cl_under_comment','Enable [commentluv] which will try and parse your last blog post, please be patient while it finds it for you');
     add_option('cl_default_on','TRUE');
-    add_option('cl_style','border:1px solid; display:block; padding:4px;');
     add_option('cl_encoding','UTF-8');
+    add_option('cl_style','border:1px solid; display:block; padding:4px;');
+ 
         
 }
 
@@ -120,7 +122,7 @@ function cl_options_page(){
 	<p>Enter css styling to apply to &lt;abbr> tag</p>
 	<input class="form-table" name="cl_style" value="<?php echo get_option('cl_style');?>"></input>
 	
-	<input type="hidden" name="page_options" value="cl_comment_text,cl_under_comment,cl_default_on" />
+	<input type="hidden" name="page_options" value="cl_comment_text,cl_under_comment,cl_default_on,cl_encoding" />
 	
 	<input type="hidden" name="action" value="update" />
 	<p class="submit"><input type="submit" name="Submit" value="<?php _e('Update Options') ?>" /></p>
