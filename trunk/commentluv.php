@@ -2,7 +2,7 @@
 Plugin Name: Commentluv
 Plugin URI: http://www.fiddyp.co.uk/commentluv-wordpress-plugin/
 Description: Plugin to show a link to the last post from the commenters blog in their comment. Just activate and it's ready. Currently parses with wordpress, blogspot, typepad and blogs that have a feed link in the head section of their page.
-Version: 1.7
+Version: 1.8
 Author: Andy Bailey
 Author URI: http://www.fiddyp.co.uk/
 
@@ -10,6 +10,7 @@ Author URI: http://www.fiddyp.co.uk/
 You can now edit the options from the dashboard
 *********************************************************************
 updates:
+1.8 - added option to specify encoding of output - thanks 
 1.7 - added steroids to the feed fetching routine, now no need to do all the fandangles of trying
 to determine feed location and tidying up crappy characters. Now, output is in utf-8 with all
 special characters staying put! thanks http://blog.mukispace.com
@@ -79,6 +80,7 @@ function show_cl_options() {
     add_option('cl_under_comment','Enable [commentluv] which will try and parse your last blog post, please be patient while it finds it for you');
     add_option('cl_default_on','TRUE');
     add_option('cl_style','border:1px solid; display:block; padding:4px;');
+    add_option('cl_encoding','UTF-8');
         
 }
 
@@ -95,7 +97,6 @@ function cl_options_page(){
 	<form method="post" action="options.php" id="options">
 	<?php wp_nonce_field('update-options') ?>
 	<h2>CommentLuv Wordpress Plugin</h2>
-	<em>Beta testing version</em>
 	<p>This plugin takes the url from the comment form and tries to parse the feed of the site and display the last entry made</p>
 	<p>If you have any questions or comment, please visit <a href="http://www.fiddyp.co.uk" target="_blank">FiddyP Blog</a> and leave a comment</p>
 	
@@ -113,6 +114,8 @@ function cl_options_page(){
 	<option <?php if(get_option('cl_default_on')=="TRUE") {echo "selected=selected";}?> >TRUE</option>
 	<option <?php if(get_option('cl_default_on')=="FALSE") { echo "selected=selected";}?> >FALSE</option>
 	</select>
+	<p>Character encoding to use</p>
+	<input name="cl_encoding" value="<?php echo get_option('cl_encoding');?>"></input>
 	<p>Enter css styling to apply to &lt;abbr> tag</p>
 	<input class="form-table" name="cl_style" value="<?php echo get_option('cl_style');?>"></input>
 	
@@ -131,7 +134,7 @@ $cl_under_comment=str_replace('[commentluv]','<a href="http://www.fiddyp.co.uk/c
 
 	echo "<input name='luv' id='luv' value='luv' type='checkbox' style='width: auto;'";
 	if(get_option('cl_default_on')=="TRUE") { echo ' checked="checked" ';}
-	echo "/><label for='luv'><!-- Added by CommentLuv Plugin v1.7 - Andy Bailey @ www.fiddyp.co.uk-->".$cl_under_comment."</label>";
+	echo "/><label for='luv'><!-- Added by CommentLuv Plugin v18 - Andy Bailey @ www.fiddyp.co.uk-->".$cl_under_comment."</label>";
 	return $id; // need to return what we got sent
 }
 
@@ -168,7 +171,7 @@ function comment_luv($comment_data){
 		$debug=1;
 	}
 	if($luv=='luv' && $debug) {
-		$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (noluv) ',strlen($comment_data['comment_content']),0);
+		$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (has luv) ',strlen($comment_data['comment_content']),0);
 	}
 
 	// don't parse for admin posting comment reply,pingback or trackback and checks if last post already added and check for luv box checked
@@ -218,7 +221,7 @@ function comment_luv($comment_data){
 	// *******************************
 	// *** time to do the fetching ***
 	// *******************************
-	$url="http://www.commentluv.com/commentluvinc/remoteCL5.php?type=single&url=".$author_url;
+	$url="http://www.commentluv.com/commentluvinc/remoteCL5.php?type=single&url=".$author_url."&encode=".get_option('cl_encoding');
 	// try curl if it is enabled
 	if(extension_loaded('curl') ){
 		// debug
@@ -263,6 +266,10 @@ function comment_luv($comment_data){
 	// insert last post data onto the end of the comment content
 	if($content){	// only output if last post found
 		$comment_data['comment_content']=substr_replace($comment_data['comment_content'], "\n\n".$cl_comment_text,strlen($comment_data['comment_content']),0);
+	} else {
+		if($debug) {
+			$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (no links returned) ',strlen($comment_data['comment_content']),0);
+		}
 	}
 
 	// thats it! pass back the new comment data to wordpress
