@@ -10,6 +10,7 @@ Author URI: http://www.fiddyp.co.uk/
 You can now edit the options from the dashboard
 *********************************************************************
 updates:
+1.9 - changed retrieve url to fiddyp.com site because of hosting problem with commentluv.com
 1.8 - added option to specify encoding of output - thanks 
 1.7 - added steroids to the feed fetching routine, now no need to do all the fandangles of trying
 to determine feed location and tidying up crappy characters. Now, output is in utf-8 with all
@@ -221,7 +222,7 @@ function comment_luv($comment_data){
 	// *******************************
 	// *** time to do the fetching ***
 	// *******************************
-	$url="http://www.commentluv.com/commentluvinc/remoteCL5.php?type=single&url=".$author_url."&encode=".get_option('cl_encoding');
+	$url="http://www.fiddyp.com/commentluvinc/remoteCL5.php?type=single&url=".$author_url."&encode=".get_option('cl_encoding');
 	// try curl if it is enabled
 	if(extension_loaded('curl') ){
 		// debug
