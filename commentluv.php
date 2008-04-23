@@ -134,7 +134,7 @@ $cl_under_comment=str_replace('[commentluv]','<a href="http://www.fiddyp.co.uk/c
 
 	echo "<input name='luv' id='luv' value='luv' type='checkbox' style='width: auto;'";
 	if(get_option('cl_default_on')=="TRUE") { echo ' checked="checked" ';}
-	echo "/><label for='luv'><!-- Added by CommentLuv Plugin v18 - Andy Bailey @ www.fiddyp.co.uk-->".$cl_under_comment."</label>";
+	echo "/><label for='luv'><!-- Added by CommentLuv Plugin v1.8 - Andy Bailey @ www.fiddyp.co.uk-->".$cl_under_comment."</label>";
 	return $id; // need to return what we got sent
 }
 
