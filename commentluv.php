@@ -1,8 +1,8 @@
 <?php /*
 Plugin Name: Commentluv
 Plugin URI: http://www.fiddyp.co.uk/commentluv-wordpress-plugin/
-Description: Plugin to show a link to the last post from the commenters blog in their comment. Just activate and it's ready. Currently parses with wordpress, blogspot, typepad and blogs that have a feed link in the head section of their page.
-Version: 1.91
+Description: Plugin to show a link to the last post from the commenters blog in their comment. Just activate and it's ready. Will parse a feed from most sites that have a feed location specified in its head html (provided the hosting of the target site isn't too slow so that the script times out)
+Version: 1.92
 Author: Andy Bailey
 Author URI: http://www.fiddyp.co.uk/
 
@@ -10,6 +10,7 @@ Author URI: http://www.fiddyp.co.uk/
 You can now edit the options from the dashboard
 *********************************************************************
 updates:
+1.92 - fix case of 1 being output for feed return value and added donate button
 1.91 - fix option change for character encoding (forgot to add extra option to hidden field in option page html)
 1.9 - changed retrieve url to fiddyp.com site because of hosting problem with commentluv.com
 1.8 - added option to specify encoding of output - thanks 
@@ -126,7 +127,33 @@ function cl_options_page(){
 	
 	<input type="hidden" name="action" value="update" />
 	<p class="submit"><input type="submit" name="Submit" value="<?php _e('Update Options') ?>" /></p>
-	</form></div>
+	</form>
+
+<p>I've tried to make CommentLuv as compatible as possible with as many blog platforms as I could and from version 1.92 everything should go a lot smoother due to the remotely hosted file on Fiddyp.co.uk that does the magic of the fetching of the last blog post, to make it work on as many sites as possible I host the script on my own server at my own cost. 
+
+<p>If you feel that your CommentLuv plugin is useful to you please consider donating a small amount of USD to keep the server happy with the thousands upon thousands of requests for peoples last blog post that it gets every single day. 
+
+<p>Donating is not obligatory but it does keep me motivated to keep improving the script and adding new features (like allowing the user a choice of which last post to display or implementing AJAX into the functionality).
+
+<p>Thanks for spreading the luv and feel free to contact me any time at my blog if you have any suggestions or  problems!
+
+<p>Andy Bailey<br/>
+Fiddyp.co.uk
+
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+<input type="hidden" name="cmd" value="_donations">
+<input type="hidden" name="business" value="root@teamplaylotto.com">
+<input type="hidden" name="item_name" value="CommentLuv">
+<input type="hidden" name="no_shipping" value="0">
+<input type="hidden" name="no_note" value="1">
+<input type="hidden" name="currency_code" value="USD">
+<input type="hidden" name="tax" value="0">
+<input type="hidden" name="lc" value="GB">
+<input type="hidden" name="bn" value="PP-DonationsBF">
+<input type="image" src="https://www.paypal.com/en_GB/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online.">
+<img alt="" border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1">
+</form>
+</div>
  <?php }
  
  
@@ -137,7 +164,7 @@ $cl_under_comment=str_replace('[commentluv]','<a href="http://www.fiddyp.co.uk/c
 
 	echo "<input name='luv' id='luv' value='luv' type='checkbox' style='width: auto;'";
 	if(get_option('cl_default_on')=="TRUE") { echo ' checked="checked" ';}
-	echo "/><label for='luv'><!-- Added by CommentLuv Plugin v1.91 - Andy Bailey @ www.fiddyp.co.uk-->".$cl_under_comment."</label>";
+	echo "/><label for='luv'><!-- Added by CommentLuv Plugin v1.92 - Andy Bailey @ www.fiddyp.co.uk-->".$cl_under_comment."</label>";
 	return $id; // need to return what we got sent
 }
 
@@ -267,7 +294,7 @@ function comment_luv($comment_data){
 	$cl_comment_text=str_replace($search,$replace,$cl_comment_text);
 		
 	// insert last post data onto the end of the comment content
-	if($content){	// only output if last post found
+	if(strstr($content,"href")){	// only output if last post found
 		$comment_data['comment_content']=substr_replace($comment_data['comment_content'], "\n\n".$cl_comment_text,strlen($comment_data['comment_content']),0);
 	} else {
 		if($debug) {
