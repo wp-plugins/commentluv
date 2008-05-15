@@ -3,7 +3,7 @@ Contributors: Andy Bailey
 Tags: comments, linkluv
 Requires at least: 2.1
 Tested up to: 2.5
-Stable tag: 1.91
+Stable tag: 1.92
 
 Appends a titled link to the authors last blog post on their comment giving back some luv to the people that join your discussion.
 
@@ -33,10 +33,10 @@ You may want to test it after activation by logging out and adding a comment to 
 You probably have your wordpress set to hold comments in moderation if they contain a link.
 Go to your wordpress dashboard and go to Options/discussion and change the comment moderation option to "Hold a comment in the queue if it contains 2 links"
 
-= I can see the settings in the dashboard but there isn't any text below the comment form, why?
+= I can see the settings in the dashboard but there isn't any text below the comment form, why? =
 
 The text gets added when the commentform action is called, your theme needs to have this code just before the </form> tag in your comments.php file...
-<?php do_action('comment_form', $post->ID); ?>
+&lt;?php do_action('comment_form', $post->ID); ?>
 
 = Why doesn't my plugin show anyone's last post? =
 
