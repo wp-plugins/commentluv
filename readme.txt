@@ -3,7 +3,7 @@ Contributors: Andy Bailey
 Tags: comments, linkluv
 Requires at least: 2.1
 Tested up to: 2.5
-Stable tag: 1.92
+Stable tag: 1.93
 
 Appends a titled link to the authors last blog post on their comment giving back some luv to the people that join your discussion.
 

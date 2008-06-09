@@ -2,7 +2,7 @@
 Plugin Name: Commentluv
 Plugin URI: http://www.fiddyp.co.uk/commentluv-wordpress-plugin/
 Description: Plugin to show a link to the last post from the commenters blog in their comment. Just activate and it's ready. Will parse a feed from most sites that have a feed location specified in its head html (provided the hosting of the target site isn't too slow so that the script times out)
-Version: 1.92
+Version: 1.93
 Author: Andy Bailey
 Author URI: http://www.fiddyp.co.uk/
 
@@ -10,7 +10,8 @@ Author URI: http://www.fiddyp.co.uk/
 You can now edit the options from the dashboard
 *********************************************************************
 updates:
-1.92 - fix case of 1 being output for feed return value and added donate button
+1.93 - change styling of comment
+1.92 - fix case of 1 being output for feed return value
 1.91 - fix option change for character encoding (forgot to add extra option to hidden field in option page html)
 1.9 - changed retrieve url to fiddyp.com site because of hosting problem with commentluv.com
 1.8 - added option to specify encoding of output - thanks 
@@ -91,7 +92,7 @@ function show_cl_options() {
 // add style to head
 function cl_style(){
 	echo '<!-- Styling added by CommentLuv http://www.fiddyp.co.uk -->';
-	echo '<style type="text/css">.commentlist abbr{'.get_option('cl_style').'}</style>';
+	echo '<style type="text/css">abbr em{'.get_option('cl_style').'}</style>';
 }
 // function to add menu page under options
 
@@ -104,7 +105,7 @@ function cl_options_page(){
 	<p>This plugin takes the url from the comment form and tries to parse the feed of the site and display the last entry made</p>
 	<p>If you have any questions or comment, please visit <a href="http://www.fiddyp.co.uk" target="_blank">FiddyP Blog</a> and leave a comment</p>
 	
-	<p><strong>Enter the text you want displayed in the comment. &lt;abbr> &lt;/abbr> allows you to style the display.</strong>
+	<p><strong>Enter the text you want displayed in the comment. &lt;abbr>&lt;em> &lt;/em>&lt;/abbr> allows you to style the display.</strong>
 	<input class="form-table" name="cl_comment_text" value="<?php echo get_option('cl_comment_text');?>"></input>
 	<p>You can use:
 	<br/>[name] to display author name
@@ -120,7 +121,7 @@ function cl_options_page(){
 	</select>
 	<p>Character encoding to use</p>
 	<input name="cl_encoding" value="<?php echo get_option('cl_encoding');?>"></input>
-	<p>Enter css styling to apply to &lt;abbr> tag</p>
+	<p>Enter css styling to apply to comment</p>
 	<input class="form-table" name="cl_style" value="<?php echo get_option('cl_style');?>"></input>
 	
 	<input type="hidden" name="page_options" value="cl_comment_text,cl_under_comment,cl_default_on,cl_encoding" />
@@ -153,6 +154,7 @@ Fiddyp.co.uk
 <input type="image" src="https://www.paypal.com/en_GB/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online.">
 <img alt="" border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1">
 </form>
+
 </div>
  <?php }
  
@@ -164,7 +166,7 @@ $cl_under_comment=str_replace('[commentluv]','<a href="http://www.fiddyp.co.uk/c
 
 	echo "<input name='luv' id='luv' value='luv' type='checkbox' style='width: auto;'";
 	if(get_option('cl_default_on')=="TRUE") { echo ' checked="checked" ';}
-	echo "/><label for='luv'><!-- Added by CommentLuv Plugin v1.92 - Andy Bailey @ www.fiddyp.co.uk-->".$cl_under_comment."</label>";
+	echo "/><label for='luv'><!-- Added by CommentLuv Plugin v1.93 - Andy Bailey @ www.fiddyp.co.uk-->".$cl_under_comment."</label>";
 	return $id; // need to return what we got sent
 }
 
