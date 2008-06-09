@@ -43,7 +43,7 @@ The text gets added when the commentform action is called, your theme needs to h
 You might be having a compatibility issue with one of your other comment plugins. This version of CommentLuv currently works with AJAX edit comments, subscribe to comments and SpamKarma 2. 
 If your commentluv plugin isn't working for you, please send me an email to andy <at> teamplaylotto.com with a list of your other comment type plugins and I'll do what I can to fix it!
 
-There is also the situation where your hosting does not allow access to external files, if this is the case... ask your hosting provider to whitelist this domain - http://www.commentluv.com 
+There is also the situation where your hosting does not allow access to external files, if this is the case... ask your hosting provider to whitelist this domain - http://www.fiddyp.co.uk 
 
 = I know a blog has a feedburner link on it's page but a last post link doesn't appear, why? =
 
