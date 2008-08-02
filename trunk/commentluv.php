@@ -83,7 +83,7 @@ add_action('wp_head','cl_style');
 function show_cl_options() {
     // Add a new submenu under Options:
     add_options_page('CommentLuv', 'CommentLuv', 8, 'commentluv', 'cl_options_page');
-    add_option('cl_comment_text','[name]s last blog post..[lastpost]');
+    add_option('cl_comment_text','<abbr><em>[name]s last blog post..[lastpost]</em></abbr>');
     add_option('cl_under_comment','Enable [commentluv] which will try and parse your last blog post, please be patient while it finds it for you');
     add_option('cl_default_on','TRUE');
     add_option('cl_encoding','UTF-8');
