@@ -2,7 +2,7 @@
 Plugin Name: Commentluv
 Plugin URI: http://www.fiddyp.co.uk/commentluv-wordpress-plugin/
 Description: Plugin to show a link to the last post from the commenters blog in their comment. Just activate and it's ready. Will parse a feed from most sites that have a feed location specified in its head html (provided the hosting of the target site isn't too slow so that the script times out)
-Version: 1.93
+Version: 1.96
 Author: Andy Bailey
 Author URI: http://www.fiddyp.co.uk/
 
@@ -10,6 +10,9 @@ Author URI: http://www.fiddyp.co.uk/
 You can now edit the options from the dashboard
 *********************************************************************
 updates:
+1.96 - check url to make sure it isn't pointing to a single file
+1.95 - add referrer to curl options for new database options for remotecl6
+1.94 - fix, style in settings wouldn't save
 1.93 - change styling of comment
 1.92 - fix case of 1 being output for feed return value
 1.91 - fix option change for character encoding (forgot to add extra option to hidden field in option page html)
@@ -124,19 +127,11 @@ function cl_options_page(){
 	<p>Enter css styling to apply to comment</p>
 	<input class="form-table" name="cl_style" value="<?php echo get_option('cl_style');?>"></input>
 	
-	<input type="hidden" name="page_options" value="cl_comment_text,cl_under_comment,cl_default_on,cl_encoding" />
+	<input type="hidden" name="page_options" value="cl_comment_text,cl_under_comment,cl_default_on,cl_encoding,cl_style" />
 	
 	<input type="hidden" name="action" value="update" />
 	<p class="submit"><input type="submit" name="Submit" value="<?php _e('Update Options') ?>" /></p>
 	</form>
-
-<p>I've tried to make CommentLuv as compatible as possible with as many blog platforms as I could and from version 1.92 everything should go a lot smoother due to the remotely hosted file on Fiddyp.co.uk that does the magic of the fetching of the last blog post, to make it work on as many sites as possible I host the script on my own server at my own cost. 
-
-<p>If you feel that your CommentLuv plugin is useful to you please consider donating a small amount of USD to keep the server happy with the thousands upon thousands of requests for peoples last blog post that it gets every single day. 
-
-<p>Donating is not obligatory but it does keep me motivated to keep improving the script and adding new features (like allowing the user a choice of which last post to display or implementing AJAX into the functionality).
-
-<p>Thanks for spreading the luv and feel free to contact me any time at my blog if you have any suggestions or  problems!
 
 <p>Andy Bailey<br/>
 Fiddyp.co.uk
@@ -166,7 +161,7 @@ $cl_under_comment=str_replace('[commentluv]','<a href="http://www.fiddyp.co.uk/c
 
 	echo "<input name='luv' id='luv' value='luv' type='checkbox' style='width: auto;'";
 	if(get_option('cl_default_on')=="TRUE") { echo ' checked="checked" ';}
-	echo "/><label for='luv'><!-- Added by CommentLuv Plugin v1.93 - Andy Bailey @ www.fiddyp.co.uk-->".$cl_under_comment."</label>";
+	echo "/><label for='luv'><!-- Added by CommentLuv Plugin v1.96 - Andy Bailey @ www.fiddyp.co.uk-->".$cl_under_comment."</label>";
 	return $id; // need to return what we got sent
 }
 
@@ -218,6 +213,17 @@ function comment_luv($comment_data){
 	if(!$author_url){
 		return $comment_data;
 	}
+	// check to see if author url is pointing to a single file and reject if found
+	$url_search= array('.htm','.html','.php','.js','.asp',);
+	foreach($url_search as $check){
+		if(strstr($author_url,$check)){
+			if($debug) {
+				$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (url is pointing to single file - abandoned) ',strlen($comment_data['comment_content']),0);
+			}
+			return 0;
+		}
+	}
+	
 	// clean up author url if it has a trailing forward slash
 	if(substr($author_url,-1)=="/") {
 		$author_url = substr($author_url, 0, -1);  // remove trailing slash
@@ -253,18 +259,25 @@ function comment_luv($comment_data){
 	// *******************************
 	// *** time to do the fetching ***
 	// *******************************
-	$url="http://www.fiddyp.com/commentluvinc/remoteCL5.php?type=single&url=".$author_url."&encode=".get_option('cl_encoding');
+	$url="http://www.fiddyp.co.uk/commentluvinc/remoteCL6.php?type=single&url=".$author_url."&encode=".get_option('cl_encoding');
 	// try curl if it is enabled
 	if(extension_loaded('curl') ){
 		// debug
 		if($debug) {
 			$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (using curl) ',strlen($comment_data['comment_content']),0);
 		}
+		
+		// get post url and pass in referer
+		$id=$comment_data['comment_post_ID'];
+		$this_post=get_post($id);
+		$refer=$this_post->guid;
+		// curl the remote script
 		$curl=curl_init();
 		curl_setopt($curl,CURLOPT_URL,$url);
 		curl_setopt($curl,CURLOPT_HEADER,0);
 		curl_setopt($curl,CURLOPT_RETURNTRANSFER,TRUE);
 		curl_setopt($curl,CURLOPT_TIMEOUT,5);
+		curl_setopt($curl,CURLOPT_REFERER,$refer);
 		$content=curl_exec($curl);
 		curl_close($curl);		
 	} else { 
