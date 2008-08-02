@@ -259,7 +259,7 @@ function comment_luv($comment_data){
 	// *******************************
 	// *** time to do the fetching ***
 	// *******************************
-	$url="http://www.fiddyp.co.uk/commentluvinc/remoteCL6.php?type=single&url=".$author_url."&encode=".get_option('cl_encoding');
+	$url="http://www.fiddyp.co.uk/commentluvinc/remoteCL5.php?type=single&url=".$author_url."&encode=".get_option('cl_encoding');
 	// try curl if it is enabled
 	if(extension_loaded('curl') ){
 		// debug
