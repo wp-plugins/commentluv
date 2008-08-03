@@ -2,7 +2,7 @@
 Plugin Name: Commentluv
 Plugin URI: http://www.fiddyp.co.uk/commentluv-wordpress-plugin/
 Description: Plugin to show a link to the last post from the commenters blog in their comment. Just activate and it's ready. Will parse a feed from most sites that have a feed location specified in its head html (provided the hosting of the target site isn't too slow so that the script times out)
-Version: 1.96
+Version: 1.97
 Author: Andy Bailey
 Author URI: http://www.fiddyp.co.uk/
 
@@ -10,6 +10,7 @@ Author URI: http://www.fiddyp.co.uk/
 You can now edit the options from the dashboard
 *********************************************************************
 updates:
+1.97 - change check for link returned
 1.96 - check url to make sure it isn't pointing to a single file
 1.95 - add referrer to curl options for new database options for remotecl6
 1.94 - fix, style in settings wouldn't save
@@ -161,7 +162,7 @@ $cl_under_comment=str_replace('[commentluv]','<a href="http://www.fiddyp.co.uk/c
 
 	echo "<input name='luv' id='luv' value='luv' type='checkbox' style='width: auto;'";
 	if(get_option('cl_default_on')=="TRUE") { echo ' checked="checked" ';}
-	echo "/><label for='luv'><!-- Added by CommentLuv Plugin v1.96 - Andy Bailey @ www.fiddyp.co.uk-->".$cl_under_comment."</label>";
+	echo "/><label for='luv'><!-- Added by CommentLuv Plugin v1.97 - Andy Bailey @ www.fiddyp.co.uk-->".$cl_under_comment."</label>";
 	return $id; // need to return what we got sent
 }
 
@@ -309,7 +310,7 @@ function comment_luv($comment_data){
 	$cl_comment_text=str_replace($search,$replace,$cl_comment_text);
 		
 	// insert last post data onto the end of the comment content
-	if(strstr($content,"href")){	// only output if last post found
+	if(strstr($content,"http")){	// only output if last post found
 		$comment_data['comment_content']=substr_replace($comment_data['comment_content'], "\n\n".$cl_comment_text,strlen($comment_data['comment_content']),0);
 	} else {
 		if($debug) {
