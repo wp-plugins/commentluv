@@ -1,8 +1,8 @@
 <?php /*
 Plugin Name: Commentluv
 Plugin URI: http://www.fiddyp.co.uk/commentluv-wordpress-plugin/
-Description: Plugin to show a link to the last post from the commenters blog in their comment. Just activate and it's ready. Will parse a feed from most sites that have a feed location specified in its head html (provided the hosting of the target site isn't too slow so that the script times out)
-Version: 1.97
+Description: Plugin to show a link to the last post from the commenters blog in their comment. Just activate and it's ready. Will parse a feed from most sites that have a feed location specified in its head html. See the <a href="options-general.php?page=commentluv">Settings Page</a> for styling and text output options.
+Version: 1.98
 Author: Andy Bailey
 Author URI: http://www.fiddyp.co.uk/
 
@@ -10,6 +10,7 @@ Author URI: http://www.fiddyp.co.uk/
 You can now edit the options from the dashboard
 *********************************************************************
 updates:
+1.98 - 210808 small change to label style
 1.97 - change check for link returned
 1.96 - check url to make sure it isn't pointing to a single file
 1.95 - add referrer to curl options for new database options for remotecl6
@@ -106,6 +107,30 @@ function cl_options_page(){
 	<form method="post" action="options.php" id="options">
 	<?php wp_nonce_field('update-options') ?>
 	<h2>CommentLuv Wordpress Plugin</h2>
+	<div class="plugin-update">
+	<?php if(extension_loaded('curl') ){
+		// let user know it works
+		echo "<h3>Curl is enabled</h3>";
+		
+		$url="http://www.fiddyp.co.uk/commentluvinc/remoteCL6.php?url=http://www.fiddyp.co.uk/feed";
+		$curl=curl_init();
+		curl_setopt($curl,CURLOPT_URL,$url);
+		curl_setopt($curl,CURLOPT_HEADER,0);
+		curl_setopt($curl,CURLOPT_RETURNTRANSFER,TRUE);
+		curl_setopt($curl,CURLOPT_TIMEOUT,5);
+		curl_setopt($curl,CURLOPT_REFERER,"Plugin settings page");
+		$content=curl_exec($curl);
+		curl_close($curl);	
+		
+		if(strpos($content,"http://")){
+			echo "<p>If everything is working ok, you can see the lastest post from FiddyP below.</p>Andy Baileys last blog post...$content";
+		}
+	} else {
+		echo "<h2>CURL not enabled!</h2>";
+		echo "<p>Your hosting needs to have the CURL library installed for CommentLuv to work";
+	}
+	?>
+	</div>
 	<p>This plugin takes the url from the comment form and tries to parse the feed of the site and display the last entry made</p>
 	<p>If you have any questions or comment, please visit <a href="http://www.fiddyp.co.uk" target="_blank">FiddyP Blog</a> and leave a comment</p>
 	
@@ -162,7 +187,7 @@ $cl_under_comment=str_replace('[commentluv]','<a href="http://www.fiddyp.co.uk/c
 
 	echo "<input name='luv' id='luv' value='luv' type='checkbox' style='width: auto;'";
 	if(get_option('cl_default_on')=="TRUE") { echo ' checked="checked" ';}
-	echo "/><label for='luv'><!-- Added by CommentLuv Plugin v1.97 - Andy Bailey @ www.fiddyp.co.uk-->".$cl_under_comment."</label>";
+	echo "/><label style='width:100%;' for='luv'><!-- Added by CommentLuv Plugin v1.97 - Andy Bailey @ www.fiddyp.co.uk-->".$cl_under_comment."</label>";
 	return $id; // need to return what we got sent
 }
 
