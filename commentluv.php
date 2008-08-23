@@ -123,7 +123,7 @@ function cl_options_page(){
 		curl_close($curl);	
 		
 		if(strpos($content,"http://")){
-			echo "<p>If everything is working ok, you can see the lastest post from FiddyP below.</p>Andy Baileys last blog post...$content";
+			echo "<p>If everything is working ok, you can see the latest post from FiddyP below.</p>Andy Baileys last blog post...$content";
 		}
 	} else {
 		echo "<h2>CURL not enabled!</h2>";
