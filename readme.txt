@@ -3,7 +3,7 @@ Contributors: Andy Bailey
 Tags: comments, linkluv
 Requires at least: 2.1
 Tested up to: 2.6.1
-Stable tag: 1.98
+Stable tag: 1.99
 
 Appends a titled link to the authors last blog post on their comment giving back some luv to the people that join your discussion.
 
@@ -24,7 +24,7 @@ This plugin now uses a remote script to do the parsing for much wider compatibil
 3. No template editing required
 4. Check for settings on the dashboard/settings/commentluv page
 
-You may want to test it after activation by logging out and adding a comment to one of your posts but use a different URL as the comment author site. you can use http://www.fiddyp.co.uk if you want and see if it apends my last blog post.
+When you visit the settings page, it will tell you if it will work with your visitors.
 
 == Frequently Asked Questions ==
 
