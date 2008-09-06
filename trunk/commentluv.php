@@ -2,7 +2,7 @@
 Plugin Name: Commentluv
 Plugin URI: http://www.fiddyp.co.uk/commentluv-wordpress-plugin/
 Description: Plugin to show a link to the last post from the commenters blog in their comment. Just activate and it's ready. Will parse a feed from most sites that have a feed location specified in its head html. See the <a href="options-general.php?page=commentluv">Settings Page</a> for styling and text output options.
-Version: 1.98
+Version: 1.99
 Author: Andy Bailey
 Author URI: http://www.fiddyp.co.uk/
 
@@ -10,6 +10,7 @@ Author URI: http://www.fiddyp.co.uk/
 You can now edit the options from the dashboard
 *********************************************************************
 updates:
+1.99 - 6/9/8 wrap checkbox and label in clear both div thanks http://www.kimwoodbridge.com for your help
 1.98 - 210808 small change to label style
 1.97 - change check for link returned
 1.96 - check url to make sure it isn't pointing to a single file
@@ -185,9 +186,9 @@ function add_text($id){
 $cl_under_comment=get_option('cl_under_comment');
 $cl_under_comment=str_replace('[commentluv]','<a href="http://www.fiddyp.co.uk/commentluv-wordpress-plugin/">CommentLuv</a>',$cl_under_comment);	
 
-	echo "<input name='luv' id='luv' value='luv' type='checkbox' style='width: auto;'";
+	echo "<div class='commentluv-check' style='clear: both;'><input name='luv' id='luv' value='luv' type='checkbox' style='width: auto;'";
 	if(get_option('cl_default_on')=="TRUE") { echo ' checked="checked" ';}
-	echo "/><label style='width:100%;' for='luv'><!-- Added by CommentLuv Plugin v1.98 - Andy Bailey @ www.fiddyp.co.uk-->".$cl_under_comment."</label>";
+	echo "/><label style='width:100%;' for='luv'><!-- Added by CommentLuv Plugin v1.99 - Andy Bailey @ www.fiddyp.co.uk-->".$cl_under_comment."</label></div>";
 	return $id; // need to return what we got sent
 }
 
