@@ -5,7 +5,7 @@ Requires at least: 2.5
 Tested up to: 2.6.2
 Stable tag: 2.1
 
-Appends a titled link using AJAX to the authors last blog post on their comment giving back some luv to the people that join your discussion. Compatible with logged on users and Wordpress MU. Visit CommentLuv.com for detailed instructions on features. 
+Appends a titled link using AJAX to the authors last blog post on their comment giving back some luv to the people that join your discussion. 
 
 == Description ==
 
