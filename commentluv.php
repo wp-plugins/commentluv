@@ -1,8 +1,8 @@
 <?php /*
-Plugin Name: Commentluv
-Plugin URI: http://www.fiddyp.co.uk/commentluv-wordpress-plugin/
+Plugin Name: commentluv
+Plugin URI: http://www.commentluv.com/download/ajax-commentluv-installation/
 Description: Plugin to show a link to the last post from the commenters blog in their comment. Just activate and it's ready. Will parse a feed from most sites that have a feed location specified in its head html. See the <a href="options-general.php?page=commentluv">Settings Page</a> for styling and text output options.
-Version: 1.99
+Version: 2.1
 Author: Andy Bailey
 Author URI: http://www.fiddyp.co.uk/
 
@@ -10,7 +10,29 @@ Author URI: http://www.fiddyp.co.uk/
 You can now edit the options from the dashboard
 *********************************************************************
 updates:
-1.99 - 6/9/8 wrap checkbox and label in clear both div thanks http://www.kimwoodbridge.com for your help
+2.1 23/9/8 Change to final remote file location and updated readme and download pages
+2.0b r13 - 22/9/8 logged on users now can get luv (missed out URL field ID doh!) www.macbrosplace.com
+2.0b r12 - 21/9/8 remove onsubmit event from jquery script and leave it to wordpress to insert the value. Have to
+add one more filter hook for the pre-comment save and do all the fandanglery there. (issue reported by http://www.macbrosplace.com)
+2.0b r11 - 20/9/8 ooh, I put in click tracking for admin if it is enabled
+2.0b r11 - 20/9/8 add text to options page and apostrophe junkies fix (http://weblog.biznz.net)  :-)
+2.0b r10 - 16/9/8 new remote files for compatible click tracking and remote fetching
+2.0b r9 - 15/9/8 adjust form so user can choose between ID or name for their comment form fields (thanks ovidiu! http://zice.ro)
+2.0b r8 - 14/9/8 compatible with brians threaded comments. (override submit function so it activates addthelink()
+2.0b r7 - 13/9/8 much better way for the link to be added to the textarea. Also dont add if there is an existing last blog post in the text area
+2.0b r6 - 13/9/8 fixed for blank url. made click tracking optional and added warning to settings page about using ID only
+2.0b r5 - 11/9/8 field for verification or site id code, tracking of links, new remote acl script, message on error
+2.0b r4 - 10/9/8 Changed code slightly to allow tracking of commentluv links. Updated text output option if plugin is less than version 204
+2.0b r4 - 9/9/8 added more style to head to make select box 300px and made check before comment is returned to submit so the image isn't included if no post found. Updated lastposts.click to lasposts.change to make chrome work with change of entry
+2.0b r3 - 7/9/8 changed remote script address (to adapt to database writes made in remote script)
+2.0b r2 - 6/9/8 changed jquery so it doesn't select all selects - jQuery('#lastposts option:selected').text();
+2.0b r2 - 5/9/8 change remote script to commentluv.com so it can use the database
+2.0b r2 - 4/9/8 add whitelist options filter (http://mu.wordpress.org/forums/topic.php?id=9210)
+2.0b r2 - 4/9/8 specific to MU
+2.0b r1 - 4/9/8 tidy up options saving (testing by Ovidiu http://pacura.ru)
+2.0b r1 - 3/9/8 use text given in settings page for inserted text
+2.0b r1 - 3/9/8 make compatible with logged in user
+2.0b r1 - 1/9/8 convert to AJAX enabled!!
 1.98 - 210808 small change to label style
 1.97 - change check for link returned
 1.96 - check url to make sure it isn't pointing to a single file
@@ -20,7 +42,7 @@ updates:
 1.92 - fix case of 1 being output for feed return value
 1.91 - fix option change for character encoding (forgot to add extra option to hidden field in option page html)
 1.9 - changed retrieve url to fiddyp.com site because of hosting problem with commentluv.com
-1.8 - added option to specify encoding of output - thanks 
+1.8 - added option to specify encoding of output - thanks me
 1.7 - added steroids to the feed fetching routine, now no need to do all the fandangles of trying
 to determine feed location and tidying up crappy characters. Now, output is in utf-8 with all
 special characters staying put! thanks http://blog.mukispace.com
@@ -74,95 +96,360 @@ feedburner.
 
 //************ you shouldn't edit below this line!*******************************
 
-// hooks, call comment_luv function just before comment is posted . gets passed array of comment fields
-// hooks, call add_text when comment form is shown, gets passed id of post
-add_filter('preprocess_comment','comment_luv',0);
-add_action('comment_form','add_text');
-add_action('admin_menu', 'show_cl_options');
-add_action('wp_head','cl_style');
+// action hooks
 
+add_action('admin_menu', 'show_cl_options');
+add_action('wp_head','cl_style_script');
+add_action('comment_form','cl_add_fields');
+add_filter('preprocess_comment','cl_post',0);
+add_filter('whitelist_options','commentluv_alter_whitelist_options');
+register_activation_hook(__FILE__, 'commentluv_activation');
+
+
+// make compatible with Mu
+function commentluv_alter_whitelist_options($whitelist) {
+	if(is_array($whitelist)) {
+		$option_array = array('commentluv' => array('cl_comment_text','cl_default_on','cl_style','cl_author_id','cl_site_id','cl_comment_id','cl_commentform_id','cl_badge','cl_member_id','cl_click_track','cl_author_type','cl_url_type','cl_textarea_type'));
+		$whitelist = array_merge($whitelist,$option_array);
+	}
+	return $whitelist;
+}
+
+// localization - oo-er!
+$commentluv_domain = 'commentluv';
+$commentluv_is_setup = 0;
+$cl_script_added=0;
+
+function commentluv_setup()
+{
+	global $commenluv_domain, $commentluv_is_setup;
+
+	if($commentluv_is_setup) {
+		return;
+	}
+
+	load_plugin_textdomain($commentluv_domain, PLUGINDIR.'/'.dirname(plugin_basename(__FILE__)), dirname(plugin_basename(__FILE__)));
+	$commentluv_is_setup=1;
+}
+
+function commentluv_activation(){
+	// set version for future releases if they need to change a value
+	$version=get_option('cl_version');
+	if($version<213){
+		update_option('cl_version','213');
+	}
+}
+
+// add fields for registered user so ajaxcl will work for logged on users
+function cl_add_fields($id){
+	if (is_user_logged_in()){
+		// get options values and insert as hidden fields
+		global $userdata;
+		get_currentuserinfo();
+		$author=$userdata->display_name;
+		$userid=$userdata->ID;
+		// check for MU blog
+		if( function_exists( 'is_site_admin' ) ) {
+			global $wpdb;
+			$row = $wpdb->get_row("SELECT * FROM wp_blogs WHERE blog_id=$userid");
+			$url = $row->domain.$row->path;
+		}else {
+			$url=$userdata->user_url;
+		}
+
+		$cl_author_id=get_option('cl_author_id');
+		$cl_site_id=get_option('cl_site_id');
+
+		echo "<input type='hidden' id='$cl_author_id' name='$cl_author_id' value='$author' />";
+		echo "<input type='hidden' id='$cl_site_id' name='$cl_site_id' value='$url' />";
+	}
+	return $id;
+}
+
+function cl_post($comment_data){
+	// insert the last link to the end of the comment and save to db by returning $comment_data
+	$cl_post=$_POST['cl_post'];
+	if($cl_post){
+		// if there's something there do something with it!
+		if(strstr($cl_post,"commentluv.com/error") || substr($cl_post,10,1)=="0"){
+			return $comment_data;
+		}
+		$cl_comment_text=str_replace("'","&#180;",get_option('cl_comment_text'));
+		// change output text to that set in the options page
+		$search=array('[name]','[lastpost]');
+		$replace=array($comment_data['comment_author'],$cl_post);
+		$cl_comment_text=str_replace($search,$replace,$cl_comment_text);
+		$comment_data['comment_content'].="\n\n<abbr><em>$cl_comment_text</abbr></em>";
+		return $comment_data;
+	} else {
+		return $comment_data;
+	}
+}
 
 //function for menu
 function show_cl_options() {
-    // Add a new submenu under Options:
-    add_options_page('CommentLuv', 'CommentLuv', 8, 'commentluv', 'cl_options_page');
-    add_option('cl_comment_text','<abbr><em>[name]s last blog post..[lastpost]</em></abbr>');
-    add_option('cl_under_comment','Enable [commentluv] which will try and parse your last blog post, please be patient while it finds it for you');
-    add_option('cl_default_on','TRUE');
-    add_option('cl_encoding','UTF-8');
-    add_option('cl_style','border:1px solid; display:block; padding:4px;');
- 
-        
+	commentluv_alter_whitelist_options("");
+	// Add a new submenu under Options:
+	add_options_page('CommentLuv', 'CommentLuv', 8, 'commentluv', 'cl_options_page');
+	add_option('cl_comment_text','[name]&#180;s last blog post..[lastpost]');
+	add_option('cl_default_on','TRUE');
+	add_option('cl_style','border:1px solid; display:block; padding:4px;');
+	add_option('cl_author_id','author');
+	add_option('cl_site_id','url');
+	add_option('cl_comment_id','comment');
+	add_option('cl_commentform_id','#commentform');
+	add_option('cl_badge','ACL88x31-white.gif');
+	add_option('cl_member_id','');
+	add_option('cl_author_type','ID');
+	add_option('cl_url_type','ID');
+	add_option('cl_textarea_type','ID');
+	add_option('cl_click_track','on');
+	commentluv_activation();
+	add_option('cl_version','213');
 }
 
 // add style to head
-function cl_style(){
-	echo '<!-- Styling added by CommentLuv http://www.fiddyp.co.uk -->';
-	echo '<style type="text/css">abbr em{'.get_option('cl_style').'}</style>';
+function cl_style_script(){
+	global $cl_script_added;
+
+	if ($cl_script_added) {
+		return;
+	}
+	echo '<!-- Styling and script added by commentluv 2.1 http://www.commentluv.com -->';
+	echo '<style type="text/css">abbr em{'.get_option('cl_style').'} #lastposts { width: 300px; }</style>';
+
+	$cl_commentform_id=get_option('cl_commentform_id');
+
+	$cl_comment_id=get_option('cl_comment_id');
+	$cl_author_id=get_option('cl_author_id');
+	$cl_site_id=get_option('cl_site_id');
+
+	// construct selector string based on ID or name (ternery yey!)
+	$comment_selector= (get_option('cl_textarea_type')=="name")? "\"textarea[name='$cl_comment_id']\"" : "'#$cl_comment_id'";
+	$author_selector=  (get_option('cl_author_type')=="name")? "\"input[name='$cl_author_id']\"" : "'#$cl_author_id'";
+	$url_selector=  (get_option('cl_url_type')=="name")? "\"input[name='$cl_site_id']\"" : "'#$cl_site_id'";
+
+	$cl_comment_text=str_replace("'","&#180;",get_option('cl_comment_text'));
+	$cl_default_on=get_option('cl_default_on');
+	$cl_badge=get_option('cl_badge');
+	$cl_member_id=get_option('cl_member_id');
+	$plugin_dir = basename(dirname(__FILE__));
+
+
+
+	$script="\njQuery(document).ready(function() {\n".
+	"jQuery('$cl_commentform_id').after('<span id=\"mylastpost\" style=\"clear: both\"><a href=\"http://www.commentluv.com\">".
+	"<img src=\"".get_bloginfo('url')."/".PLUGINDIR."/commentluv/$cl_badge\"/></a></span>' + '<br/><select name=\"lastposts\" id=\"lastposts\"><option value=0 ></option></select>');\n".
+	"jQuery('$cl_commentform_id').append('<input type=\"hidden\" id=\"cl_post\" name=\"cl_post\"></input>');\n".
+	"jQuery('#lastposts').hide();\n";
+	if(get_option('cl_click_track')=="on"){
+		$script.="jQuery('abbr em a').click(processclick);\n";
+	}
+	$script.="jQuery($comment_selector).focus(cl_dostuff); \n".
+	"jQuery('#lastposts').change(function(){ \n".
+	"jQuery('option').remove(\":contains('choose a different post to show')\");\n".
+	"var url = jQuery(this).val();\n".
+	"var title = jQuery('#lastposts option:selected').text(); \n".
+	"jQuery('#mylastpost a').replaceWith('<a href=\"' + url + '\">' + title + '</a>');\n".
+	"jQuery('#cl_post').val('<a href=\"' + url + '\">' + title + '</a>');\n".
+	"});\n".
+	"jQuery($url_selector).change(function(){ jQuery($comment_selector).bind('focus',cl_dostuff);}); \n".
+	"});\n";
+
+	if(get_option('cl_click_track')=="on"){
+		$script.="function processclick(){\n".
+		"var url=jQuery(this).attr('href');\n".
+		"var thelinkobj=jQuery(this);\n".
+		"var cl_member_id=\"".get_option('cl_member_id')."\";\n".
+		"var addit=url + \"&cl_member_id=\" + cl_member_id + \"&callback=?\";\n".
+		"var clurl=\"http://www.commentluv.com/commentluvinc/ajaxcl_click821.php?url=\" + addit;\n".
+		"jQuery.getJSON(clurl,function(data) {\n".
+		"jQuery.each(data.msg,function(i,item) {\n".
+		"jQuery(thelinkobj).text(data.msg[i].text);}) \n".
+		"window.location=url;\n".
+		"}); return false;}\n";
+	}
+	$script.="function cl_dostuff(){\n".
+	"var check=jQuery($url_selector).val();\n".
+	"if(!check) { return }\n".
+	"var xyz=jQuery($url_selector).val();	\n".
+	"var name=jQuery($author_selector).val(); \n".
+	"var url=\"http://www.commentluv.com/commentluvinc/ajaxcl821.php?url=\"+xyz+\"";
+	if($cl_member_id) {
+		$script.="&memberid=$cl_member_id";
+	}
+	$script.="&callback=?\";\n".
+	"jQuery.getJSON(url,function(data){ \n".
+	"jQuery.each(data.links, function(i,item){	\n".
+	"jQuery('#lastposts').append('<option value=\"'+data.links[i].url+'\">'+data.links[i].title+'</option>');\n".
+	"});\n".
+	"jQuery('#lastposts').append('<option value=0 ";
+
+	// handle default off
+	if($cl_default_on=="FALSE") {
+		$script.="selected=selected";
+	}
+
+	$script.=">".__('Do Not Show','commentluv')."</option><option value=\"1\" ";
+
+	// handle default on
+	if($cl_default_on=="TRUE"){
+		$script.="selected=selected";
+	}
+
+	$script.=">".__('Click to choose a different post to show','commentluv')."</option>').fadeIn(1000);\n";
+
+	// change output text to that set in the options page
+	$search=array('[name]','[lastpost]');
+	$replace=array("' + name + '","<a href=\"' + data.links[0].url + '\">' + data.links[0].title + '</a>");
+	$cl_comment_text=str_replace($search,$replace,$cl_comment_text);
+
+	$script.="jQuery('#mylastpost').html('<abbr><em>".$cl_comment_text."</em></abbr>').fadeIn(1000); \n".
+	"jQuery('#cl_post').val('<a href=\"' + data.links[0].url + '\">' + data.links[0].title + '</a>');\n".
+	"jQuery($comment_selector).unbind(); \n".
+	"});\n".
+	"}\n";
+
+	if(is_single()) {
+
+		echo'<script src="'.get_option('siteurl').'/wp-includes/js/jquery/jquery.js?ver=1.2.6"> </script>';
+		echo '<script type="text/javascript">';
+		// add click tracking if enabled to head for admin
+		if(current_user_can('edit_users')){
+			$adminscript="\njQuery(document).ready(function() {\n";
+			if(get_option('cl_click_track')=="on"){
+				$adminscript.="jQuery('abbr em a').click(processclick);});\n".
+				"function processclick(){\n".
+				"var url=jQuery(this).attr('href');\n".
+				"var thelinkobj=jQuery(this);\n".
+				"var cl_member_id=\"".get_option('cl_member_id')."\";\n".
+				"var addit=url + \"&cl_member_id=\" + cl_member_id + \"&callback=?\";\n".
+				"var clurl=\"http://www.commentluv.com/commentluvinc/ajaxcl_click821.php?url=\" + addit;\n".
+				"jQuery.getJSON(clurl,function(data) {\n".
+				"jQuery.each(data.msg,function(i,item) {\n".
+				"jQuery(thelinkobj).text(data.msg[i].text);}) \n".
+				"window.location=url;\n".
+				"}); return false;}\n";
+				echo $adminscript;
+			}
+		} else {
+			// normal user script (so admin doesn't get the badge below form)
+			echo $script;
+		}
+	}
+
+	echo "</script>";
+
+	echo '<!-- end commentluv  http://www.fiddyp.co.uk -->';
+
+	//wp_enqueue_script('jquery');
+	$cl_script_added=1;
+
 }
 // function to add menu page under options
 
 function cl_options_page(){
+	commentluv_setup();
 	?>
-	<div class="wrap">
+<div class="wrap">
+
 	<form method="post" action="options.php" id="options">
-	<?php wp_nonce_field('update-options') ?>
-	<h2>CommentLuv Wordpress Plugin</h2>
-	<div class="plugin-update">
-	<?php if(extension_loaded('curl') ){
-		// let user know it works
-		echo "<h3>Curl is enabled</h3>";
-		
-		$url="http://www.fiddyp.co.uk/commentluvinc/remoteCL6.php?url=http://www.fiddyp.co.uk";
-		$curl=curl_init();
-		curl_setopt($curl,CURLOPT_URL,$url);
-		curl_setopt($curl,CURLOPT_HEADER,0);
-		curl_setopt($curl,CURLOPT_RETURNTRANSFER,TRUE);
-		curl_setopt($curl,CURLOPT_TIMEOUT,5);
-		curl_setopt($curl,CURLOPT_REFERER,"Plugin settings page");
-		$content=curl_exec($curl);
-		curl_close($curl);	
-		
-		if(strpos($content,"http://")){
-			echo "<p>If everything is working ok, you can see the latest post from FiddyP below.</p>Andy Baileys last blog post...$content";
-		}
-	} else {
-		echo "<h2>CURL not enabled!</h2>";
-		echo "<p>Your hosting needs to have the CURL library installed for CommentLuv to work";
-	}
-	?>
-	</div>
-	<p>This plugin takes the url from the comment form and tries to parse the feed of the site and display the last entry made</p>
-	<p>If you have any questions or comment, please visit <a href="http://www.fiddyp.co.uk" target="_blank">FiddyP Blog</a> and leave a comment</p>
-	
-	<p><strong>Enter the text you want displayed in the comment. &lt;abbr>&lt;em> &lt;/em>&lt;/abbr> allows you to style the display.</strong>
-	<input class="form-table" name="cl_comment_text" value="<?php echo get_option('cl_comment_text');?>"></input>
-	<p>You can use:
-	<br/>[name] to display author name
-	<br/>[site] to display their site url
-	<br />[lastpost] to display the named link to their last post</p></p>
-	
-	<p><strong>Enter the text to appear beneath the comment form informing the user that you are using CommentLuv</strong>
-	<input class="form-table" name="cl_under_comment" value="<?php echo get_option('cl_under_comment');?>"></input></p>
-	<p>Choose to have CommentLuv on by default?</p>
-	<select name="cl_default_on">
-	<option <?php if(get_option('cl_default_on')=="TRUE") {echo "selected=selected";}?> >TRUE</option>
-	<option <?php if(get_option('cl_default_on')=="FALSE") { echo "selected=selected";}?> >FALSE</option>
-	</select>
-	<p>Character encoding to use</p>
-	<input name="cl_encoding" value="<?php echo get_option('cl_encoding');?>"></input>
-	<p>Enter css styling to apply to comment</p>
-	<input class="form-table" name="cl_style" value="<?php echo get_option('cl_style');?>"></input>
-	
-	<input type="hidden" name="page_options" value="cl_comment_text,cl_under_comment,cl_default_on,cl_encoding,cl_style" />
-	
-	<input type="hidden" name="action" value="update" />
+	<?php 
+	if(function_exists('wpmu_create_blog'))
+	wp_nonce_field('commentluv-options');
+	else
+	wp_nonce_field('update-options');
+?>
+	<h2><?php _e('CommentLuv Wordpress Plugin','commentluv')?></h2>
+	<p><?php _e('This plugin takes the url from the comment form and tries to parse the feed of the site and display the last entry made','commentluv')?></p>
+	<p><?php _e('If you have any questions, comments or if you have a good idea that you would like to see in the next version of CommentLuv, please visit','commentluv')?> <a href="http://www.fiddyp.co.uk" target="_blank">FiddyP Blog</a> <?php _e('or','commentluv')?> <a href="http://www.fiddyp.co.uk/support/"><?php _e('support forum','commentluv')?></a> <?php _e('and let me know','commentluv')?>.</p>
+	<h3><?php _e('Options','commentluv')?></h3>
+	<p><?php _e('Enter the text you want displayed in the comment.','commentluv')?></p>
+	<table class="form-table">
+  <tr>
+    <td colspan="2">
+      <input class="form-table" name="cl_comment_text" value="<?php echo get_option('cl_comment_text');?>">
+    </td>
+    </tr>
+  <tr>
+    <td width="29%"><?php _e('Choose to have CommentLuv on by default?','commentluv')?></td>
+    <td width="71%"><select name="cl_default_on">
+      <option <?php if(get_option('cl_default_on')=="TRUE") {echo "selected=selected";}?> >TRUE</option>
+      <option <?php if(get_option('cl_default_on')=="FALSE") { echo "selected=selected";}?> >FALSE</option>
+    </select></td>
+  </tr>
+  </table>
+  <h3><?php _e('Styling')?></h3>
+  <p><?php _e('Wordpress doesn\'t allow a class to be applied to a paragraph in the comment area so we have to wrap the last blog post text in nested tags and apply styling to that instead.','commentluv')?></p>
+  <p><?php _e('Enter css styling to apply to comment','commentluv')?></strong> (<em><?php _e('inserted as','commentluv')?></em> &lt;style type="text/css"&gt;abbr em { border:2px; etc }&lt;/style&gt;)</p>
+  <table class="form-table">
+  <tr> 
+    <td valign="top" colspan="2"><input class="form-table" name="cl_style" value="<?php echo get_option('cl_style');?>"></td>
+  </tr>
+  </table>
+  <h3><?php _e('Comment Form Identification','commentluv')?></h3>
+<p><?php _e('Enter the ID or NAME value for the input fields on your comment form.','commentluv')?></p>
+<p><?php _e('Check your comment form fields to see if they use ID= or NAME= and select the appropriate type below','commentluv')?><br/>
+<?php _e('Visit CommentLuv.com if you need instructions','commentluv')?></p>
+  <table class="form-table">
+    <td><?php _e('Comment Form ID','commentluv')?></td>
+    <td>Precede with #</td>
+    <td><input name="cl_commentform_id" value="<?php echo get_option('cl_commentform_id');?>"></td>
+  </tr>
+  <tr>
+    <td><?php _e('Authors Name field ID','commentluv')?></td>
+    <td><select name="cl_author_type">
+    	<option <?php if(get_option('cl_author_type')=="ID" ){echo "selected=selected";}?> >ID</option>
+    	<option <?php if(get_option('cl_author_type')=="name") {echo "selected=selected";}?> >name</option>
+    	</td>
+    <td><input name="cl_author_id" value="<?php echo get_option('cl_author_id');?>"></td>
+  </tr>
+  <tr>
+    <td><?php _e('Authors URL field ID','commentluv')?></td>
+    <td><select name="cl_url_type">
+    	<option <?php if(get_option('cl_url_type')=="ID") {echo "selected=selected";}?> >ID</option>
+    	<option <?php if(get_option('cl_url_type')=="name") {echo "selected=selected";}?> >name</option>
+    	</td>
+    <td><input name="cl_site_id" value="<?php echo get_option('cl_site_id');?>"></td>
+  </tr>
+  <tr>
+    <td><?php _e('Comment Text Area ID','commentluv')?></td>
+    <td><select name="cl_textarea_type">
+    	<option <?php if(get_option('cl_textarea_type')=="ID") {echo "selected=selected";}?> >ID</option>
+    	<option <?php if(get_option('cl_textarea_type')=="name" ){echo "selected=selected";}?> >name</option>
+    	</td>
+    <td><input name="cl_comment_id" value="<?php echo get_option('cl_comment_id');?>"></td>
+  </tr>
+</table>
+<h3><?php _e('Display Badge','commentluv')?></h3>
+<p>Many thanks to <a href="http://byteful.com">Byteful Traveller</a> for creating these images.</p>
+	<table class="form-table">
+	<tr>
+      <td><?php _e('Choose badge to display','commentluv')?> </td>
+      <?php $badge=get_option('cl_badge');?>
+        <td><label><input type="radio" <?php if($badge=="CL91x17-white.gif"){echo "checked ";}?> name="cl_badge" value="CL91x17-white.gif"><img src="<?php bloginfo('url');?>/wp-content/plugins/commentluv/CL91x17-white.gif"/></label></td>
+        <td><label><input type="radio" <?php if($badge=="CL91x17-black.gif"){echo "checked ";}?> name="cl_badge" value="CL91x17-black.gif"><img src="<?php bloginfo('url');?>/wp-content/plugins/commentluv/CL91x17-black.gif"/></label></td>
+		<td><label><input type="radio" <?php if($badge=="ACL88x31-white.gif"){echo "checked ";}?> name="cl_badge" value="ACL88x31-white.gif"><img src="<?php bloginfo('url');?>/wp-content/plugins/commentluv/ACL88x31-white.gif"/></label></td>
+		<td><label><input type="radio" <?php if($badge=="ACL88x31-black.gif"){echo "checked ";}?> name="cl_badge" value="ACL88x31-black.gif"><img src="<?php bloginfo('url');?>/wp-content/plugins/commentluv/ACL88x31-black.gif"/></label></td>
+  </tr>
+    </table>
+    <h3><?php _e('CommentLuv Member ID','commentluv')?></h3>
+    <p><?php _e('If you register your site for free at','commentluv')?> <a href="http://www.commentluv.com">CommentLuv.com</a> <?php _e('you will be able to open up lots of features that are for members only like link tracking so you can see which of the comments you make on CommentLuv blogs are getting the last blog post clicked. Do NOT enter a number if you do not have one','commentluv')?></p>
+    <table class="form-table">
+    <tr><td><?php _e('Your CommentLuv.com member ID','commentluv')?></td>
+	<td><input name="cl_member_id" value="<?php echo get_option('cl_member_id');?>"></td>
+    </tr>
+    <tr><td><?php _e('Enable click tracking?','commentluv')?></td>
+    <td><input type="checkbox" name="cl_click_track" <?php if(get_option('cl_click_track')=="on"){echo "checked";};?> /></td>
+    </tr>
+    </table>
+	  <input type="hidden" name="page_options" value="cl_comment_text,cl_default_on,cl_style,cl_author_id,cl_site_id,cl_comment_id,cl_commentform_id,cl_badge,cl_member_id,cl_click_track,cl_form_type,cl_author_type,cl_url_type,cl_textarea_type" />
+	  <input type="hidden" name="action" value="update" />
+	  <input type="hidden" name="option_page" value="commentluv" />
 	<p class="submit"><input type="submit" name="Submit" value="<?php _e('Update Options') ?>" /></p>
 	</form>
-
 <p>Andy Bailey<br/>
 Fiddyp.co.uk
-
 <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 <input type="hidden" name="cmd" value="_donations">
 <input type="hidden" name="business" value="root@teamplaylotto.com">
@@ -179,174 +466,6 @@ Fiddyp.co.uk
 
 </div>
  <?php }
- 
- 
-// function to add text to bottom of form field
-function add_text($id){
-$cl_under_comment=get_option('cl_under_comment');
-$cl_under_comment=str_replace('[commentluv]','<a href="http://www.fiddyp.co.uk/commentluv-wordpress-plugin/">CommentLuv</a>',$cl_under_comment);	
-
-	echo "<div class='commentluv-check' style='clear: both;'><input name='luv' id='luv' value='luv' type='checkbox' style='width: auto;'";
-	if(get_option('cl_default_on')=="TRUE") { echo ' checked="checked" ';}
-	echo "/><label style='width:100%;' for='luv'><!-- Added by CommentLuv Plugin v1.99 - Andy Bailey @ www.fiddyp.co.uk-->".$cl_under_comment."</label></div>";
-	return $id; // need to return what we got sent
-}
-
-if (!function_exists('file_get_contents')) {
-      		function file_get_contents($filename, $incpath = false, $resource_context = null) {
-          		if (false === $fh = fopen($filename, 'rb', $incpath)) {
-              		trigger_error('file_get_contents() failed to open stream: No such file or directory', E_USER_WARNING);
-		              return false;
-        		}
- 
-          	clearstatcache();
-          	if ($fsize = @filesize($filename)) {
-              $data = fread($fh, $fsize);
-          	} else {
-              $data = '';
-              while (!feof($fh)) {
-                  $data .= fread($fh, 8192);
-            	}
-          	}
- 
-          	fclose($fh);
-          	return $data;
-      		}
-  		}	
-
-// this is the magic part.
-// function to parse the users feed and add a link to last post after the rest of the comment content
-function comment_luv($comment_data){
-	$manual_feed=0;
-	$debug=0; // for my own debugging, shows a breadcrumb of what is tried for parsing
-	$luv = $_POST['luv']; // get checkbox value for commentluv
-	// check for debug command
-	if(strstr($comment_data['comment_content'],"[debugon]")){
-		$debug=1;
-	}
-	if($luv=='luv' && $debug) {
-		$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (has luv) ',strlen($comment_data['comment_content']),0);
-	}
-
-	// don't parse for admin posting comment reply,pingback or trackback and checks if last post already added and check for luv box checked
-	get_currentuserinfo() ;
-	global $user_level;
-	if ($luv!='luv' || $user_level > 7 || $comment_data['comment_type'] == 'pingback' || $comment_data['comment_type'] == 'trackback' || strstr($comment_data['comment_content'],"<abbr>")) {
-		return $comment_data;
-	}
-	// get author url
-	$author_url=$comment_data['comment_author_url'];
-	// if no author url given, return
-	if(!$author_url){
-		return $comment_data;
-	}
-	// check to see if author url is pointing to a single file and reject if found
-	$url_search= array('.htm','.html','.php','.js','.asp',);
-	foreach($url_search as $check){
-		if(strstr($author_url,$check)){
-			if($debug) {
-				$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (url is pointing to single file - abandoned) ',strlen($comment_data['comment_content']),0);
-			}
-			return 0;
-		}
-	}
-	
-	// clean up author url if it has a trailing forward slash
-	if(substr($author_url,-1)=="/") {
-		$author_url = substr($author_url, 0, -1);  // remove trailing slash
-		if($debug) {
-			$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (remove slash) ',strlen($comment_data['comment_content']),0);
-		}
-	}
-
-	// ***********************
-	// *** fun starts here ***
-	// ***********************
 
 
-	
-
-	// ***************************
-	// *** detect manual entry ***
-	// ***************************
-	// here we see if user manually entered their own feed url
-	if(strstr($comment_data['comment_content'],"[feed]")){
-		$author_url=LL_TextBetween("[feed]","[/feed]",$comment_data['comment_content']);
-		// now strip feed bit from comment
-		$manual_feed_pos_start=strpos($comment_data['comment_content'],"[feed]");
-		$comment_data['comment_content']=substr($comment_data['comment_content'],0,$manual_feed_pos_start);
-		$manual_feed=1;
-		// debug
-		if($debug) {
-			$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (manual feed specified) ',strlen($comment_data['comment_content']),0);
-		}
-
-	}
-
-	// *******************************
-	// *** time to do the fetching ***
-	// *******************************
-	$url="http://www.fiddyp.co.uk/commentluvinc/remoteCL5.php?type=single&url=".$author_url."&encode=".get_option('cl_encoding');
-	// try curl if it is enabled
-	if(extension_loaded('curl') ){
-		// debug
-		if($debug) {
-			$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (using curl) ',strlen($comment_data['comment_content']),0);
-		}
-		
-		// get post url and pass in referer
-		$id=$comment_data['comment_post_ID'];
-		$this_post=get_post($id);
-		$refer=$this_post->guid;
-		// curl the remote script
-		$curl=curl_init();
-		curl_setopt($curl,CURLOPT_URL,$url);
-		curl_setopt($curl,CURLOPT_HEADER,0);
-		curl_setopt($curl,CURLOPT_RETURNTRANSFER,TRUE);
-		curl_setopt($curl,CURLOPT_TIMEOUT,5);
-		curl_setopt($curl,CURLOPT_REFERER,$refer);
-		$content=curl_exec($curl);
-		curl_close($curl);		
-	} else { 
-		// try file instead
-		// debug
-		if($debug) {
-			$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (using filegetcontents) ',strlen($comment_data['comment_content']),0);
-		}
-		$content=file_get_contents($url);
-	}
-
-	// for compatibility with other comment plugins remove the wp_rel_nofollow functon call
-	remove_filter('pre_comment_content', 'wp_rel_nofollow');
-
-	// ****************************
-	// *** append the last post ***
-	// ****************************
-
-	
-	
-	$content=mysql_real_escape_string($content);
-	
-	$cl_comment_text=get_option('cl_comment_text');
-	$cl_default_on=get_option('cl_default_on');
-	
-	$search=array('[name]','[site]','[lastpost]');
-	$replace=array($comment_data['comment_author'],$author_url,$content);
-	
-	$cl_comment_text=str_replace($search,$replace,$cl_comment_text);
-		
-	// insert last post data onto the end of the comment content
-	if(strstr($content,"http")){	// only output if last post found
-		$comment_data['comment_content']=substr_replace($comment_data['comment_content'], "\n\n".$cl_comment_text,strlen($comment_data['comment_content']),0);
-	} else {
-		if($debug) {
-			$comment_data['comment_content']=substr_replace($comment_data['comment_content'], ' (no links returned) ',strlen($comment_data['comment_content']),0);
-		}
-	}
-
-	// thats it! pass back the new comment data to wordpress
-	return $comment_data;
-
-
-} // end function
 ?>

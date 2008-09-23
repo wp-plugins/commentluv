@@ -1,0 +1,146 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: CommentLuv 2.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-09-20 10:41-0000\n"
+"PO-Revision-Date: \n"
+"Last-Translator: Andy Bailey <andy@teamplaylotto.com>\n"
+"Language-Team:  <andy@teamplaylotto.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: English\n"
+"X-Poedit-Country: UNITED KINGDOM\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SearchPath-0: C:\\xampp\\htdocs\\wordpress\\wp-content\\plugins\\commentluv\n"
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:295
+msgid "Do Not Show"
+msgstr "N&atilde;o Mostrar"
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:302
+msgid "Click to choose a different post to show"
+msgstr "Clicar para mostrar um artigo diferente"
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:364
+msgid "CommentLuv Wordpress Plugin"
+msgstr "CommentLuv Wordpress Plugin"
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:365
+msgid "This plugin takes the url from the comment form and tries to parse the feed of the site and display the last entry made"
+msgstr "Este plugin insere um link para o &uacute;ltimo artigo do url inserido no formul&aacute;rio dos coment&aacute;rios"
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:366
+msgid "If you have any questions, comments or if you have a good idea that you would like to see in the next version of CommentLuv, please visit"
+msgstr "Se tens alguma d&uacute;vida, coment&aacute;rios ou sugest&atilde;o, por favor visita"
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:366
+msgid "or"
+msgstr "ou"
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:366
+msgid "support forum"
+msgstr "f&oacute;rum de suporte"
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:366
+msgid "and let me know"
+msgstr "avisa-me"
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:367
+msgid "Options"
+msgstr "Op&ccedil;&otilde;es"
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:368
+msgid "Enter the text you want displayed in the comment."
+msgstr "Introduz o texto que ir&aacute; aparecer no coment&aacute;rio."
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:376
+msgid "Choose to have CommentLuv on by default?"
+msgstr "Deseja ter o CommentLuv activo por defeito?"
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:383
+msgid "Styling"
+msgstr "Estilo"
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:384
+msgid "Wordpress doesn't allow a class to be applied to a paragraph in the comment area so we have to wrap the last blog post text in nested tags and apply styling to that instead."
+msgstr "O Wordpress n&atilde;o permite que a uma class seja aplicado um par&aacute;grafo no &agrave;rea dos coment&aacute;rios, ent&atilde;o &eacute; necess&aacute;rio passar o &uacute;ltimo artigo para tags e aplicar os estilo."
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:385
+msgid "Enter css styling to apply to comment"
+msgstr "Introduza o estilo css para o coment&aacute;rio"
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:385
+msgid "inserted as"
+msgstr "inserido como"
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:391
+msgid "Comment Form Identification"
+msgstr "Formul&aacute;rio de Identifica&ccedil;&atilde;o do Coment&aacute;rio"
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:392
+msgid "Enter the ID or NAME value for the input fields on your comment form."
+msgstr "Introduza o ID ou o Nome para os campos de entrada do seu formul&aacute;rio de coment&aacute;rios."
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:393
+msgid "Check your comment form fields to see if they user ID= or NAME= and select the appropriate type below"
+msgstr "Verifique os campos do formul&aacute;rio de coment&aacute;rios para ter a certeza que eles usam ID= ou NAME= e seleccione o tipo apropriado abaixo"
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:394
+msgid "Visit CommentLuv.com if you need instructions"
+msgstr "Visite CommentLuv.com se necessitar de instru&ccedil;&otilde;es"
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:396
+msgid "Comment Form ID"
+msgstr "ID do Formul&aacute;rio de Coment&aacute;rios"
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:401
+msgid "Authors Name field ID"
+msgstr "ID do campo do Nome"
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:409
+msgid "Authors URL field ID"
+msgstr "ID do campo do URL"
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:417
+msgid "Comment Text Area ID"
+msgstr "ID da &agrave;rea de texto do coment&aacute;rio"
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:425
+msgid "Display Badge"
+msgstr "Mostrar Logo"
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:429
+msgid "Choose badge to display"
+msgstr "Escolher logo"
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:437
+msgid "CommentLuv Member ID"
+msgstr "ID de membro do CommentLuv"
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:438
+msgid "If you register your site for free at"
+msgstr "Se registares o teu site gratuitamente em"
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:438
+msgid "you will be able to open up lots of features that are for members only like link tracking so you can see which of the comments you make on CommentLuv blogs are getting the last blog post clicked. Do NOT enter a number if you do not have one"
+msgstr "ter&aacute;s a possibilidade de ter mais funcionalidades que s&atilde;o exclusivas a membros como rastrear os links dos coment&aacute;rios que fez em blogs que utilizam o CommentLuv. N&Atilde;O introduzas um n&uacute;mero se n&atilde;o tiveres um"
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:440
+msgid "Your CommentLuv.com member ID"
+msgstr "O teu ID de membro do CommentLuv.com"
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:443
+msgid "Enable click tracking? (experimental for registered members)"
+msgstr "Activar rastreio de links? (apenas para utilizadores registados)"
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:450
+msgid "Update Options"
+msgstr "Actualizar Op&ccedil;&otilde;es"
+
+#~ msgid "do NOT use single quotes"
+#~ msgstr "N&Atilde;O usar plicas"
+#~ msgid "or double quotes"
+#~ msgstr "ou aspas"
+
