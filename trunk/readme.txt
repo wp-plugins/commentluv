@@ -91,7 +91,6 @@ ie.
 
 [name]'s last blog post...[lastpost]
 
-Styling
-Wordpress doesn't allow a class to be set for a comment paragraph so the text that is added is enclosed in <abbr><em> tags and style applied to that like this in the style settings
+Wordpress doesn't allow a class to be set for a comment paragraph so the text that is added is enclosed in &lt;abbr>&lt;em> tags and style applied to that like this in the style settings
 
 abbr em { border:2px solid #ffffff; display:block; padding:4px; background-color: #eeffee; }
