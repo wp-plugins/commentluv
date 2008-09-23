@@ -35,7 +35,7 @@ You may want to test it after activation by logging out and adding a comment to 
 You probably have your wordpress set to hold comments in moderation if they contain a link.
 Go to your wordpress dashboard and go to Options/discussion and change the comment moderation option to "Hold a comment in the queue if it contains 2 links" (or more)
 
-= I can see the settings in the dashboard but there isn't an image below the comment form, why?=
+= I can see the settings in the dashboard but there isn't an image below the comment form, why? =
 
 Check the settings page has the correct values for your form name and fields. Visit CommentLuv.com or the support forum http://www.fiddyp.co.uk/support and post a query there if you get stuck.
 
