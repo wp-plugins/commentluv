@@ -2,7 +2,7 @@
 Plugin Name: commentluv
 Plugin URI: http://www.commentluv.com/download/ajax-commentluv-installation/
 Description: Plugin to show a link to the last post from the commenters blog in their comment. Just activate and it's ready. Will parse a feed from most sites that have a feed location specified in its head html. See the <a href="options-general.php?page=commentluv">Settings Page</a> for styling and text output options.
-Version: 2.1
+Version: 2.12
 Author: Andy Bailey
 Author URI: http://www.fiddyp.co.uk/
 
@@ -10,6 +10,8 @@ Author URI: http://www.fiddyp.co.uk/
 You can now edit the options from the dashboard
 *********************************************************************
 updates:
+2.12 24/9/8 Allow user to choose no image or use text instead. Try to run cl_dostuff if url field already filled (fix for imwithjoe.com)
+2.11 23/9/8 Use better constant to specify image url in javascript (http://indigospot.com) and moved button to below comment text area
 2.1 23/9/8 Change to final remote file location and updated readme and download pages
 2.0b r13 - 22/9/8 logged on users now can get luv (missed out URL field ID doh!) www.macbrosplace.com
 2.0b r12 - 21/9/8 remove onsubmit event from jquery script and leave it to wordpress to insert the value. Have to
@@ -109,7 +111,7 @@ register_activation_hook(__FILE__, 'commentluv_activation');
 // make compatible with Mu
 function commentluv_alter_whitelist_options($whitelist) {
 	if(is_array($whitelist)) {
-		$option_array = array('commentluv' => array('cl_comment_text','cl_default_on','cl_style','cl_author_id','cl_site_id','cl_comment_id','cl_commentform_id','cl_badge','cl_member_id','cl_click_track','cl_author_type','cl_url_type','cl_textarea_type'));
+		$option_array = array('commentluv' => array('cl_comment_text','cl_default_on','cl_style','cl_author_id','cl_site_id','cl_comment_id','cl_commentform_id','cl_badge','cl_member_id','cl_click_track','cl_author_type','cl_url_type','cl_textarea_type','cl_reset','cl_showtext'));
 		$whitelist = array_merge($whitelist,$option_array);
 	}
 	return $whitelist;
@@ -204,6 +206,7 @@ function show_cl_options() {
 	add_option('cl_url_type','ID');
 	add_option('cl_textarea_type','ID');
 	add_option('cl_click_track','on');
+	add_option('cl_showtext','CommentLuv Enabled');
 	commentluv_activation();
 	add_option('cl_version','213');
 }
@@ -215,7 +218,7 @@ function cl_style_script(){
 	if ($cl_script_added) {
 		return;
 	}
-	echo '<!-- Styling and script added by commentluv 2.1 http://www.commentluv.com -->';
+	echo '<!-- Styling and script added by commentluv 2.12 http://www.commentluv.com -->';
 	echo '<style type="text/css">abbr em{'.get_option('cl_style').'} #lastposts { width: 300px; }</style>';
 
 	$cl_commentform_id=get_option('cl_commentform_id');
@@ -235,17 +238,23 @@ function cl_style_script(){
 	$cl_member_id=get_option('cl_member_id');
 	$plugin_dir = basename(dirname(__FILE__));
 
-
+	if($cl_badge=='text'){
+		$cl_badge_val=get_option('cl_showtext');
+	} else {
+		$cl_badge_val="<img src=\"".WP_PLUGIN_URL."/commentluv/$cl_badge\"/>";
+	}
 
 	$script="\njQuery(document).ready(function() {\n".
 	"jQuery('$cl_commentform_id').after('<span id=\"mylastpost\" style=\"clear: both\"><a href=\"http://www.commentluv.com\">".
-	"<img src=\"".get_bloginfo('url')."/".PLUGINDIR."/commentluv/$cl_badge\"/></a></span>' + '<br/><select name=\"lastposts\" id=\"lastposts\"><option value=0 ></option></select>');\n".
+	"$cl_badge_val</a></span>' + '<br/><select name=\"lastposts\" id=\"lastposts\"><option value=0 ></option></select>');\n".
 	"jQuery('$cl_commentform_id').append('<input type=\"hidden\" id=\"cl_post\" name=\"cl_post\"></input>');\n".
 	"jQuery('#lastposts').hide();\n";
 	if(get_option('cl_click_track')=="on"){
 		$script.="jQuery('abbr em a').click(processclick);\n";
 	}
 	$script.="jQuery($comment_selector).focus(cl_dostuff); \n".
+	// quick fix for imwithjoe.com - if url field is full, do the fetch or bind a blur function on url field for after it is filled
+	"if(jQuery($url_selector).val()){ cl_dostuff();} else { jQuery($url_selector).blur(cl_dostuff);}".
 	"jQuery('#lastposts').change(function(){ \n".
 	"jQuery('option').remove(\":contains('choose a different post to show')\");\n".
 	"var url = jQuery(this).val();\n".
@@ -350,6 +359,22 @@ function cl_style_script(){
 
 function cl_options_page(){
 	commentluv_setup();
+	if(get_option('cl_reset')=="on"){
+		update_option('cl_comment_text','[name]&#180;s last blog post..[lastpost]');
+		update_option('cl_default_on','TRUE');
+		update_option('cl_style','border:1px solid; display:block; padding:4px;');
+		update_option('cl_author_id','author');
+		update_option('cl_site_id','url');
+		update_option('cl_comment_id','comment');
+		update_option('cl_commentform_id','#commentform');
+		update_option('cl_badge','ACL88x31-white.gif');
+		update_option('cl_author_type','ID');
+		update_option('cl_url_type','ID');
+		update_option('cl_textarea_type','ID');
+		update_option('cl_click_track','on');
+		update_option('cl_showtext','CommentLuv Enabled');
+		update_option('cl_reset','off');
+	}
 	?>
 <div class="wrap">
 
@@ -427,11 +452,13 @@ function cl_options_page(){
 	<tr>
       <td><?php _e('Choose badge to display','commentluv')?> </td>
       <?php $badge=get_option('cl_badge');?>
-        <td><label><input type="radio" <?php if($badge=="CL91x17-white.gif"){echo "checked ";}?> name="cl_badge" value="CL91x17-white.gif"><img src="<?php bloginfo('url');?>/wp-content/plugins/commentluv/CL91x17-white.gif"/></label></td>
-        <td><label><input type="radio" <?php if($badge=="CL91x17-black.gif"){echo "checked ";}?> name="cl_badge" value="CL91x17-black.gif"><img src="<?php bloginfo('url');?>/wp-content/plugins/commentluv/CL91x17-black.gif"/></label></td>
-		<td><label><input type="radio" <?php if($badge=="ACL88x31-white.gif"){echo "checked ";}?> name="cl_badge" value="ACL88x31-white.gif"><img src="<?php bloginfo('url');?>/wp-content/plugins/commentluv/ACL88x31-white.gif"/></label></td>
-		<td><label><input type="radio" <?php if($badge=="ACL88x31-black.gif"){echo "checked ";}?> name="cl_badge" value="ACL88x31-black.gif"><img src="<?php bloginfo('url');?>/wp-content/plugins/commentluv/ACL88x31-black.gif"/></label></td>
+        <td><label><input type="radio" <?php if($badge=="CL91x17-white.gif"){echo "checked ";}?> name="cl_badge" value="CL91x17-white.gif"><img src="<?php echo WP_PLUGIN_URL;?>/commentluv/CL91x17-white.gif"/></label></td>
+        <td><label><input type="radio" <?php if($badge=="CL91x17-black.gif"){echo "checked ";}?> name="cl_badge" value="CL91x17-black.gif"><img src="<?php echo WP_PLUGIN_URL;?>/commentluv/CL91x17-black.gif"/></label></td>
+		<td><label><input type="radio" <?php if($badge=="ACL88x31-white.gif"){echo "checked ";}?> name="cl_badge" value="ACL88x31-white.gif"><img src="<?php echo WP_PLUGIN_URL;?>/commentluv/ACL88x31-white.gif"/></label></td>
+		<td><label><input type="radio" <?php if($badge=="ACL88x31-black.gif"){echo "checked ";}?> name="cl_badge" value="ACL88x31-black.gif"><img src="<?php echo WP_PLUGIN_URL;?>/commentluv/ACL88x31-black.gif"/></label></td>
+		<td><label><input type="radio" <?php if($badge=="nothing.gif"){echo "checked ";}?> name="cl_badge" value="nothing.gif"><?php _e('Show nothing','commentluv')?></label></td>
   </tr>
+  <tr><td><label><input type="radio" <?php if($badge=="text"){echo "checked ";}?> name="cl_badge" value="text"><?php _e('Show text','commentluv')?></label> <input class="form-table" type="text" name="cl_showtext" value="<?php echo get_option('cl_showtext');?>"></input></td></tr>
     </table>
     <h3><?php _e('CommentLuv Member ID','commentluv')?></h3>
     <p><?php _e('If you register your site for free at','commentluv')?> <a href="http://www.commentluv.com">CommentLuv.com</a> <?php _e('you will be able to open up lots of features that are for members only like link tracking so you can see which of the comments you make on CommentLuv blogs are getting the last blog post clicked. Do NOT enter a number if you do not have one','commentluv')?></p>
@@ -443,9 +470,10 @@ function cl_options_page(){
     <td><input type="checkbox" name="cl_click_track" <?php if(get_option('cl_click_track')=="on"){echo "checked";};?> /></td>
     </tr>
     </table>
-	  <input type="hidden" name="page_options" value="cl_comment_text,cl_default_on,cl_style,cl_author_id,cl_site_id,cl_comment_id,cl_commentform_id,cl_badge,cl_member_id,cl_click_track,cl_form_type,cl_author_type,cl_url_type,cl_textarea_type" />
+	  <input type="hidden" name="page_options" value="cl_comment_text,cl_default_on,cl_style,cl_author_id,cl_site_id,cl_comment_id,cl_commentform_id,cl_badge,cl_member_id,cl_click_track,cl_form_type,cl_author_type,cl_url_type,cl_textarea_type,cl_reset,cl_showtext" />
 	  <input type="hidden" name="action" value="update" />
 	  <input type="hidden" name="option_page" value="commentluv" />
+	  <p><input type="checkbox" name="cl_reset"/><?php _e('Reset to Default Settings','commentluv')?>
 	<p class="submit"><input type="submit" name="Submit" value="<?php _e('Update Options') ?>" /></p>
 	</form>
 <p>Andy Bailey<br/>

@@ -3,9 +3,9 @@ Contributors: Andy Bailey
 Tags: comments, linkluv
 Requires at least: 2.5
 Tested up to: 2.6.2
-Stable tag: 2.1
+Stable tag: 2.12
 
-Appends a titled link using AJAX to the authors last blog post on their comment giving back some luv to the people that join your discussion. 
+Appends a titled link using AJAX to the authors last blog post on their comment giving back some luv to the people that join your discussion. Compatible with logged on users and Wordpress MU. Visit CommentLuv.com for detailed instructions on features. 
 
 == Description ==
 
@@ -35,7 +35,7 @@ You may want to test it after activation by logging out and adding a comment to 
 You probably have your wordpress set to hold comments in moderation if they contain a link.
 Go to your wordpress dashboard and go to Options/discussion and change the comment moderation option to "Hold a comment in the queue if it contains 2 links" (or more)
 
-= I can see the settings in the dashboard but there isn't an image below the comment form, why? =
+= I can see the settings in the dashboard but there isn't an image below the comment form, why?
 
 Check the settings page has the correct values for your form name and fields. Visit CommentLuv.com or the support forum http://www.fiddyp.co.uk/support and post a query there if you get stuck.
 
@@ -91,6 +91,7 @@ ie.
 
 [name]'s last blog post...[lastpost]
 
-Wordpress doesn't allow a class to be set for a comment paragraph so the text that is added is enclosed in &lt;abbr>&lt;em> tags and style applied to that like this in the style settings
+Styling
+Wordpress doesn't allow a class to be set for a comment paragraph so the text that is added is enclosed in <abbr><em> tags and style applied to that like this in the style settings
 
 abbr em { border:2px solid #ffffff; display:block; padding:4px; background-color: #eeffee; }
