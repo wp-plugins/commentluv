@@ -2,7 +2,7 @@
 Plugin Name: commentluv
 Plugin URI: http://www.commentluv.com/download/ajax-commentluv-installation/
 Description: Plugin to show a link to the last post from the commenters blog in their comment. Just activate and it's ready. Will parse a feed from most sites that have a feed location specified in its head html. See the <a href="options-general.php?page=commentluv">Settings Page</a> for styling and text output options.
-Version: 2.1.2
+Version: 2.1.3
 Author: Andy Bailey
 Author URI: http://www.fiddyp.co.uk/
 
@@ -10,6 +10,9 @@ Author URI: http://www.fiddyp.co.uk/
 You can now edit the options from the dashboard
 *********************************************************************
 updates:
+
+2.1.3 24/9/8 fix for older than 2.6 to use wp_plugin_dir and remove quick fix for imwithjoe (it was the ID's joe!)
+			and make inline javascript valid xhtml. Validates!
 2.1.2 24/9/8 Allow user to choose no image or use text instead. Try to run cl_dostuff if url field already filled (fix for imwithjoe.com)
 2.11 23/9/8 Use better constant to specify image url in javascript (http://indigospot.com) and moved button to below comment text area
 2.1 23/9/8 Change to final remote file location and updated readme and download pages
@@ -107,6 +110,9 @@ add_filter('preprocess_comment','cl_post',0);
 add_filter('whitelist_options','commentluv_alter_whitelist_options');
 register_activation_hook(__FILE__, 'commentluv_activation');
 
+// for lesser Wp than 2.6
+if ( ! defined( 'WP_PLUGIN_URL' ) )
+define( 'WP_PLUGIN_URL', WP_CONTENT_URL. '/plugins' );
 
 // make compatible with Mu
 function commentluv_alter_whitelist_options($whitelist) {
@@ -218,7 +224,7 @@ function cl_style_script(){
 	if ($cl_script_added) {
 		return;
 	}
-	echo '<!-- Styling and script added by commentluv 2.12 http://www.commentluv.com -->';
+	echo '<!-- Styling and script added by commentluv 2.13 http://www.commentluv.com -->';
 	echo '<style type="text/css">abbr em{'.get_option('cl_style').'} #lastposts { width: 300px; }</style>';
 
 	$cl_commentform_id=get_option('cl_commentform_id');
@@ -253,8 +259,6 @@ function cl_style_script(){
 		$script.="jQuery('abbr em a').click(processclick);\n";
 	}
 	$script.="jQuery($comment_selector).focus(cl_dostuff); \n".
-	// quick fix for imwithjoe.com - if url field is full, do the fetch or bind a blur function on url field for after it is filled
-	"if(jQuery($url_selector).val()){ cl_dostuff();} else { jQuery($url_selector).blur(cl_dostuff);}".
 	"jQuery('#lastposts').change(function(){ \n".
 	"jQuery('option').remove(\":contains('choose a different post to show')\");\n".
 	"var url = jQuery(this).val();\n".
@@ -321,8 +325,8 @@ function cl_style_script(){
 
 	if(is_single()) {
 
-		echo'<script src="'.get_option('siteurl').'/wp-includes/js/jquery/jquery.js?ver=1.2.6"> </script>';
-		echo '<script type="text/javascript">';
+		echo'<script type="text/javascript" src="'.get_option('siteurl').'/wp-includes/js/jquery/jquery.js?ver=1.2.6"></script>';
+		echo "<script type=\"text/javascript\"><!--//--><![CDATA[//><!--";
 		// add click tracking if enabled to head for admin
 		if(current_user_can('edit_users')){
 			$adminscript="\njQuery(document).ready(function() {\n";
@@ -347,7 +351,7 @@ function cl_style_script(){
 		}
 	}
 
-	echo "</script>";
+	echo "//--><!]]></script>";
 
 	echo '<!-- end commentluv  http://www.fiddyp.co.uk -->';
 
