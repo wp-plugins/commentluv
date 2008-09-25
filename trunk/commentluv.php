@@ -328,7 +328,7 @@ function cl_style_script(){
 	"}\n";
 
 	if(is_single()) {
-		echo '<!-- Styling and script added by commentluv 2.13 http://www.commentluv.com -->';
+		echo '<!-- Styling and script added by commentluv 2.14 http://www.commentluv.com -->';
 		echo '<style type="text/css">abbr em{'.get_option('cl_style').'} #lastposts { width: 300px; }</style>';
 		wp_enqueue_script('jquery');
 		echo "<script type=\"text/javascript\"><!--//--><![CDATA[//><!--";
