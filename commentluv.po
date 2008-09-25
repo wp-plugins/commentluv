@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CommentLuv 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-09-25 15:44-0000\n"
+"POT-Creation-Date: 2008-09-25 20:13-0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Andy Bailey <andy@teamplaylotto.com>\n"
 "Language-Team:  <andy@teamplaylotto.com>\n"
@@ -15,143 +15,147 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SearchPath-0: C:\\xampp\\htdocs\\wordpress\\wp-content\\plugins\\commentluv\n"
 
-#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:310
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:319
 msgid "Do Not Show"
 msgstr ""
 
-#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:317
-msgid "Click to choose a different post to show"
-msgstr ""
-
-#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:399
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:410
 msgid "CommentLuv Wordpress Plugin"
 msgstr ""
 
-#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:400
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:411
 msgid "This plugin takes the url from the comment form and tries to parse the feed of the site and display the last entry made"
 msgstr ""
 
-#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:401
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:412
 msgid "If you have any questions, comments or if you have a good idea that you would like to see in the next version of CommentLuv, please visit"
 msgstr ""
 
-#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:401
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:412
 msgid "or"
 msgstr ""
 
-#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:401
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:412
 msgid "support forum"
 msgstr ""
 
-#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:401
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:412
 msgid "and let me know"
 msgstr ""
 
-#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:402
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:413
 msgid "Options"
 msgstr ""
 
-#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:403
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:414
 msgid "Enter the text you want displayed in the comment."
 msgstr ""
 
-#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:411
-msgid "Choose to have CommentLuv on by default?"
-msgstr ""
-
-#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:418
-msgid "Styling"
-msgstr ""
-
-#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:419
-msgid "Wordpress doesn't allow a class to be applied to a paragraph in the comment area so we have to wrap the last blog post text in nested tags and apply styling to that instead."
-msgstr ""
-
-#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:420
-msgid "Enter css styling to apply to comment"
-msgstr ""
-
-#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:420
-msgid "inserted as"
-msgstr ""
-
-#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:426
-msgid "Comment Form Identification"
-msgstr ""
-
-#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:427
-msgid "Enter the ID or NAME value for the input fields on your comment form."
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:423
+msgid "Text displayed in the select box"
 msgstr ""
 
 #: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:428
-msgid "Check your comment form fields to see if they use ID= or NAME= and select the appropriate type below"
+msgid "Choose to have CommentLuv on by default?"
 msgstr ""
 
-#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:429
-msgid "Visit CommentLuv.com if you need instructions"
-msgstr ""
-
-#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:431
-msgid "Comment Form ID"
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:435
+msgid "Styling"
 msgstr ""
 
 #: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:436
-msgid "Authors Name field ID"
+msgid "Wordpress doesn't allow a class to be applied to a paragraph in the comment area so we have to wrap the last blog post text in nested tags and apply styling to that instead."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:437
+msgid "Enter css styling to apply to comment"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:437
+msgid "inserted as"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:443
+msgid "Comment Form Identification"
 msgstr ""
 
 #: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:444
+msgid "Enter the ID or NAME value for the input fields on your comment form."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:445
+msgid "Check your comment form fields to see if they use ID= or NAME= and select the appropriate type below"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:446
+msgid "Visit CommentLuv.com if you need instructions"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:448
+msgid "Comment Form ID"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:453
+msgid "Authors Name field ID"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:461
 msgid "Authors URL field ID"
 msgstr ""
 
-#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:452
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:469
 msgid "Comment Text Area ID"
 msgstr ""
 
-#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:460
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:477
 msgid "Display Badge"
 msgstr ""
 
-#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:464
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:481
 msgid "Choose badge to display"
 msgstr ""
 
-#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:470
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:487
 msgid "Show nothing"
 msgstr ""
 
-#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:472
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:490
 msgid "Show text"
 msgstr ""
 
-#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:473
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:490
 msgid "Append badge to (DIV or object ID) optional"
 msgstr ""
 
-#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:475
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:490
+msgid "Prepend html before badge or text (optional)"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:492
 msgid "CommentLuv Member ID"
 msgstr ""
 
-#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:476
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:493
 msgid "If you register your site for free at"
 msgstr ""
 
-#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:476
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:493
 msgid "you will be able to open up lots of features that are for members only like link tracking so you can see which of the comments you make on CommentLuv blogs are getting the last blog post clicked. Do NOT enter a number if you do not have one"
 msgstr ""
 
-#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:478
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:495
 msgid "Your CommentLuv.com member ID"
 msgstr ""
 
-#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:481
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:498
 msgid "Enable click tracking?"
 msgstr ""
 
-#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:488
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:505
 msgid "Reset to Default Settings"
 msgstr ""
 
-#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:489
+#: C:\xampp\htdocs\wordpress\wp-content\plugins\commentluv/commentluv.php:506
 msgid "Update Options"
 msgstr ""
 

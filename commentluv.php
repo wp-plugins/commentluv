@@ -2,7 +2,7 @@
 Plugin Name: commentluv
 Plugin URI: http://www.commentluv.com/download/ajax-commentluv-installation/
 Description: Plugin to show a link to the last post from the commenters blog in their comment. Just activate and it's ready. Will parse a feed from most sites that have a feed location specified in its head html. See the <a href="options-general.php?page=commentluv">Settings Page</a> for styling and text output options.
-Version: 2.1.4
+Version: 2.1.5
 Author: Andy Bailey
 Author URI: http://www.fiddyp.co.uk/
 
@@ -10,6 +10,8 @@ Author URI: http://www.fiddyp.co.uk/
 You can now edit the options from the dashboard
 *********************************************************************
 updates:
+2.1.5 25/9/8 do the features ever stop?? Marco says we should had some option for html to be added before button and delete old selects if change url. done!
+also I am a dumbo for using wp_enqueue_script in the function called by wp_head, it should be before that. so sorry everyone! (retiredat47.com)
 2.1.4 25/9/8 enqueue script and give choice to place button where someone wants it thanks Marco! http://www.saphod.net/
 2.1.3 24/9/8 fix for older than 2.6 to use wp_plugin_dir and remove quick fix for imwithjoe (it was the ID's joe!)
 and make inline javascript valid xhtml. Validates!
@@ -109,7 +111,7 @@ add_action('comment_form','cl_add_fields');
 add_filter('preprocess_comment','cl_post',0);
 add_filter('whitelist_options','commentluv_alter_whitelist_options');
 register_activation_hook(__FILE__, 'commentluv_activation');
-
+	wp_enqueue_script('jquery');
 // for lesser Wp than 2.6
 if ( ! defined( 'WP_PLUGIN_URL' ) )
 define( 'WP_PLUGIN_URL', WP_CONTENT_URL. '/plugins' );
@@ -117,7 +119,7 @@ define( 'WP_PLUGIN_URL', WP_CONTENT_URL. '/plugins' );
 // make compatible with Mu
 function commentluv_alter_whitelist_options($whitelist) {
 	if(is_array($whitelist)) {
-		$option_array = array('commentluv' => array('cl_comment_text','cl_default_on','cl_style','cl_author_id','cl_site_id','cl_comment_id','cl_commentform_id','cl_badge','cl_member_id','cl_click_track','cl_author_type','cl_url_type','cl_textarea_type','cl_reset','cl_showtext','cl_badge_pos'));
+		$option_array = array('commentluv' => array('cl_comment_text','cl_default_on','cl_style','cl_author_id','cl_site_id','cl_comment_id','cl_commentform_id','cl_badge','cl_member_id','cl_click_track','cl_author_type','cl_url_type','cl_textarea_type','cl_reset','cl_showtext','cl_badge_pos','cl_prepend'));
 		$whitelist = array_merge($whitelist,$option_array);
 	}
 	return $whitelist;
@@ -214,8 +216,10 @@ function show_cl_options() {
 	add_option('cl_click_track','on');
 	add_option('cl_showtext','CommentLuv Enabled');
 	add_option('cl_badge_pos','');
+	add_option('cl_prepend','');
 	commentluv_activation();
 	add_option('cl_version','213');
+	add_option('cl_select_text','choose a different post to show');
 }
 
 // add style to head
@@ -253,9 +257,14 @@ function cl_style_script(){
 	if($append_id){
 		$cl_commentform_id="#".$append_id;
 	}
+	// optional prepend
+	$cl_prepend=get_option('cl_prepend');
+	
+	// select text
+	$cl_select_text=get_option('cl_select_text');
 
 	$script="\njQuery(document).ready(function() {\n".
-	"jQuery('$cl_commentform_id').after('<span id=\"mylastpost\" style=\"clear: both\"><a href=\"http://www.commentluv.com\">".
+	"jQuery('$cl_commentform_id').after('$cl_prepend<span id=\"mylastpost\" style=\"clear: both\"><a href=\"http://www.commentluv.com\">".
 	"$cl_badge_val</a></span>' + '<br/><select name=\"lastposts\" id=\"lastposts\"><option value=0 ></option></select>');\n".
 	"jQuery('$cl_commentform_id').append('<input type=\"hidden\" id=\"cl_post\" name=\"cl_post\"></input>');\n".
 	"jQuery('#lastposts').hide();\n";
@@ -264,13 +273,13 @@ function cl_style_script(){
 	}
 	$script.="jQuery($comment_selector).focus(cl_dostuff); \n".
 	"jQuery('#lastposts').change(function(){ \n".
-	"jQuery('option').remove(\":contains('choose a different post to show')\");\n".
+	"jQuery('option').remove(\":contains('".$cl_select_text."')\");\n".
 	"var url = jQuery(this).val();\n".
 	"var title = jQuery('#lastposts option:selected').text(); \n".
 	"jQuery('#mylastpost a').replaceWith('<a href=\"' + url + '\">' + title + '</a>');\n".
 	"jQuery('#cl_post').val('<a href=\"' + url + '\">' + title + '</a>');\n".
 	"});\n".
-	"jQuery($url_selector).change(function(){ jQuery($comment_selector).bind('focus',cl_dostuff);}); \n".
+	"jQuery($url_selector).change(function(){ jQuery('#lastposts').empty(); jQuery($comment_selector).bind('focus',cl_dostuff);}); \n".
 	"});\n";
 
 	if(get_option('cl_click_track')=="on"){
@@ -314,7 +323,7 @@ function cl_style_script(){
 		$script.="selected=selected";
 	}
 
-	$script.=">".__('Click to choose a different post to show','commentluv')."</option>').fadeIn(1000);\n";
+	$script.=">$cl_select_text</option>').fadeIn(1000);\n";
 
 	// change output text to that set in the options page
 	$search=array('[name]','[lastpost]');
@@ -327,10 +336,10 @@ function cl_style_script(){
 	"});\n".
 	"}\n";
 
-	if(is_single()) {
-		echo '<!-- Styling and script added by commentluv 2.14 http://www.commentluv.com -->';
+	if(is_single()) {		
+		echo '<!-- Styling and script added by commentluv 2.15 http://www.commentluv.com -->';
 		echo '<style type="text/css">abbr em{'.get_option('cl_style').'} #lastposts { width: 300px; }</style>';
-		wp_enqueue_script('jquery');
+
 		echo "<script type=\"text/javascript\"><!--//--><![CDATA[//><!--";
 		// add click tracking if enabled to head for admin
 		if(current_user_can('edit_users')){
@@ -385,6 +394,8 @@ function cl_options_page(){
 		update_option('cl_showtext','CommentLuv Enabled');
 		update_option('cl_reset','off');
 		update_option('cl_badge_pos','');
+		update_option('cl_prepend','');
+		update_option('cl_select_text','Choose a different post to show');
 	}
 	?>
 <div class="wrap">
@@ -405,6 +416,12 @@ function cl_options_page(){
   <tr>
     <td colspan="2">
       <input class="form-table" name="cl_comment_text" value="<?php echo get_option('cl_comment_text');?>">
+    </td>
+    </tr>
+    <tr>
+    <td colspan="2">
+    <?php _e('Text displayed in the select box','commentluv');?>
+      <input class="form-table" name="cl_select_text" value="<?php echo get_option('cl_select_text');?>">
     </td>
     </tr>
   <tr>
@@ -468,9 +485,9 @@ function cl_options_page(){
 		<td><label><input type="radio" <?php if($badge=="ACL88x31-white.gif"){echo "checked ";}?> name="cl_badge" value="ACL88x31-white.gif"><img src="<?php echo WP_PLUGIN_URL;?>/commentluv/ACL88x31-white.gif"/></label></td>
 		<td><label><input type="radio" <?php if($badge=="ACL88x31-black.gif"){echo "checked ";}?> name="cl_badge" value="ACL88x31-black.gif"><img src="<?php echo WP_PLUGIN_URL;?>/commentluv/ACL88x31-black.gif"/></label></td>
 		<td><label><input type="radio" <?php if($badge=="nothing.gif"){echo "checked ";}?> name="cl_badge" value="nothing.gif"><?php _e('Show nothing','commentluv')?></label></td>
-  </tr>
-  <tr><td><label><input type="radio" <?php if($badge=="text"){echo "checked ";}?> name="cl_badge" value="text"><?php _e('Show text','commentluv')?></label> <input class="form-table" type="text" name="cl_showtext" value="<?php echo get_option('cl_showtext');?>"></input></td></tr>
-  <tr><td><label><?php _e('Append badge to (DIV or object ID) optional','commentluv')?><input class="form-table" type="text" name="cl_badge_pos" value="<?php echo get_option('cl_badge_pos');?>"></input></td></tr>
+  </tr></table>
+  <table class="form-table">
+  <tr><td><label><input type="radio" <?php if($badge=="text"){echo "checked ";}?> name="cl_badge" value="text"><?php _e('Show text','commentluv')?></label> <input class="form-table" type="text" name="cl_showtext" value="<?php echo get_option('cl_showtext');?>"></input></td><td></td><td><label><?php _e('Append badge to (DIV or object ID) optional','commentluv')?><input class="form-table" type="text" name="cl_badge_pos" value="<?php echo get_option('cl_badge_pos');?>"></input></td><td></td><td><label><?php _e('Prepend html before badge or text (optional)','commentluv')?></label><input class="form-table" type="text" name="cl_prepend" value="<?php echo htmlspecialchars(get_option('cl_prepend'));?>"></input></tr>
     </table>
     <h3><?php _e('CommentLuv Member ID','commentluv')?></h3>
     <p><?php _e('If you register your site for free at','commentluv')?> <a href="http://www.commentluv.com">CommentLuv.com</a> <?php _e('you will be able to open up lots of features that are for members only like link tracking so you can see which of the comments you make on CommentLuv blogs are getting the last blog post clicked. Do NOT enter a number if you do not have one','commentluv')?></p>
@@ -482,7 +499,7 @@ function cl_options_page(){
     <td><input type="checkbox" name="cl_click_track" <?php if(get_option('cl_click_track')=="on"){echo "checked";};?> /></td>
     </tr>
     </table>
-	  <input type="hidden" name="page_options" value="cl_comment_text,cl_default_on,cl_style,cl_author_id,cl_site_id,cl_comment_id,cl_commentform_id,cl_badge,cl_member_id,cl_click_track,cl_form_type,cl_author_type,cl_url_type,cl_textarea_type,cl_reset,cl_showtext,cl_badge_pos" />
+	  <input type="hidden" name="page_options" value="cl_comment_text,cl_default_on,cl_style,cl_author_id,cl_site_id,cl_comment_id,cl_commentform_id,cl_badge,cl_member_id,cl_click_track,cl_form_type,cl_author_type,cl_url_type,cl_textarea_type,cl_reset,cl_showtext,cl_badge_pos,cl_prepend,cl_select_text" />
 	  <input type="hidden" name="action" value="update" />
 	  <input type="hidden" name="option_page" value="commentluv" />
 	  <p><input type="checkbox" name="cl_reset"/><?php _e('Reset to Default Settings','commentluv')?>
