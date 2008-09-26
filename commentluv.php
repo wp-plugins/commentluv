@@ -111,10 +111,8 @@ add_action('comment_form','cl_add_fields');
 add_filter('preprocess_comment','cl_post',0);
 add_filter('whitelist_options','commentluv_alter_whitelist_options');
 register_activation_hook(__FILE__, 'commentluv_activation');
-	wp_enqueue_script('jquery');
-// for lesser Wp than 2.6
-if ( ! defined( 'WP_PLUGIN_URL' ) )
-define( 'WP_PLUGIN_URL', WP_CONTENT_URL. '/plugins' );
+wp_enqueue_script('jquery');
+
 
 // make compatible with Mu
 function commentluv_alter_whitelist_options($whitelist) {
@@ -224,6 +222,16 @@ function show_cl_options() {
 
 // add style to head
 function cl_style_script(){
+	// for lesser Wp than 2.6
+	// Pre-2.6 compatibility
+	if ( ! defined( 'WP_CONTENT_URL' ) )
+	define( 'WP_CONTENT_URL', get_option( 'siteurl' ) . '/wp-content' );
+	if ( ! defined( 'WP_CONTENT_DIR' ) )
+	define( 'WP_CONTENT_DIR', ABSPATH . 'wp-content' );
+	if ( ! defined( 'WP_PLUGIN_URL' ) )
+	define( 'WP_PLUGIN_URL', WP_CONTENT_URL. '/plugins' );
+	if ( ! defined( 'WP_PLUGIN_DIR' ) )
+	define( 'WP_PLUGIN_DIR', WP_CONTENT_DIR . '/plugins' );
 	global $cl_script_added;
 
 	if ($cl_script_added) {
@@ -251,7 +259,7 @@ function cl_style_script(){
 	} else {
 		$cl_badge_val="<img src=\"".WP_PLUGIN_URL."/commentluv/$cl_badge\"/>";
 	}
-	
+
 	// check if user has set append ID differently
 	$append_id=get_option('cl_badge_pos');
 	if($append_id){
@@ -259,7 +267,7 @@ function cl_style_script(){
 	}
 	// optional prepend
 	$cl_prepend=get_option('cl_prepend');
-	
+
 	// select text
 	$cl_select_text=get_option('cl_select_text');
 
@@ -336,7 +344,7 @@ function cl_style_script(){
 	"});\n".
 	"}\n";
 
-	if(is_single()) {		
+	if(is_single()) {
 		echo '<!-- Styling and script added by commentluv 2.15 http://www.commentluv.com -->';
 		echo '<style type="text/css">abbr em{'.get_option('cl_style').'} #lastposts { width: 300px; }</style>';
 
