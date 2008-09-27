@@ -10,6 +10,7 @@ Author URI: http://www.fiddyp.co.uk/
 You can now edit the options from the dashboard
 *********************************************************************
 updates:
+2.1.6 27/9/8 make compatible for less that wp 2.5.1
 2.1.5 25/9/8 do the features ever stop?? Marco says we should had some option for html to be added before button and delete old selects if change url. done!
 also I am a dumbo for using wp_enqueue_script in the function called by wp_head, it should be before that. so sorry everyone! (retiredat47.com)
 2.1.4 25/9/8 enqueue script and give choice to place button where someone wants it thanks Marco! http://www.saphod.net/
