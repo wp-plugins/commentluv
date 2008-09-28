@@ -2,7 +2,7 @@
 Plugin Name: commentluv
 Plugin URI: http://www.commentluv.com/download/ajax-commentluv-installation/
 Description: Plugin to show a link to the last post from the commenters blog in their comment. Just activate and it's ready. Will parse a feed from most sites that have a feed location specified in its head html. See the <a href="options-general.php?page=commentluv">Settings Page</a> for styling and text output options.
-Version: 2.1.5
+Version: 2.1.6
 Author: Andy Bailey
 Author URI: http://www.fiddyp.co.uk/
 
@@ -346,7 +346,7 @@ function cl_style_script(){
 	"}\n";
 
 	if(is_single()) {
-		echo '<!-- Styling and script added by commentluv 2.15 http://www.commentluv.com -->';
+		echo '<!-- Styling and script added by commentluv 2.16 http://www.commentluv.com -->';
 		echo '<style type="text/css">abbr em{'.get_option('cl_style').'} #lastposts { width: 300px; }</style>';
 
 		echo "<script type=\"text/javascript\"><!--//--><![CDATA[//><!--";
