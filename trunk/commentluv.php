@@ -2,7 +2,7 @@
 Plugin Name: commentluv
 Plugin URI: http://www.commentluv.com/download/ajax-commentluv-installation/
 Description: Plugin to show a link to the last post from the commenters blog in their comment. Just activate and it's ready. Will parse a feed from most sites that have a feed location specified in its head html. See the <a href="options-general.php?page=commentluv">Settings Page</a> for styling and text output options.
-Version: 2.5
+Version: 2.5.1
 Author: Andy Bailey
 Author URI: http://www.fiddyp.co.uk/
 
@@ -10,6 +10,7 @@ Author URI: http://www.fiddyp.co.uk/
 You can now edit the options from the dashboard
 *********************************************************************
 updates:
+2.5.1 - fix for pesky IE and Chrome
 2.5 2nd oct 08 - fix for the people that can rtfm and added checkbox for traditonal users to be happy. show badge but no action for admin (again for the !rtfm's)
 2.2   1st Oct 08 - the big fat update! fix all images for WP2.5 - 2.5.2 and added the luvheart info box option and made ready for luvcontests..
 2.1.7 28/9/8 change defaults from ID to name as that seems to be more prevalant in themes. Added constants compatibility to admin function
