@@ -5,7 +5,8 @@ function commentluv(cl_settings){
 			cl_settings[0]=parentformname;
 		}
 		var cl_badge=cl_settings[7];
-		jQuery('#'+cl_settings[0]).after(cl_settings[12]+'<div id="mylastpostbox"><div style="float:left"><input type="checkbox" id="luv" '+cl_settings[9]+'"/></div><div style="float:left"><span id="mylastpost" style="clear: both"><a href="http://www.commentluv.com">'+cl_badge+'</a></span>' + '<br/><select name="lastposts" id="lastposts"></select></div></div>');
+		var checked=cl_settings[9];
+		jQuery('#'+cl_settings[0]).after(cl_settings[12]+'<div id="mylastpostbox"><div style="float:left"><input type="checkbox" id="luv" '+cl_settings[9]+'/></div><div style="float:left"><span id="mylastpost" style="clear: both"><a href="http://www.commentluv.com">'+cl_badge+'</a></span>' + '<br/><select name="lastposts" id="lastposts"></select></div></div>');
 		jQuery('#'+parentformname).append('<input type="hidden" id="cl_post" name="cl_post"></input>');
 		jQuery('#lastposts').hide();
 		if(cl_settings[10]){
