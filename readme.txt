@@ -3,13 +3,15 @@ Contributors: Andy Bailey
 Tags: comments, linkluv
 Requires at least: 2.5
 Tested up to: 2.6.2
-Stable tag: 2.1.6
+Stable tag: 2.5
 
 Appends a titled link using AJAX to the authors last blog post on their comment giving back some luv to the people that join your discussion. Compatible with logged on users and Wordpress MU. Visit CommentLuv.com for detailed instructions on features. 
 
 == Description ==
 
 Pass a bit of luv onto your commenters by providing a titled link to their last blog post. This plugin attempts to parse the feed of the comment author by visiting their site and looking for their feed while they type their comment and appends it once they submit.
+
+Entice them even more with the new info box ajax popup showing their descript, gravatar and other sites they visit.
 
 It will start to work with any new comments posted after installation (it will not add last post links to comments made before CommentLuv has been activated). You can set the plugin to track the clicks made on the links received and see the stats at commentluv.com (free registration)
 
@@ -29,6 +31,9 @@ You can see if it has enabled correctly by logging out and looking for the badge
 You may want to test it after activation by logging out and adding a comment to one of your posts, you can use http://www.fiddyp.co.uk if you want and see if it apends my last blog post.
 
 == Frequently Asked Questions ==
+
+= I don't see the badge in the comment form =
+The badge will not show if your are logged in as admin. If you are not logged in but still cannot see the badge, check the settings for your comment form ID. You can see what it is set to in your themes `comments.php` file
 
 = All my comments are now being held in moderation, why? =
 

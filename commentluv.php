@@ -2,7 +2,7 @@
 Plugin Name: commentluv
 Plugin URI: http://www.commentluv.com/download/ajax-commentluv-installation/
 Description: Plugin to show a link to the last post from the commenters blog in their comment. Just activate and it's ready. Will parse a feed from most sites that have a feed location specified in its head html. See the <a href="options-general.php?page=commentluv">Settings Page</a> for styling and text output options.
-Version: 2.1.6
+Version: 2.5
 Author: Andy Bailey
 Author URI: http://www.fiddyp.co.uk/
 
@@ -10,6 +10,10 @@ Author URI: http://www.fiddyp.co.uk/
 You can now edit the options from the dashboard
 *********************************************************************
 updates:
+2.5 2nd oct 08 - fix for the people that can rtfm and added checkbox for traditonal users to be happy. show badge but no action for admin (again for the !rtfm's)
+2.2   1st Oct 08 - the big fat update! fix all images for WP2.5 - 2.5.2 and added the luvheart info box option and made ready for luvcontests..
+2.1.7 28/9/8 change defaults from ID to name as that seems to be more prevalant in themes. Added constants compatibility to admin function
+added sanitize function for troublesome special characters in text output
 2.1.6 27/9/8 make compatible for less that wp 2.5.1
 2.1.5 25/9/8 do the features ever stop?? Marco says we should had some option for html to be added before button and delete old selects if change url. done!
 also I am a dumbo for using wp_enqueue_script in the function called by wp_head, it should be before that. so sorry everyone! (retiredat47.com)
@@ -114,11 +118,32 @@ add_filter('whitelist_options','commentluv_alter_whitelist_options');
 register_activation_hook(__FILE__, 'commentluv_activation');
 wp_enqueue_script('jquery');
 
+// clean input string
+function cleanInput($input) {
+	return htmlentities(trim($input), ENT_QUOTES);
+}
+
+// sanatize function
+function sanitize($input) {
+	if (is_array($input)) {
+		foreach($input as $var=>$val) {
+			$output[$var] = sanitize($val);
+		}
+	}
+	else {
+		if (get_magic_quotes_gpc()) {
+			$input = stripslashes($input);
+		}
+		$input  = cleanInput($input);
+		$output = mysql_real_escape_string($input);
+	}
+	return $output;
+}
 
 // make compatible with Mu
 function commentluv_alter_whitelist_options($whitelist) {
 	if(is_array($whitelist)) {
-		$option_array = array('commentluv' => array('cl_comment_text','cl_default_on','cl_style','cl_author_id','cl_site_id','cl_comment_id','cl_commentform_id','cl_badge','cl_member_id','cl_click_track','cl_author_type','cl_url_type','cl_textarea_type','cl_reset','cl_showtext','cl_badge_pos','cl_prepend'));
+		$option_array = array('commentluv' => array('cl_comment_text','cl_default_on','cl_style','cl_author_id','cl_site_id','cl_comment_id','cl_commentform_id','cl_badge','cl_member_id','cl_click_track','cl_author_type','cl_url_type','cl_textarea_type','cl_reset','cl_showtext','cl_badge_pos','cl_prepend','cl_heart_tip'));
 		$whitelist = array_merge($whitelist,$option_array);
 	}
 	return $whitelist;
@@ -144,8 +169,9 @@ function commentluv_setup()
 function commentluv_activation(){
 	// set version for future releases if they need to change a value
 	$version=get_option('cl_version');
-	if($version<213){
-		update_option('cl_version','213');
+	if($version<250){
+		update_option('cl_version','250');
+		update_option('cl_commentform_id','');
 	}
 }
 
@@ -202,6 +228,7 @@ function show_cl_options() {
 	add_options_page('CommentLuv', 'CommentLuv', 8, 'commentluv', 'cl_options_page');
 	add_option('cl_comment_text','[name]&#180;s last blog post..[lastpost]');
 	add_option('cl_default_on','TRUE');
+	add_option('cl_heart_tip','TRUE');
 	add_option('cl_style','border:1px solid; display:block; padding:4px;');
 	add_option('cl_author_id','author');
 	add_option('cl_site_id','url');
@@ -209,15 +236,15 @@ function show_cl_options() {
 	add_option('cl_commentform_id','#commentform');
 	add_option('cl_badge','ACL88x31-white.gif');
 	add_option('cl_member_id','');
-	add_option('cl_author_type','ID');
-	add_option('cl_url_type','ID');
-	add_option('cl_textarea_type','ID');
+	add_option('cl_author_type','name');
+	add_option('cl_url_type','name');
+	add_option('cl_textarea_type','name');
 	add_option('cl_click_track','on');
 	add_option('cl_showtext','CommentLuv Enabled');
 	add_option('cl_badge_pos','');
 	add_option('cl_prepend','');
 	commentluv_activation();
-	add_option('cl_version','213');
+	add_option('cl_version','250');
 	add_option('cl_select_text','choose a different post to show');
 }
 
@@ -238,7 +265,6 @@ function cl_style_script(){
 	if ($cl_script_added) {
 		return;
 	}
-	$cl_commentform_id=get_option('cl_commentform_id');
 
 	$cl_comment_id=get_option('cl_comment_id');
 	$cl_author_id=get_option('cl_author_id');
@@ -249,7 +275,7 @@ function cl_style_script(){
 	$author_selector=  (get_option('cl_author_type')=="name")? "\"input[name='$cl_author_id']\"" : "'#$cl_author_id'";
 	$url_selector=  (get_option('cl_url_type')=="name")? "\"input[name='$cl_site_id']\"" : "'#$cl_site_id'";
 
-	$cl_comment_text=str_replace("'","&#180;",get_option('cl_comment_text'));
+	$cl_comment_text=get_option('cl_comment_text');
 	$cl_default_on=get_option('cl_default_on');
 	$cl_badge=get_option('cl_badge');
 	$cl_member_id=get_option('cl_member_id');
@@ -260,145 +286,100 @@ function cl_style_script(){
 	} else {
 		$cl_badge_val="<img src=\"".WP_PLUGIN_URL."/commentluv/$cl_badge\"/>";
 	}
-
 	// check if user has set append ID differently
 	$append_id=get_option('cl_badge_pos');
-	if($append_id){
-		$cl_commentform_id="#".$append_id;
-	}
-	// optional prepend
-	$cl_prepend=get_option('cl_prepend');
 
-	// select text
-	$cl_select_text=get_option('cl_select_text');
-
-	$script="\njQuery(document).ready(function() {\n".
-	"jQuery('$cl_commentform_id').after('$cl_prepend<span id=\"mylastpost\" style=\"clear: both\"><a href=\"http://www.commentluv.com\">".
-	"$cl_badge_val</a></span>' + '<br/><select name=\"lastposts\" id=\"lastposts\"><option value=0 ></option></select>');\n".
-	"jQuery('$cl_commentform_id').append('<input type=\"hidden\" id=\"cl_post\" name=\"cl_post\"></input>');\n".
-	"jQuery('#lastposts').hide();\n";
-	if(get_option('cl_click_track')=="on"){
-		$script.="jQuery('abbr em a').click(processclick);\n";
-	}
-	$script.="jQuery($comment_selector).focus(cl_dostuff); \n".
-	"jQuery('#lastposts').change(function(){ \n".
-	"jQuery('option').remove(\":contains('".$cl_select_text."')\");\n".
-	"var url = jQuery(this).val();\n".
-	"var title = jQuery('#lastposts option:selected').text(); \n".
-	"jQuery('#mylastpost a').replaceWith('<a href=\"' + url + '\">' + title + '</a>');\n".
-	"jQuery('#cl_post').val('<a href=\"' + url + '\">' + title + '</a>');\n".
-	"});\n".
-	"jQuery($url_selector).change(function(){ jQuery('#lastposts').empty(); jQuery($comment_selector).bind('focus',cl_dostuff);}); \n".
-	"});\n";
-
-	if(get_option('cl_click_track')=="on"){
-		$script.="function processclick(){\n".
-		"var url=jQuery(this).attr('href');\n".
-		"var thelinkobj=jQuery(this);\n".
-		"var cl_member_id=\"".get_option('cl_member_id')."\";\n".
-		"var addit=url + \"&cl_member_id=\" + cl_member_id + \"&callback=?\";\n".
-		"var clurl=\"http://www.commentluv.com/commentluvinc/ajaxcl_click821.php?url=\" + addit;\n".
-		"jQuery.getJSON(clurl,function(data) {\n".
-		"jQuery.each(data.msg,function(i,item) {\n".
-		"jQuery(thelinkobj).text(data.msg[i].text);}) \n".
-		"window.location=url;\n".
-		"}); return false;}\n";
-	}
-	$script.="function cl_dostuff(){\n".
-	"var check=jQuery($url_selector).val();\n".
-	"if(!check) { return }\n".
-	"var xyz=jQuery($url_selector).val();	\n".
-	"var name=jQuery($author_selector).val(); \n".
-	"var url=\"http://www.commentluv.com/commentluvinc/ajaxcl821.php?url=\"+xyz+\"";
-	if($cl_member_id) {
-		$script.="&memberid=$cl_member_id";
-	}
-	$script.="&callback=?\";\n".
-	"jQuery.getJSON(url,function(data){ \n".
-	"jQuery.each(data.links, function(i,item){	\n".
-	"jQuery('#lastposts').append('<option value=\"'+data.links[i].url+'\">'+data.links[i].title+'</option>');\n".
-	"});\n".
-	"jQuery('#lastposts').append('<option value=0 ";
-
-	// handle default off
-	if($cl_default_on=="FALSE") {
-		$script.="selected=selected";
-	}
-
-	$script.=">".__('Do Not Show','commentluv')."</option><option value=\"1\" ";
-
-	// handle default on
-	if($cl_default_on=="TRUE"){
-		$script.="selected=selected";
-	}
-
-	$script.=">$cl_select_text</option>').fadeIn(1000);\n";
-
-	// change output text to that set in the options page
-	$search=array('[name]','[lastpost]');
-	$replace=array("' + name + '","<a href=\"' + data.links[0].url + '\">' + data.links[0].title + '</a>");
-	$cl_comment_text=str_replace($search,$replace,$cl_comment_text);
-
-	$script.="jQuery('#mylastpost').html('<abbr><em>".$cl_comment_text."</em></abbr>').fadeIn(1000); \n".
-	"jQuery('#cl_post').val('<a href=\"' + data.links[0].url + '\">' + data.links[0].title + '</a>');\n".
-	"jQuery($comment_selector).unbind(); \n".
-	"});\n".
-	"}\n";
-
+	// start the javascript output
 	if(is_single()) {
-		echo '<!-- Styling and script added by commentluv 2.16 http://www.commentluv.com -->';
-		echo '<style type="text/css">abbr em{'.get_option('cl_style').'} #lastposts { width: 300px; }</style>';
-
-		echo "<script type=\"text/javascript\"><!--//--><![CDATA[//><!--";
-		// add click tracking if enabled to head for admin
-		if(current_user_can('edit_users')){
-			$adminscript="\njQuery(document).ready(function() {\n";
-			if(get_option('cl_click_track')=="on"){
-				$adminscript.="jQuery('abbr em a').click(processclick);});\n".
-				"function processclick(){\n".
-				"var url=jQuery(this).attr('href');\n".
-				"var thelinkobj=jQuery(this);\n".
-				"var cl_member_id=\"".get_option('cl_member_id')."\";\n".
-				"var addit=url + \"&cl_member_id=\" + cl_member_id + \"&callback=?\";\n".
-				"var clurl=\"http://www.commentluv.com/commentluvinc/ajaxcl_click821.php?url=\" + addit;\n".
-				"jQuery.getJSON(clurl,function(data) {\n".
-				"jQuery.each(data.msg,function(i,item) {\n".
-				"jQuery(thelinkobj).text(data.msg[i].text);}) \n".
-				"window.location=url;\n".
-				"}); return false;}\n";
-				echo $adminscript;
-			}
-		} else {
-			// normal user script (so admin doesn't get the badge below form)
-			echo $script;
+		echo '<!-- Styling and script added by commentluv 2.5 http://www.commentluv.com -->';
+		echo '<style type="text/css">abbr em{'.get_option('cl_style').'} #lastposts { width: 300px; } </style>';
+		echo "\n<script type=\"text/javascript\" src=\"".WP_PLUGIN_URL."/commentluv/js/commentluv.js\"></script>";
+		if(get_option('cl_click_track')=="on"){
+			echo "\n<script type=\"text/javascript\" src=\"".WP_PLUGIN_URL."/commentluv/js/processclick.js\"></script>\n";
 		}
+		if(get_option('cl_heart_tip')==TRUE){
+			echo "<link rel=\"stylesheet\" href=\"".WP_PLUGIN_URL."/commentluv/include/tipstyle.css\" type=\"text/css\" />\n";
+			echo "<script type=\"text/javascript\"><!--//--><![CDATA[//><!--\n";
+			echo "jQuery(document).ready(function(){\n".
+			"jQuery(\"abbr em a\").each(function(i){\n".
+			"jQuery(this).after(' <a class=\'jTip\' id=\'' + i + '\' name=\'My CommentLuv Profile\' href=\'".
+			WP_PLUGIN_URL."/commentluv/include/tip.php?width=375&url=' + jQuery(this).attr('href') +'\'><img src=\'".
+			WP_PLUGIN_URL."/commentluv/images/littleheart.png\' alt=\'#\' /></a>');\n".
+			"});\n".
+			"JT_init();});\n";
+			echo "//--><!]]></script>\n";
+			echo "<script type='text/javascript' src='".WP_PLUGIN_URL."/commentluv/js/jtip.js'></script>\n";
+		}
+		echo "<script type=\"text/javascript\"><!--//--><![CDATA[//><!--";
+		echo "\n var cl_settings=new Array();\n";
+		echo "cl_settings[0]=\"$append_id\";\n";
+		echo "cl_settings[1]=$author_selector;\n";
+		echo "cl_settings[2]=$url_selector;\n";
+		echo "cl_settings[3]=$comment_selector;\n";
+
+		// select text
+		$cl_select_text=get_option('cl_select_text');
+		echo "cl_settings[5]=\"$cl_select_text\";\n";
+		echo "cl_settings[6]=\"$cl_badge\";\n";
+		echo "cl_settings[7]=\"".addslashes($cl_badge_val)."\";\n";
+		echo "cl_settings[8]=\"".addslashes($cl_badge_val)."\";\n";
+		if($cl_default_on=="TRUE"){
+			$cl_default_on="checked";
+		} else {
+			$cl_default_on="";
+		}
+		echo "cl_settings[9]=\"$cl_default_on\";\n";
+		//click track
+		if(get_option('cl_click_track')=="on") {
+			$cl_click_track=1;
+		} else {
+			$cl_click_track=0;
+		}
+		echo "cl_settings[10]=\"$cl_click_track\";\n";
+		echo "cl_settings[11]=\"$cl_heart_tip\";\n";
+		// optional prepend
+		$cl_prepend=addslashes(get_option('cl_prepend'));
+		echo "cl_settings[12]=\"$cl_prepend\";\n";
+		// switch off for admin
+		if(current_user_can('edit_users')){
+			echo "cl_settings[13]=\"admin\";";
+		}
+		echo "commentluv(cl_settings);\n";
+
 		echo "//--><!]]></script>";
 
 		echo '<!-- end commentluv  http://www.fiddyp.co.uk -->';
+		$cl_script_added=1;
 	}
-
-
-
-	//wp_enqueue_script('jquery');
-	$cl_script_added=1;
 
 }
 // function to add menu page under options
 
 function cl_options_page(){
+	// Pre-2.6 compatibility
+	if ( ! defined( 'WP_CONTENT_URL' ) )
+	define( 'WP_CONTENT_URL', get_option( 'siteurl' ) . '/wp-content' );
+	if ( ! defined( 'WP_CONTENT_DIR' ) )
+	define( 'WP_CONTENT_DIR', ABSPATH . 'wp-content' );
+	if ( ! defined( 'WP_PLUGIN_URL' ) )
+	define( 'WP_PLUGIN_URL', WP_CONTENT_URL. '/plugins' );
+	if ( ! defined( 'WP_PLUGIN_DIR' ) )
+	define( 'WP_PLUGIN_DIR', WP_CONTENT_DIR . '/plugins' );
+
 	commentluv_setup();
 	if(get_option('cl_reset')=="on"){
 		update_option('cl_comment_text','[name]&#180;s last blog post..[lastpost]');
 		update_option('cl_default_on','TRUE');
+		update_option('cl_heart_tip','TRUE');
 		update_option('cl_style','border:1px solid; display:block; padding:4px;');
 		update_option('cl_author_id','author');
 		update_option('cl_site_id','url');
 		update_option('cl_comment_id','comment');
-		update_option('cl_commentform_id','#commentform');
+		update_option('cl_commentform_id','');
 		update_option('cl_badge','ACL88x31-white.gif');
-		update_option('cl_author_type','ID');
-		update_option('cl_url_type','ID');
-		update_option('cl_textarea_type','ID');
+		update_option('cl_author_type','name');
+		update_option('cl_url_type','name');
+		update_option('cl_textarea_type','name');
 		update_option('cl_click_track','on');
 		update_option('cl_showtext','CommentLuv Enabled');
 		update_option('cl_reset','off');
@@ -440,6 +421,13 @@ function cl_options_page(){
       <option <?php if(get_option('cl_default_on')=="FALSE") { echo "selected=selected";}?> >FALSE</option>
     </select></td>
   </tr>
+  <tr>
+    <td width="29%"><?php _e('Choose to have CommentLuv Info box?','commentluv')?></td>
+    <td width="71%"><select name="cl_heart_tip">
+      <option <?php if(get_option('cl_heart_tip')=="TRUE") {echo "selected=selected";}?> >TRUE</option>
+      <option <?php if(get_option('cl_heart_tip')=="FALSE") { echo "selected=selected";}?> >FALSE</option>
+    </select></td>
+  </tr>
   </table>
   <h3><?php _e('Styling')?></h3>
   <p><?php _e('Wordpress doesn\'t allow a class to be applied to a paragraph in the comment area so we have to wrap the last blog post text in nested tags and apply styling to that instead.','commentluv')?></p>
@@ -454,10 +442,6 @@ function cl_options_page(){
 <p><?php _e('Check your comment form fields to see if they use ID= or NAME= and select the appropriate type below','commentluv')?><br/>
 <?php _e('Visit CommentLuv.com if you need instructions','commentluv')?></p>
   <table class="form-table">
-    <td><?php _e('Comment Form ID','commentluv')?></td>
-    <td>Precede with #</td>
-    <td><input name="cl_commentform_id" value="<?php echo get_option('cl_commentform_id');?>"></td>
-  </tr>
   <tr>
     <td><?php _e('Authors Name field ID','commentluv')?></td>
     <td><select name="cl_author_type">
@@ -508,7 +492,7 @@ function cl_options_page(){
     <td><input type="checkbox" name="cl_click_track" <?php if(get_option('cl_click_track')=="on"){echo "checked";};?> /></td>
     </tr>
     </table>
-	  <input type="hidden" name="page_options" value="cl_comment_text,cl_default_on,cl_style,cl_author_id,cl_site_id,cl_comment_id,cl_commentform_id,cl_badge,cl_member_id,cl_click_track,cl_form_type,cl_author_type,cl_url_type,cl_textarea_type,cl_reset,cl_showtext,cl_badge_pos,cl_prepend,cl_select_text" />
+	  <input type="hidden" name="page_options" value="cl_comment_text,cl_default_on,cl_style,cl_author_id,cl_site_id,cl_comment_id,cl_commentform_id,cl_badge,cl_member_id,cl_click_track,cl_form_type,cl_author_type,cl_url_type,cl_textarea_type,cl_reset,cl_showtext,cl_badge_pos,cl_prepend,cl_select_text,cl_heart_tip" />
 	  <input type="hidden" name="action" value="update" />
 	  <input type="hidden" name="option_page" value="commentluv" />
 	  <p><input type="checkbox" name="cl_reset"/><?php _e('Reset to Default Settings','commentluv')?>
