@@ -2,7 +2,7 @@
 Plugin Name: commentluv
 Plugin URI: http://www.commentluv.com/download/ajax-commentluv-installation/
 Description: Plugin to show a link to the last post from the commenters blog in their comment. Just activate and it's ready. Will parse a feed from most sites that have a feed location specified in its head html. See the <a href="options-general.php?page=commentluv">Settings Page</a> for styling and text output options.
-Version: 2.5.1
+Version: 2.5.2
 Author: Andy Bailey
 Author URI: http://www.fiddyp.co.uk/
 
@@ -10,6 +10,7 @@ Author URI: http://www.fiddyp.co.uk/
 You can now edit the options from the dashboard
 *********************************************************************
 updates:
+2.5.2 - 4 oct 08 - oh dear silly me, forgot to enclose an ==TRUE with quotes. (line 302) heart info box now can be switched off. thanks Ute from http://www.utes-dezines.de for you feedback.
 2.5.1 - fix for pesky IE and Chrome
 2.5 2nd oct 08 - fix for the people that can rtfm and added checkbox for traditonal users to be happy. show badge but no action for admin (again for the !rtfm's)
 2.2   1st Oct 08 - the big fat update! fix all images for WP2.5 - 2.5.2 and added the luvheart info box option and made ready for luvcontests..
@@ -170,9 +171,8 @@ function commentluv_setup()
 function commentluv_activation(){
 	// set version for future releases if they need to change a value
 	$version=get_option('cl_version');
-	if($version<250){
-		update_option('cl_version','250');
-		update_option('cl_commentform_id','');
+	if($version<252){
+		update_option('cl_version','252');
 	}
 }
 
@@ -245,7 +245,7 @@ function show_cl_options() {
 	add_option('cl_badge_pos','');
 	add_option('cl_prepend','');
 	commentluv_activation();
-	add_option('cl_version','250');
+	add_option('cl_version','252');
 	add_option('cl_select_text','choose a different post to show');
 }
 
@@ -292,13 +292,13 @@ function cl_style_script(){
 
 	// start the javascript output
 	if(is_single()) {
-		echo '<!-- Styling and script added by commentluv 2.5 http://www.commentluv.com -->';
+		echo '<!-- Styling and script added by commentluv 2.5.2 http://www.commentluv.com -->';
 		echo '<style type="text/css">abbr em{'.get_option('cl_style').'} #lastposts { width: 300px; } </style>';
 		echo "\n<script type=\"text/javascript\" src=\"".WP_PLUGIN_URL."/commentluv/js/commentluv.js\"></script>";
 		if(get_option('cl_click_track')=="on"){
 			echo "\n<script type=\"text/javascript\" src=\"".WP_PLUGIN_URL."/commentluv/js/processclick.js\"></script>\n";
 		}
-		if(get_option('cl_heart_tip')==TRUE){
+		if(get_option('cl_heart_tip')=="TRUE"){
 			echo "<link rel=\"stylesheet\" href=\"".WP_PLUGIN_URL."/commentluv/include/tipstyle.css\" type=\"text/css\" />\n";
 			echo "<script type=\"text/javascript\"><!--//--><![CDATA[//><!--\n";
 			echo "jQuery(document).ready(function(){\n".
