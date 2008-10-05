@@ -9,8 +9,19 @@ function commentluv(cl_settings){
 		jQuery('#'+cl_settings[0]).after(cl_settings[12]+'<div id="mylastpostbox"><div style="float:left"><input type="checkbox" id="luv" '+cl_settings[9]+'/></div><div style="float:left"><span id="mylastpost" style="clear: both"><a href="http://www.commentluv.com">'+cl_badge+'</a></span>' + '<br/><select name="lastposts" id="lastposts"></select></div></div>');
 		jQuery('#'+parentformname).append('<input type="hidden" id="cl_post" name="cl_post"></input>');
 		jQuery('#lastposts').hide();
-		if(cl_settings[10]){
-			jQuery('abbr em a').click(processclick);
+		if(cl_settings[10]=="1"){
+			var cl_member_id=cl_settings[14];
+			jQuery('abbr em a').click(function(){
+				var url=jQuery(this).attr('href');
+				var thelinkobj=jQuery(this);
+				var addit=url + "&cl_member_id=" + cl_member_id + "&callback=?";
+				var clurl="http://www.commentluv.com/commentluvinc/ajaxcl_click821.php?url=" + addit;
+				jQuery.getJSON(clurl,function(data) {
+					jQuery.each(data.msg,function(i,item) {
+						jQuery(thelinkobj).text(data.msg[i].text);})
+						window.location=url;
+				}); return false;
+			});
 		}
 		jQuery(cl_settings[3]).focus(function(){
 			cl_dostuff(cl_settings);
@@ -22,9 +33,9 @@ function commentluv(cl_settings){
 			jQuery('#mylastpost a').replaceWith('<a href="' + url + '">' + title + '</a>');
 			jQuery('#cl_post').val('<a href="' + url + '">' + title + '</a>');
 		});
-		jQuery(cl_settings[2]).change(function(){ 
+		jQuery(cl_settings[2]).change(function(){
 			if(jQuery('#luv').is(":checked")){
-				jQuery('#lastposts').empty(); 
+				jQuery('#lastposts').empty();
 				jQuery(cl_settings[3]).bind('focus',cl_dostuff(cl_settings));
 			}
 		});
@@ -34,10 +45,10 @@ function commentluv(cl_settings){
 				jQuery('#cl_post').val(jQuery('#mylastpost abbr em').html());
 				jQuery('#lastposts').attr("disabled", false);
 				jQuery('#mylastpost abbr em').fadeTo("slow", 1);
-			
+
 			} else {
 				// was checked, user unchecked it so empty hidden field in form
-				jQuery('#cl_post').val("");	
+				jQuery('#cl_post').val("");
 				jQuery('#lastposts').attr("disabled", true);
 				jQuery('#mylastpost abbr em').fadeTo("slow", 0.33);
 			}

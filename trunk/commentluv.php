@@ -2,7 +2,7 @@
 Plugin Name: commentluv
 Plugin URI: http://www.commentluv.com/download/ajax-commentluv-installation/
 Description: Plugin to show a link to the last post from the commenters blog in their comment. Just activate and it's ready. Will parse a feed from most sites that have a feed location specified in its head html. See the <a href="options-general.php?page=commentluv">Settings Page</a> for styling and text output options.
-Version: 2.5.2
+Version: 2.5.3
 Author: Andy Bailey
 Author URI: http://www.fiddyp.co.uk/
 
@@ -10,6 +10,7 @@ Author URI: http://www.fiddyp.co.uk/
 You can now edit the options from the dashboard
 *********************************************************************
 updates:
+2.5.3 - fix for clicktracking off. needs quotes around the 1 too! prettied up default styling for abbr em and fixed an error with click tracking not adding member id by moving the click function to inline with commentluv.js
 2.5.2 - 4 oct 08 - oh dear silly me, forgot to enclose an ==TRUE with quotes. (line 302) heart info box now can be switched off. thanks Ute from http://www.utes-dezines.de for you feedback.
 2.5.1 - fix for pesky IE and Chrome
 2.5 2nd oct 08 - fix for the people that can rtfm and added checkbox for traditonal users to be happy. show badge but no action for admin (again for the !rtfm's)
@@ -171,8 +172,8 @@ function commentluv_setup()
 function commentluv_activation(){
 	// set version for future releases if they need to change a value
 	$version=get_option('cl_version');
-	if($version<252){
-		update_option('cl_version','252');
+	if($version<253){
+		update_option('cl_version','253');
 	}
 }
 
@@ -230,7 +231,7 @@ function show_cl_options() {
 	add_option('cl_comment_text','[name]&#180;s last blog post..[lastpost]');
 	add_option('cl_default_on','TRUE');
 	add_option('cl_heart_tip','TRUE');
-	add_option('cl_style','border:1px solid; display:block; padding:4px;');
+	add_option('cl_style','border:1px solid #ffffff; background-color: #eeeeee; display:block; padding:4px;');
 	add_option('cl_author_id','author');
 	add_option('cl_site_id','url');
 	add_option('cl_comment_id','comment');
@@ -245,7 +246,7 @@ function show_cl_options() {
 	add_option('cl_badge_pos','');
 	add_option('cl_prepend','');
 	commentluv_activation();
-	add_option('cl_version','252');
+	add_option('cl_version','253');
 	add_option('cl_select_text','choose a different post to show');
 }
 
@@ -280,6 +281,9 @@ function cl_style_script(){
 	$cl_default_on=get_option('cl_default_on');
 	$cl_badge=get_option('cl_badge');
 	$cl_member_id=get_option('cl_member_id');
+	if(!$cl_member_id){
+		$cl_member_id="0";
+	}
 	$plugin_dir = basename(dirname(__FILE__));
 
 	if($cl_badge=='text'){
@@ -292,12 +296,12 @@ function cl_style_script(){
 
 	// start the javascript output
 	if(is_single()) {
-		echo '<!-- Styling and script added by commentluv 2.5.2 http://www.commentluv.com -->';
+		echo '<!-- Styling and script added by commentluv 2.5.3 http://www.commentluv.com -->';
 		echo '<style type="text/css">abbr em{'.get_option('cl_style').'} #lastposts { width: 300px; } </style>';
 		echo "\n<script type=\"text/javascript\" src=\"".WP_PLUGIN_URL."/commentluv/js/commentluv.js\"></script>";
-		if(get_option('cl_click_track')=="on"){
-			echo "\n<script type=\"text/javascript\" src=\"".WP_PLUGIN_URL."/commentluv/js/processclick.js\"></script>\n";
-		}
+		//if(get_option('cl_click_track')=="on"){
+			//echo "\n<script type=\"text/javascript\" src=\"".WP_PLUGIN_URL."/commentluv/js/processclick.js\"></script>\n";
+		//}
 		if(get_option('cl_heart_tip')=="TRUE"){
 			echo "<link rel=\"stylesheet\" href=\"".WP_PLUGIN_URL."/commentluv/include/tipstyle.css\" type=\"text/css\" />\n";
 			echo "<script type=\"text/javascript\"><!--//--><![CDATA[//><!--\n";
@@ -343,8 +347,9 @@ function cl_style_script(){
 		echo "cl_settings[12]=\"$cl_prepend\";\n";
 		// switch off for admin
 		if(current_user_can('edit_users')){
-			echo "cl_settings[13]=\"admin\";";
+			echo "cl_settings[13]=\"admin\";\n";
 		}
+		echo "cl_settings[14]=\"$cl_member_id\";\n";
 		echo "commentluv(cl_settings);\n";
 
 		echo "//--><!]]></script>";
@@ -372,7 +377,7 @@ function cl_options_page(){
 		update_option('cl_comment_text','[name]&#180;s last blog post..[lastpost]');
 		update_option('cl_default_on','TRUE');
 		update_option('cl_heart_tip','TRUE');
-		update_option('cl_style','border:1px solid; display:block; padding:4px;');
+		update_option('cl_style','border:2px solid #ffffff; display:block; padding:4px;');
 		update_option('cl_author_id','author');
 		update_option('cl_site_id','url');
 		update_option('cl_comment_id','comment');
