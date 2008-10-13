@@ -1,98 +1,27 @@
 <?php
 // include file for comemntluv to display tooltip for heart icon
-class ReadFile{
+// 6 Oct 08 - added another function for curl if fopen and filegetcontents fail
+// 9 oct 08 - added last resort iframe html if fopen, file_get_contents and cURL fail
+if(function_exists("curl_init")){
+			//setup curl values
+			$url=$_GET['url'];
+			$curl=curl_init();
+			curl_setopt($curl,CURLOPT_URL,"http://www.commentluv.com/commentluvinc/clplus_tooltip.php?url=".$url);
+			curl_setopt($curl,CURLOPT_HEADER,0);
+			curl_setopt($curl,CURLOPT_RETURNTRANSFER,TRUE);
+			curl_setopt($curl,CURLOPT_TIMEOUT,7);
+			$content=curl_exec($curl);
 
-	var $targetFile;
-	var $error;
-	var $errorText;
-	var $data;
-	var $timeout;
-
-	function ReadFile($targetFile){
-		//INITIALIZE
-		$this->targetFile=$targetFile;
-		$this->error=false;
-		$this->timeout=10; //TIMEOUT IN SECONDS
-		
-		if(!empty($this->targetFile)){
-			$this->downloadContents();
-		}
-		else{
-			$this->errorText="Filename not specififed in class constuctor";
-			$this->error=true;
-		}
-	}
-	
-	function getFileContents(){
-		if(!$this->hasError()){
-			return $this->data;
-		}
-		return false;
-	}
-	
-	function hasError(){
-		if($this->error){
-			return true;
-		}
-		return false;
-	}
-	
-	function getError(){ 
-		return $this->errorText; 
-	}
-
-	function downloadContents(){
-		$data=NULL;
-		//CHECK TO SEE IF WE ARE USING PHP 4.3+
-		if(function_exists('file_get_contents')){
-			$this->data=$this->openWithFileGetContents();
-		} 
-		else{
-			$this->data=$this->openWithFOpen();
-		}
-	}
-	
-	function openWithFileGetContents(){
-		$data=NULL;
-		//SET TIMEOUT (PHP 4.3+ ONLY)
-		ini_set('default_socket_timeout', $this->timeout);  
-		//RETRIEVE FILE
-		if(!$data=@file_get_contents($this->targetFile)){
-			$this->errorText='file_get_contents of ' . $this->targetFile . ' failed.';
-			$this->error=true;
-		}
-		return $data;
-	}
-	
-	function openWithFOpen(){
-		$data=NULL; 
-		//RETRIEVE FILE
-		if($dataFile = @fopen($this->targetFile, "r" )){
-			while (!feof($dataFile)) {
-				$data.= fgets($dataFile, 4096);
+			if(!curl_error($curl)){
+				$data=$content;
+				curl_close($curl);
+			} else {
+				// can't do curl so echo out iframe html
+				$data="<iframe frameborder=0 width=\"360\" height=\"400\" src=\"http://www.commentluv.com/commentluvinc/clplus_tooltip.php?url=".$_GET['url']."\"></iframe>";
 			}
-			fclose($dataFile);
+		} else {
+			$data="<iframe frameborder=0 width=\"360\" height=\"400\" src=\"http://www.commentluv.com/commentluvinc/clplus_tooltip.php?url=".$_GET['url']."\"></iframe>";
 		}
-		else{
-			$this->errorText='fopen of ' . $this->targetFile . ' failed.';
-			$this->error=true;
-		}
-		return $data;
-	}
-}
 
-$url="http://www.commentluv.com/commentluvinc/clplus_tooltip.php?url=".$_GET['url'];
-$myReadAccess=new ReadFile($url);
-
-if(!$data=$myReadAccess->getFileContents()){
-	
-        //ERROR, DISPLAY ERROR MESSAGE
-	echo "Error: " . $myReadAccess->getError();
-}
-else{
-	 
-        //SUCCESS, DISPLAY FILE CONTENTS
-	echo $data;
-}
-
+		echo $data;
 ?>
