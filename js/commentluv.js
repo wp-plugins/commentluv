@@ -1,7 +1,7 @@
 function commentluv(cl_settings){
 	jQuery(document).ready(function() {
 		parentformname = jQuery(cl_settings[3]).parents("form").attr("id");
-		if(!cl_settings[0]){
+		if(cl_settings[0]==""){
 			cl_settings[0]=parentformname;
 		}
 		var cl_badge=cl_settings[7];
@@ -11,6 +11,7 @@ function commentluv(cl_settings){
 		jQuery('#lastposts').hide();
 		if(cl_settings[10]=="1"){
 			var cl_member_id=cl_settings[14];
+			var cl_version=cl_settings[15];
 			jQuery('abbr em a').click(function(){
 				var url=jQuery(this).attr('href');
 				var thelinkobj=jQuery(this);
@@ -34,9 +35,10 @@ function commentluv(cl_settings){
 			jQuery('#cl_post').val('<a href="' + url + '">' + title + '</a>');
 		});
 		jQuery(cl_settings[2]).change(function(){
-			if(jQuery('#luv').is(":checked")){
+			if(jQuery('#luv').is(":checked") && jQuery('#cl_post').val()!=""){
 				jQuery('#lastposts').empty();
-				jQuery(cl_settings[3]).bind('focus',cl_dostuff(cl_settings));
+				cl_dostuff(cl_settings);
+				//jQuery(cl_settings[3]).bind('focus',cl_dostuff(cl_settings));
 			}
 		});
 		jQuery('#luv').click(function(){
@@ -60,7 +62,7 @@ function commentluv(cl_settings){
 			if(!check || !jQuery('#luv').is(":checked") || cl_settings[13]) { return }
 			var xyz=jQuery(cl_settings[2]).val();
 			var name=jQuery(cl_settings[1]).val();
-			var url="http://www.commentluv.com/commentluvinc/ajaxcl821.php?url="+xyz+"&callback=?";
+			var url="http://www.commentluv.com/commentluvinc/ajaxcl8254.php?url="+xyz+"&version=" + cl_version +"&callback=?";
 			jQuery.getJSON(url,function(data){
 				jQuery.each(data.links, function(i,item){
 					jQuery('#lastposts').append('<option value="'+data.links[i].url+'">'+data.links[i].title+'</option>');

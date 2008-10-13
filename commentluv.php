@@ -2,7 +2,7 @@
 Plugin Name: commentluv
 Plugin URI: http://www.commentluv.com/download/ajax-commentluv-installation/
 Description: Plugin to show a link to the last post from the commenters blog in their comment. Just activate and it's ready. Will parse a feed from most sites that have a feed location specified in its head html. See the <a href="options-general.php?page=commentluv">Settings Page</a> for styling and text output options.
-Version: 2.5.3
+Version: 2.5.4
 Author: Andy Bailey
 Author URI: http://www.fiddyp.co.uk/
 
@@ -10,6 +10,9 @@ Author URI: http://www.fiddyp.co.uk/
 You can now edit the options from the dashboard
 *********************************************************************
 updates:
+2.5.4 - 6 oct 08 - changed included tip.php so it has curl too. added version number to url for easier remote file functions. and changed commentluv.js to prevent
+double firing of cl_dostuff (Marco Luthe from http://www.saphod.net/ (is a geek!))
+		changed tip.php so it can work with curl or iframe so everyone can use it. thanks espen from http://www.espeniversen.com/ for testing
 2.5.3 - fix for clicktracking off. needs quotes around the 1 too! prettied up default styling for abbr em and fixed an error with click tracking not adding member id by moving the click function to inline with commentluv.js
 2.5.2 - 4 oct 08 - oh dear silly me, forgot to enclose an ==TRUE with quotes. (line 302) heart info box now can be switched off. thanks Ute from http://www.utes-dezines.de for you feedback.
 2.5.1 - fix for pesky IE and Chrome
@@ -172,8 +175,8 @@ function commentluv_setup()
 function commentluv_activation(){
 	// set version for future releases if they need to change a value
 	$version=get_option('cl_version');
-	if($version<253){
-		update_option('cl_version','253');
+	if($version<254){
+		update_option('cl_version','254');
 	}
 }
 
@@ -228,7 +231,7 @@ function show_cl_options() {
 	commentluv_alter_whitelist_options("");
 	// Add a new submenu under Options:
 	add_options_page('CommentLuv', 'CommentLuv', 8, 'commentluv', 'cl_options_page');
-	add_option('cl_comment_text','[name]&#180;s last blog post..[lastpost]');
+	add_option('cl_comment_text','[name]&#8217;s last blog post..[lastpost]');
 	add_option('cl_default_on','TRUE');
 	add_option('cl_heart_tip','TRUE');
 	add_option('cl_style','border:1px solid #ffffff; background-color: #eeeeee; display:block; padding:4px;');
@@ -246,7 +249,7 @@ function show_cl_options() {
 	add_option('cl_badge_pos','');
 	add_option('cl_prepend','');
 	commentluv_activation();
-	add_option('cl_version','253');
+	add_option('cl_version','254');
 	add_option('cl_select_text','choose a different post to show');
 }
 
@@ -276,7 +279,7 @@ function cl_style_script(){
 	$comment_selector= (get_option('cl_textarea_type')=="name")? "\"textarea[name='$cl_comment_id']\"" : "'#$cl_comment_id'";
 	$author_selector=  (get_option('cl_author_type')=="name")? "\"input[name='$cl_author_id']\"" : "'#$cl_author_id'";
 	$url_selector=  (get_option('cl_url_type')=="name")? "\"input[name='$cl_site_id']\"" : "'#$cl_site_id'";
-
+	$cl_version=get_option('cl_version');
 	$cl_comment_text=get_option('cl_comment_text');
 	$cl_default_on=get_option('cl_default_on');
 	$cl_badge=get_option('cl_badge');
@@ -296,12 +299,9 @@ function cl_style_script(){
 
 	// start the javascript output
 	if(is_single()) {
-		echo '<!-- Styling and script added by commentluv 2.5.3 http://www.commentluv.com -->';
+		echo '<!-- Styling and script added by commentluv 2.5.4 http://www.commentluv.com -->';
 		echo '<style type="text/css">abbr em{'.get_option('cl_style').'} #lastposts { width: 300px; } </style>';
 		echo "\n<script type=\"text/javascript\" src=\"".WP_PLUGIN_URL."/commentluv/js/commentluv.js\"></script>";
-		//if(get_option('cl_click_track')=="on"){
-			//echo "\n<script type=\"text/javascript\" src=\"".WP_PLUGIN_URL."/commentluv/js/processclick.js\"></script>\n";
-		//}
 		if(get_option('cl_heart_tip')=="TRUE"){
 			echo "<link rel=\"stylesheet\" href=\"".WP_PLUGIN_URL."/commentluv/include/tipstyle.css\" type=\"text/css\" />\n";
 			echo "<script type=\"text/javascript\"><!--//--><![CDATA[//><!--\n";
@@ -350,6 +350,7 @@ function cl_style_script(){
 			echo "cl_settings[13]=\"admin\";\n";
 		}
 		echo "cl_settings[14]=\"$cl_member_id\";\n";
+		echo "cl_settings[15]=\"$cl_version\";\n";
 		echo "commentluv(cl_settings);\n";
 
 		echo "//--><!]]></script>";
