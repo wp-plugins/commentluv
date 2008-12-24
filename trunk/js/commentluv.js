@@ -1,30 +1,40 @@
+jQuery.noConflict();
 function commentluv(cl_settings){
 	jQuery(document).ready(function() {
-		parentformname = jQuery(cl_settings[3]).parents("form").attr("id");
+		var formObj = jQuery("textarea[name='" + cl_settings[3] + "']").parents("form"); // get form object that is parent of textarea named "comment"
 		if(cl_settings[0]==""){
-			cl_settings[0]=parentformname;
+			cl_settings[0]=formObj;
+		} else {
+			formObj = '#' + cl_settings[0];
 		}
+		// auto set url, comment and author field
+	
+		var urlObj = jQuery("input[name='" + cl_settings[2] + "']",formObj);
+		var comObj = jQuery("textarea[name='" + cl_settings[3] + "']",formObj);
+		var autObj = jQuery("input[name='" + cl_settings[1] + "']",formObj);
 		var cl_badge=cl_settings[7];
 		var checked=cl_settings[9];
-		jQuery('#'+cl_settings[0]).after(cl_settings[12]+'<div id="mylastpostbox"><div style="float:left"><input type="checkbox" id="luv" '+cl_settings[9]+'/></div><div style="float:left"><span id="mylastpost" style="clear: both"><a href="http://www.commentluv.com">'+cl_badge+'</a></span>' + '<br/><select name="lastposts" id="lastposts"></select></div></div>');
-		jQuery('#'+parentformname).append('<input type="hidden" id="cl_post" name="cl_post"></input>');
+		jQuery(formObj).after(cl_settings[12]+'<div id="mylastpostbox"><div style="float:left"><input type="checkbox" id="luv" '+cl_settings[9]+'/></div><div style="float:left"><span id="mylastpost" style="clear: both"><a href="http://www.commentluv.com">'+cl_badge+'</a></span>' + '<br/><select name="lastposts" id="lastposts"></select></div></div><div style="clear:both"></div>');
+		jQuery(formObj).append('<input type="hidden" id="cl_post" name="cl_post"></input>');
 		jQuery('#lastposts').hide();
 		if(cl_settings[10]=="1"){
 			var cl_member_id=cl_settings[14];
 			var cl_version=cl_settings[15];
+			// do click on last blog post link, store click, show click, open in new window
 			jQuery('abbr em a').click(function(){
 				var url=jQuery(this).attr('href');
 				var thelinkobj=jQuery(this);
+				jQuery(thelinkobj).attr('target','_blank');
 				var addit=url + "&cl_member_id=" + cl_member_id + "&callback=?";
 				var clurl="http://www.commentluv.com/commentluvinc/ajaxcl_click821.php?url=" + addit;
 				jQuery.getJSON(clurl,function(data) {
 					jQuery.each(data.msg,function(i,item) {
-						jQuery(thelinkobj).text(data.msg[i].text);})
-						window.location=url;
-				}); return false;
+						jQuery(thelinkobj).text(data.msg[i].text + jQuery(thelinkobj).text());})
+						return true;
+				}); 
 			});
 		}
-		jQuery(cl_settings[3]).focus(function(){
+		jQuery(comObj).focus(function(){
 			cl_dostuff(cl_settings);
 		});
 		jQuery('#lastposts').change(function(){
@@ -34,10 +44,11 @@ function commentluv(cl_settings){
 			jQuery('#mylastpost a').replaceWith('<a href="' + url + '">' + title + '</a>');
 			jQuery('#cl_post').val('<a href="' + url + '">' + title + '</a>');
 		});
-		jQuery(cl_settings[2]).change(function(){
+		jQuery(urlObj).change(function(){
 			if(jQuery('#luv').is(":checked") && jQuery('#cl_post').val()!=""){
 				jQuery('#lastposts').empty();
 				cl_dostuff(cl_settings);
+				jQuery(comObj).unbind();
 				//jQuery(cl_settings[3]).bind('focus',cl_dostuff(cl_settings));
 			}
 		});
@@ -57,11 +68,11 @@ function commentluv(cl_settings){
 		});
 
 		function cl_dostuff(cl_settings){
-			var check=jQuery(cl_settings[2]).val();
+			var check=jQuery(urlObj).val();
 			// return if no url or checkbox is unticked or is admin
 			if(!check || !jQuery('#luv').is(":checked") || cl_settings[13]) { return }
-			var xyz=jQuery(cl_settings[2]).val();
-			var name=jQuery(cl_settings[1]).val();
+			var xyz=jQuery(urlObj).val();
+			var name=jQuery(autObj).val();
 			var url="http://www.commentluv.com/commentluvinc/ajaxcl8254.php?url="+xyz+"&version=" + cl_version +"&callback=?";
 			jQuery.getJSON(url,function(data){
 				jQuery.each(data.links, function(i,item){
@@ -73,8 +84,10 @@ function commentluv(cl_settings){
 				if(jQuery('#luv').is(":checked")){
 					jQuery('#cl_post').val('<a href="' + data.links[0].url + '">' + data.links[0].title + '</a>');
 				}
-				jQuery(cl_settings[3]).unbind();
+
 			});
+			jQuery(comObj).unbind();
+			
 		}
 	});
 }

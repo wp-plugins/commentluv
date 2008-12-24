@@ -2,7 +2,7 @@
 Plugin Name: commentluv
 Plugin URI: http://www.commentluv.com/download/ajax-commentluv-installation/
 Description: Plugin to show a link to the last post from the commenters blog in their comment. Just activate and it's ready. Will parse a feed from most sites that have a feed location specified in its head html. See the <a href="options-general.php?page=commentluv">Settings Page</a> for styling and text output options.
-Version: 2.5.4
+Version: 2.61
 Author: Andy Bailey
 Author URI: http://www.fiddyp.co.uk/
 
@@ -10,6 +10,10 @@ Author URI: http://www.fiddyp.co.uk/
 You can now edit the options from the dashboard
 *********************************************************************
 updates:
+2.6.1 - 21 Dec 08 - add intense debate
+2.6 - 6 dec 08 - separate settings page. compatibility with 2.7
+21 nov 08 - use new javascript so set form field values as just the names instead of [textarea[name='comment'] just use comment
+2.5.5 - 31 oct 08 - add function for wp_prototype_before_jquery for added compatibility
 2.5.4 - 6 oct 08 - changed included tip.php so it has curl too. added version number to url for easier remote file functions. and changed commentluv.js to prevent
 double firing of cl_dostuff (Marco Luthe from http://www.saphod.net/ (is a geek!))
 		changed tip.php so it can work with curl or iframe so everyone can use it. thanks espen from http://www.espeniversen.com/ for testing
@@ -121,9 +125,50 @@ add_action('wp_head','cl_style_script');
 add_action('comment_form','cl_add_fields');
 add_filter('preprocess_comment','cl_post',0);
 add_filter('whitelist_options','commentluv_alter_whitelist_options');
+add_filter('plugin_action_links', 'commentluv_action', -10, 2);
 register_activation_hook(__FILE__, 'commentluv_activation');
+
+if (!function_exists('wp_prototype_before_jquery')) {
+	function wp_prototype_before_jquery( $js_array ) {
+		if ( false === $jquery = array_search( 'jquery', $js_array ) )
+			return $js_array;
+	
+		if ( false === $prototype = array_search( 'prototype', $js_array ) )
+			return $js_array;
+	
+		if ( $prototype < $jquery )
+			return $js_array;
+	
+		unset($js_array[$prototype]);
+	
+		array_splice( $js_array, $jquery, 0, 'prototype' );
+	
+		return $js_array;
+	}
+	
+	add_filter( 'print_scripts_array', 'wp_prototype_before_jquery' );
+}
+
 wp_enqueue_script('jquery');
 
+
+function commentluv_action($links, $file) {
+	// adds the link to the settings page in the plugin list page
+	if ($file == plugin_basename(dirname(__FILE__).'/commentluv.php'))
+	$links[] = "<a href='options-general.php?page=commentluv/commentluv.php'>" . __('Settings', 'CommentLuv') . "</a>";
+	return $links;
+}
+
+// Add the administrative settings to the "Settings" menu by calling manage_page function
+function show_cl_options() {
+	if ( function_exists( 'add_submenu_page' ) ) {
+		add_options_page( 'CommentLuv', 'CommentLuv', 8, __FILE__, 'commentluv_manage_page' );
+	}
+}
+// Include the Manager page from file in plugin directory
+function commentluv_manage_page() {
+	include(dirname(__FILE__).'/commentluv-manager.php' );
+}
 // clean input string
 function cleanInput($input) {
 	return htmlentities(trim($input), ENT_QUOTES);
@@ -172,14 +217,6 @@ function commentluv_setup()
 	$commentluv_is_setup=1;
 }
 
-function commentluv_activation(){
-	// set version for future releases if they need to change a value
-	$version=get_option('cl_version');
-	if($version<254){
-		update_option('cl_version','254');
-	}
-}
-
 // add fields for registered user so ajaxcl will work for logged on users
 function cl_add_fields($id){
 	if (is_user_logged_in()){
@@ -226,32 +263,6 @@ function cl_post($comment_data){
 	}
 }
 
-//function for menu
-function show_cl_options() {
-	commentluv_alter_whitelist_options("");
-	// Add a new submenu under Options:
-	add_options_page('CommentLuv', 'CommentLuv', 8, 'commentluv', 'cl_options_page');
-	add_option('cl_comment_text','[name]&#8217;s last blog post..[lastpost]');
-	add_option('cl_default_on','TRUE');
-	add_option('cl_heart_tip','TRUE');
-	add_option('cl_style','border:1px solid #ffffff; background-color: #eeeeee; display:block; padding:4px;');
-	add_option('cl_author_id','author');
-	add_option('cl_site_id','url');
-	add_option('cl_comment_id','comment');
-	add_option('cl_commentform_id','#commentform');
-	add_option('cl_badge','ACL88x31-white.gif');
-	add_option('cl_member_id','');
-	add_option('cl_author_type','name');
-	add_option('cl_url_type','name');
-	add_option('cl_textarea_type','name');
-	add_option('cl_click_track','on');
-	add_option('cl_showtext','CommentLuv Enabled');
-	add_option('cl_badge_pos','');
-	add_option('cl_prepend','');
-	commentluv_activation();
-	add_option('cl_version','254');
-	add_option('cl_select_text','choose a different post to show');
-}
 
 // add style to head
 function cl_style_script(){
@@ -275,10 +286,6 @@ function cl_style_script(){
 	$cl_author_id=get_option('cl_author_id');
 	$cl_site_id=get_option('cl_site_id');
 
-	// construct selector string based on ID or name (ternery yey!)
-	$comment_selector= (get_option('cl_textarea_type')=="name")? "\"textarea[name='$cl_comment_id']\"" : "'#$cl_comment_id'";
-	$author_selector=  (get_option('cl_author_type')=="name")? "\"input[name='$cl_author_id']\"" : "'#$cl_author_id'";
-	$url_selector=  (get_option('cl_url_type')=="name")? "\"input[name='$cl_site_id']\"" : "'#$cl_site_id'";
 	$cl_version=get_option('cl_version');
 	$cl_comment_text=get_option('cl_comment_text');
 	$cl_default_on=get_option('cl_default_on');
@@ -299,17 +306,21 @@ function cl_style_script(){
 
 	// start the javascript output
 	if(is_single()) {
-		echo '<!-- Styling and script added by commentluv 2.5.4 http://www.commentluv.com -->';
+		echo '<!-- Styling and script added by commentluv 2.61 http://www.commentluv.com -->';
+		
 		echo '<style type="text/css">abbr em{'.get_option('cl_style').'} #lastposts { width: 300px; } </style>';
-		echo "\n<script type=\"text/javascript\" src=\"".WP_PLUGIN_URL."/commentluv/js/commentluv.js\"></script>";
+		echo "\n<script type=\"text/javascript\" src=\"".WP_PLUGIN_URL."/commentluv/js/commentluv";
+		if(function_exists(id_menu_items)) { echo "ID";} //get_option('cl_intense')=="on")
+		echo ".js\"></script>";
 		if(get_option('cl_heart_tip')=="TRUE"){
 			echo "<link rel=\"stylesheet\" href=\"".WP_PLUGIN_URL."/commentluv/include/tipstyle.css\" type=\"text/css\" />\n";
 			echo "<script type=\"text/javascript\"><!--//--><![CDATA[//><!--\n";
-			echo "jQuery(document).ready(function(){\n".
-			"jQuery(\"abbr em a\").each(function(i){\n".
+			echo "jQuery(document).ready(function(){\n";
+			(function_exists(id_menu_items)) ? $selector = ".idc-c-t" : $selector = "abbr";
+			echo "jQuery(\"$selector em a\").each(function(i){\n".
 			"jQuery(this).after(' <a class=\'jTip\' id=\'' + i + '\' name=\'My CommentLuv Profile\' href=\'".
 			WP_PLUGIN_URL."/commentluv/include/tip.php?width=375&url=' + jQuery(this).attr('href') +'\'><img src=\'".
-			WP_PLUGIN_URL."/commentluv/images/littleheart.png\' alt=\'#\' /></a>');\n".
+			WP_PLUGIN_URL."/commentluv/images/littleheart.png\' alt=\'#\' border=\'0\' /></a>');\n".
 			"});\n".
 			"JT_init();});\n";
 			echo "//--><!]]></script>\n";
@@ -318,9 +329,9 @@ function cl_style_script(){
 		echo "<script type=\"text/javascript\"><!--//--><![CDATA[//><!--";
 		echo "\n var cl_settings=new Array();\n";
 		echo "cl_settings[0]=\"$append_id\";\n";
-		echo "cl_settings[1]=$author_selector;\n";
-		echo "cl_settings[2]=$url_selector;\n";
-		echo "cl_settings[3]=$comment_selector;\n";
+		echo "cl_settings[1]=\"$cl_author_id\";\n";
+		echo "cl_settings[2]=\"$cl_site_id\";\n";
+		echo "cl_settings[3]=\"$cl_comment_id\";\n";
 
 		// select text
 		$cl_select_text=get_option('cl_select_text');
@@ -355,174 +366,10 @@ function cl_style_script(){
 
 		echo "//--><!]]></script>";
 
-		echo '<!-- end commentluv  http://www.fiddyp.co.uk -->';
+		echo '<!-- end commentluv  http://www.commentluv.com -->';
 		$cl_script_added=1;
 	}
 
 }
-// function to add menu page under options
-
-function cl_options_page(){
-	// Pre-2.6 compatibility
-	if ( ! defined( 'WP_CONTENT_URL' ) )
-	define( 'WP_CONTENT_URL', get_option( 'siteurl' ) . '/wp-content' );
-	if ( ! defined( 'WP_CONTENT_DIR' ) )
-	define( 'WP_CONTENT_DIR', ABSPATH . 'wp-content' );
-	if ( ! defined( 'WP_PLUGIN_URL' ) )
-	define( 'WP_PLUGIN_URL', WP_CONTENT_URL. '/plugins' );
-	if ( ! defined( 'WP_PLUGIN_DIR' ) )
-	define( 'WP_PLUGIN_DIR', WP_CONTENT_DIR . '/plugins' );
-
-	commentluv_setup();
-	if(get_option('cl_reset')=="on"){
-		update_option('cl_comment_text','[name]&#180;s last blog post..[lastpost]');
-		update_option('cl_default_on','TRUE');
-		update_option('cl_heart_tip','TRUE');
-		update_option('cl_style','border:2px solid #ffffff; display:block; padding:4px;');
-		update_option('cl_author_id','author');
-		update_option('cl_site_id','url');
-		update_option('cl_comment_id','comment');
-		update_option('cl_commentform_id','');
-		update_option('cl_badge','ACL88x31-white.gif');
-		update_option('cl_author_type','name');
-		update_option('cl_url_type','name');
-		update_option('cl_textarea_type','name');
-		update_option('cl_click_track','on');
-		update_option('cl_showtext','CommentLuv Enabled');
-		update_option('cl_reset','off');
-		update_option('cl_badge_pos','');
-		update_option('cl_prepend','');
-		update_option('cl_select_text','Choose a different post to show');
-	}
-	?>
-<div class="wrap">
-
-	<form method="post" action="options.php" id="options">
-	<?php 
-	if(function_exists('wpmu_create_blog'))
-	wp_nonce_field('commentluv-options');
-	else
-	wp_nonce_field('update-options');
-?>
-	<h2><?php _e('CommentLuv Wordpress Plugin','commentluv')?></h2>
-	<p><?php _e('This plugin takes the url from the comment form and tries to parse the feed of the site and display the last entry made','commentluv')?></p>
-	<p><?php _e('If you have any questions, comments or if you have a good idea that you would like to see in the next version of CommentLuv, please visit','commentluv')?> <a href="http://www.fiddyp.co.uk" target="_blank">FiddyP Blog</a> <?php _e('or','commentluv')?> <a href="http://www.fiddyp.co.uk/support/"><?php _e('support forum','commentluv')?></a> <?php _e('and let me know','commentluv')?>.</p>
-	<h3><?php _e('Options','commentluv')?></h3>
-	<p><?php _e('Enter the text you want displayed in the comment.','commentluv')?></p>
-	<table class="form-table">
-  <tr>
-    <td colspan="2">
-      <input class="form-table" name="cl_comment_text" value="<?php echo get_option('cl_comment_text');?>">
-    </td>
-    </tr>
-    <tr>
-    <td colspan="2">
-    <?php _e('Text displayed in the select box','commentluv');?>
-      <input class="form-table" name="cl_select_text" value="<?php echo get_option('cl_select_text');?>">
-    </td>
-    </tr>
-  <tr>
-    <td width="29%"><?php _e('Choose to have CommentLuv on by default?','commentluv')?></td>
-    <td width="71%"><select name="cl_default_on">
-      <option <?php if(get_option('cl_default_on')=="TRUE") {echo "selected=selected";}?> >TRUE</option>
-      <option <?php if(get_option('cl_default_on')=="FALSE") { echo "selected=selected";}?> >FALSE</option>
-    </select></td>
-  </tr>
-  <tr>
-    <td width="29%"><?php _e('Choose to have CommentLuv Info box?','commentluv')?></td>
-    <td width="71%"><select name="cl_heart_tip">
-      <option <?php if(get_option('cl_heart_tip')=="TRUE") {echo "selected=selected";}?> >TRUE</option>
-      <option <?php if(get_option('cl_heart_tip')=="FALSE") { echo "selected=selected";}?> >FALSE</option>
-    </select></td>
-  </tr>
-  </table>
-  <h3><?php _e('Styling')?></h3>
-  <p><?php _e('Wordpress doesn\'t allow a class to be applied to a paragraph in the comment area so we have to wrap the last blog post text in nested tags and apply styling to that instead.','commentluv')?></p>
-  <p><?php _e('Enter css styling to apply to comment','commentluv')?></strong> (<em><?php _e('inserted as','commentluv')?></em> &lt;style type="text/css"&gt;abbr em { border:2px; etc }&lt;/style&gt;)</p>
-  <table class="form-table">
-  <tr> 
-    <td valign="top" colspan="2"><input class="form-table" name="cl_style" value="<?php echo get_option('cl_style');?>"></td>
-  </tr>
-  </table>
-  <h3><?php _e('Comment Form Identification','commentluv')?></h3>
-<p><?php _e('Enter the ID or NAME value for the input fields on your comment form.','commentluv')?></p>
-<p><?php _e('Check your comment form fields to see if they use ID= or NAME= and select the appropriate type below','commentluv')?><br/>
-<?php _e('Visit CommentLuv.com if you need instructions','commentluv')?></p>
-  <table class="form-table">
-  <tr>
-    <td><?php _e('Authors Name field ID','commentluv')?></td>
-    <td><select name="cl_author_type">
-    	<option <?php if(get_option('cl_author_type')=="ID" ){echo "selected=selected";}?> >ID</option>
-    	<option <?php if(get_option('cl_author_type')=="name") {echo "selected=selected";}?> >name</option>
-    	</td>
-    <td><input name="cl_author_id" value="<?php echo get_option('cl_author_id');?>"></td>
-  </tr>
-  <tr>
-    <td><?php _e('Authors URL field ID','commentluv')?></td>
-    <td><select name="cl_url_type">
-    	<option <?php if(get_option('cl_url_type')=="ID") {echo "selected=selected";}?> >ID</option>
-    	<option <?php if(get_option('cl_url_type')=="name") {echo "selected=selected";}?> >name</option>
-    	</td>
-    <td><input name="cl_site_id" value="<?php echo get_option('cl_site_id');?>"></td>
-  </tr>
-  <tr>
-    <td><?php _e('Comment Text Area ID','commentluv')?></td>
-    <td><select name="cl_textarea_type">
-    	<option <?php if(get_option('cl_textarea_type')=="ID") {echo "selected=selected";}?> >ID</option>
-    	<option <?php if(get_option('cl_textarea_type')=="name" ){echo "selected=selected";}?> >name</option>
-    	</td>
-    <td><input name="cl_comment_id" value="<?php echo get_option('cl_comment_id');?>"></td>
-  </tr>
-</table>
-<h3><?php _e('Display Badge','commentluv')?></h3>
-<p>Many thanks to <a href="http://byteful.com">Byteful Traveller</a> for creating these images.</p>
-	<table class="form-table">
-	<tr>
-      <td><?php _e('Choose badge to display','commentluv')?> </td>
-      <?php $badge=get_option('cl_badge');?>
-        <td><label><input type="radio" <?php if($badge=="CL91x17-white.gif"){echo "checked ";}?> name="cl_badge" value="CL91x17-white.gif"><img src="<?php echo WP_PLUGIN_URL;?>/commentluv/CL91x17-white.gif"/></label></td>
-        <td><label><input type="radio" <?php if($badge=="CL91x17-black.gif"){echo "checked ";}?> name="cl_badge" value="CL91x17-black.gif"><img src="<?php echo WP_PLUGIN_URL;?>/commentluv/CL91x17-black.gif"/></label></td>
-		<td><label><input type="radio" <?php if($badge=="ACL88x31-white.gif"){echo "checked ";}?> name="cl_badge" value="ACL88x31-white.gif"><img src="<?php echo WP_PLUGIN_URL;?>/commentluv/ACL88x31-white.gif"/></label></td>
-		<td><label><input type="radio" <?php if($badge=="ACL88x31-black.gif"){echo "checked ";}?> name="cl_badge" value="ACL88x31-black.gif"><img src="<?php echo WP_PLUGIN_URL;?>/commentluv/ACL88x31-black.gif"/></label></td>
-		<td><label><input type="radio" <?php if($badge=="nothing.gif"){echo "checked ";}?> name="cl_badge" value="nothing.gif"><?php _e('Show nothing','commentluv')?></label></td>
-  </tr></table>
-  <table class="form-table">
-  <tr><td><label><input type="radio" <?php if($badge=="text"){echo "checked ";}?> name="cl_badge" value="text"><?php _e('Show text','commentluv')?></label> <input class="form-table" type="text" name="cl_showtext" value="<?php echo get_option('cl_showtext');?>"></input></td><td></td><td><label><?php _e('Append badge to (DIV or object ID) optional','commentluv')?><input class="form-table" type="text" name="cl_badge_pos" value="<?php echo get_option('cl_badge_pos');?>"></input></td><td></td><td><label><?php _e('Prepend html before badge or text (optional)','commentluv')?></label><input class="form-table" type="text" name="cl_prepend" value="<?php echo htmlspecialchars(get_option('cl_prepend'));?>"></input></tr>
-    </table>
-    <h3><?php _e('CommentLuv Member ID','commentluv')?></h3>
-    <p><?php _e('If you register your site for free at','commentluv')?> <a href="http://www.commentluv.com">CommentLuv.com</a> <?php _e('you will be able to open up lots of features that are for members only like link tracking so you can see which of the comments you make on CommentLuv blogs are getting the last blog post clicked. Do NOT enter a number if you do not have one','commentluv')?></p>
-    <table class="form-table">
-    <tr><td><?php _e('Your CommentLuv.com member ID','commentluv')?></td>
-	<td><input name="cl_member_id" value="<?php echo get_option('cl_member_id');?>"></td>
-    </tr>
-    <tr><td><?php _e('Enable click tracking?','commentluv')?></td>
-    <td><input type="checkbox" name="cl_click_track" <?php if(get_option('cl_click_track')=="on"){echo "checked";};?> /></td>
-    </tr>
-    </table>
-	  <input type="hidden" name="page_options" value="cl_comment_text,cl_default_on,cl_style,cl_author_id,cl_site_id,cl_comment_id,cl_commentform_id,cl_badge,cl_member_id,cl_click_track,cl_form_type,cl_author_type,cl_url_type,cl_textarea_type,cl_reset,cl_showtext,cl_badge_pos,cl_prepend,cl_select_text,cl_heart_tip" />
-	  <input type="hidden" name="action" value="update" />
-	  <input type="hidden" name="option_page" value="commentluv" />
-	  <p><input type="checkbox" name="cl_reset"/><?php _e('Reset to Default Settings','commentluv')?>
-	<p class="submit"><input type="submit" name="Submit" value="<?php _e('Update Options') ?>" /></p>
-	</form>
-<p>Andy Bailey<br/>
-Fiddyp.co.uk
-<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-<input type="hidden" name="cmd" value="_donations">
-<input type="hidden" name="business" value="root@teamplaylotto.com">
-<input type="hidden" name="item_name" value="CommentLuv">
-<input type="hidden" name="no_shipping" value="0">
-<input type="hidden" name="no_note" value="1">
-<input type="hidden" name="currency_code" value="USD">
-<input type="hidden" name="tax" value="0">
-<input type="hidden" name="lc" value="GB">
-<input type="hidden" name="bn" value="PP-DonationsBF">
-<input type="image" src="https://www.paypal.com/en_GB/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online.">
-<img alt="" border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1">
-</form>
-
-</div>
- <?php }
-
 
 ?>
