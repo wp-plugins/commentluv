@@ -23,7 +23,7 @@ add_option('cl_click_track','on');
 add_option('cl_showtext','CommentLuv Enabled');
 add_option('cl_badge_pos','');
 add_option('cl_prepend','');
-add_option('cl_version','260');
+add_option('cl_version','263');
 add_option('cl_select_text','choose a different post to show');
 add_option('cl_intense','off');
 // Pre-2.6 compatibility
@@ -41,8 +41,8 @@ commentluv_setup();
 function commentluv_activation(){
 	// set version for future releases if they need to change a value
 	$version=get_option('cl_version');
-	if($version<261){
-		update_option('cl_version','261');
+	if($version<263){
+		update_option('cl_version','263');
 		
 	}
 }
