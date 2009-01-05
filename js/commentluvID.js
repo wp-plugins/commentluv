@@ -1,6 +1,7 @@
 jQuery.noConflict();
 function commentluv(cl_settings){
 	jQuery(document).ready(function() {
+		if(jQuery('.idc-c-m').is(":visible")){
 		parentformname = jQuery('#IDCommentNewThreadText').parents("form").attr("id");
 		if(cl_settings[0]==""){
 			cl_settings[0]=parentformname;
@@ -104,7 +105,7 @@ function commentluv(cl_settings){
 		}
 
 		function cl_addstuff(){
-			if(jQuery('#mylastpost a').attr("href").indexOf("commentluv.com/error") < 0){
+			if(jQuery('#mylastpost a').attr("href").indexOf("commentluv.com/error") < 0 && jQuery('.idc-c-m').is(":visible")){
 				jQuery('#IDCommentNewThreadText').val(jQuery('#CLIDCommentNewThreadText').val() + "\n\n<em>" + jQuery('#txtNameNewThread').val() + "'s Recent post..." + jQuery('#mylastpost em').html());
 			} else {
 				jQuery('#IDCommentNewThreadText').val(jQuery('#CLIDCommentNewThreadText').val());
@@ -113,5 +114,5 @@ function commentluv(cl_settings){
 			jQuery('#mylastpostbox').hide();
 			jQuery('#IDCommentNewThreadText').show();
 		}
-	})
+	}})
 }
