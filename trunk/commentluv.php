@@ -10,6 +10,7 @@ Author URI: http://www.fiddyp.co.uk/
 You can now edit the options from the dashboard
 *********************************************************************
 updates:
+2.6.4 - 15 jan 09 - removed name/id pull down boxes. now use only name value (all fields have a name value by default)
 2.6.3 - 5 jan 09 - fix for intense debate. pointed to by http://dannybrown.me
 2.6.2 - 26 dec 08 minor bug with update to codex
 2.6.1 - 21 Dec 08 - add intense debate
@@ -308,7 +309,7 @@ function cl_style_script(){
 
 	// start the javascript output
 	if(is_single()) {
-		echo '<!-- Styling and script added by commentluv 2.63 http://www.commentluv.com -->';
+		echo '<!-- Styling and script added by commentluv 2.64 http://www.commentluv.com -->';
 		
 		echo '<style type="text/css">abbr em{'.get_option('cl_style').'} #lastposts { width: 300px; } </style>';
 		echo "\n<script type=\"text/javascript\" src=\"".WP_PLUGIN_URL."/commentluv/js/commentluv";

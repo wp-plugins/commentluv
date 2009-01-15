@@ -1,4 +1,5 @@
 <?php 
+// fixed up to 2.6.4 
 if ( ! defined( 'WP_PLUGIN_URL' ) )
 define( 'WP_PLUGIN_URL', WP_CONTENT_URL. '/plugins' );
 $commentluvdirectory = WP_PLUGIN_URL . '/' . dirname( plugin_basename(__FILE__) );
@@ -16,14 +17,11 @@ add_option('cl_comment_id','comment');
 add_option('cl_commentform_id','#commentform');
 add_option('cl_badge','ACL88x31-white.gif');
 add_option('cl_member_id','');
-add_option('cl_author_type','name');
-add_option('cl_url_type','name');
-add_option('cl_textarea_type','name');
 add_option('cl_click_track','on');
 add_option('cl_showtext','CommentLuv Enabled');
 add_option('cl_badge_pos','');
 add_option('cl_prepend','');
-add_option('cl_version','263');
+add_option('cl_version','264');
 add_option('cl_select_text','choose a different post to show');
 add_option('cl_intense','off');
 // Pre-2.6 compatibility
@@ -41,8 +39,8 @@ commentluv_setup();
 function commentluv_activation(){
 	// set version for future releases if they need to change a value
 	$version=get_option('cl_version');
-	if($version<263){
-		update_option('cl_version','263');
+	if($version<264){
+		update_option('cl_version','264');
 		
 	}
 }
@@ -63,9 +61,6 @@ if ($_POST['submit']=='reset'){
 		update_option('cl_comment_id','comment');
 		update_option('cl_commentform_id','');
 		update_option('cl_badge','ACL88x31-white.gif');
-		update_option('cl_author_type','name');
-		update_option('cl_url_type','name');
-		update_option('cl_textarea_type','name');
 		update_option('cl_click_track','on');
 		update_option('cl_showtext','CommentLuv Enabled');
 		update_option('cl_reset','off');
@@ -80,10 +75,8 @@ if ($_POST['Submit']==__('Update Options')){
 	update_option('cl_default_on',$_POST['cl_default_on']);
 	update_option('cl_heart_tip',$_POST['cl_heart_tip']);
 	update_option('cl_style',$_POST['cl_style']);
-	update_option('cl_author_type',$_POST['cl_author_type']);
 	update_option('cl_author_id',$_POST['cl_author_id']);
-	update_option('cl_url_type',$_POST['cl_site_id']);
-	update_option('cl_textarea_type',$_POST['cl_textarea_type']);
+	update_option('cl_site_id',$_POST['cl_site_id']);
 	update_option('cl_comment_id',$_POST['cl_comment_id']);
 	update_option('cl_badge',$_POST['cl_badge']);
 	update_option('cl_showtext',$_POST['cl_showtext']);
@@ -152,27 +145,15 @@ if ($_POST['Submit']==__('Update Options')){
   <table class="form-table">
   <tr ><td colspan="3">These settings shouldn't need changing unless you use a non standard form.</td></tr>
   <tr>
-    <td><?php _e('Authors Name field ID','commentluv')?></td>
-    <td><select name="cl_author_type">
-    	<option <?php if(get_option('cl_author_type')=="ID" ){echo "selected=selected";}?> >ID</option>
-    	<option <?php if(get_option('cl_author_type')=="name") {echo "selected=selected";}?> >name</option>
-    	</td>
+    <td><?php _e('Authors Name field name','commentluv')?></td>
     <td><input name="cl_author_id" value="<?php echo get_option('cl_author_id');?>"></td>
   </tr>
   <tr>
-    <td><?php _e('Authors URL field ID','commentluv')?></td>
-    <td><select name="cl_url_type">
-    	<option <?php if(get_option('cl_url_type')=="ID") {echo "selected=selected";}?> >ID</option>
-    	<option <?php if(get_option('cl_url_type')=="name") {echo "selected=selected";}?> >name</option>
-    	</td>
+    <td><?php _e('Authors URL field name','commentluv')?></td>
     <td><input name="cl_site_id" value="<?php echo get_option('cl_site_id');?>"></td>
   </tr>
   <tr>
-    <td><?php _e('Comment Text Area ID','commentluv')?></td>
-    <td><select name="cl_textarea_type">
-    	<option <?php if(get_option('cl_textarea_type')=="ID") {echo "selected=selected";}?> >ID</option>
-    	<option <?php if(get_option('cl_textarea_type')=="name" ){echo "selected=selected";}?> >name</option>
-    	</td>
+    <td><?php _e('Comment Text Area name','commentluv')?></td>
     <td><input name="cl_comment_id" value="<?php echo get_option('cl_comment_id');?>"></td>
   </tr>
 </table>
@@ -201,7 +182,7 @@ if ($_POST['Submit']==__('Update Options')){
     <td><input type="checkbox" name="cl_click_track" <?php if(get_option('cl_click_track')=="on"){echo "checked";};?> /></td>
     </tr>
     </table>
-	  <input type="hidden" name="page_options" value="cl_comment_text,cl_default_on,cl_style,cl_author_id,cl_site_id,cl_comment_id,cl_commentform_id,cl_badge,cl_member_id,cl_click_track,cl_form_type,cl_author_type,cl_url_type,cl_textarea_type,cl_reset,cl_showtext,cl_badge_pos,cl_prepend,cl_select_text,cl_heart_tip" />
+	  <input type="hidden" name="page_options" value="cl_comment_text,cl_default_on,cl_style,cl_author_id,cl_site_id,cl_comment_id,cl_commentform_id,cl_badge,cl_member_id,cl_click_track,cl_form_type,cl_reset,cl_showtext,cl_badge_pos,cl_prepend,cl_select_text,cl_heart_tip" />
 	  <!-- //<input type="hidden" name="action" value="update" />
 	  //<input type="hidden" name="option_page" value="commentluv" />-->
 	<p class="submit"><input type="submit" name="Submit" value="<?php _e('Update Options') ?>" /></p>
