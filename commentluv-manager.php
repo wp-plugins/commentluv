@@ -1,5 +1,5 @@
 <?php 
-// fixed up to 2.6.4 
+// fixed up to 2.6.5
 if ( ! defined( 'WP_PLUGIN_URL' ) )
 define( 'WP_PLUGIN_URL', WP_CONTENT_URL. '/plugins' );
 $commentluvdirectory = WP_PLUGIN_URL . '/' . dirname( plugin_basename(__FILE__) );
@@ -21,7 +21,7 @@ add_option('cl_click_track','on');
 add_option('cl_showtext','CommentLuv Enabled');
 add_option('cl_badge_pos','');
 add_option('cl_prepend','');
-add_option('cl_version','264');
+add_option('cl_version','265');
 add_option('cl_select_text','choose a different post to show');
 add_option('cl_intense','off');
 // Pre-2.6 compatibility
@@ -39,8 +39,8 @@ commentluv_setup();
 function commentluv_activation(){
 	// set version for future releases if they need to change a value
 	$version=get_option('cl_version');
-	if($version<264){
-		update_option('cl_version','264');
+	if($version<265){
+		update_option('cl_version','265');
 		
 	}
 }
