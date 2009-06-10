@@ -2,7 +2,7 @@
 Plugin Name: CommentLuv
 Plugin URI: http://comluv.com/download/commentluv-wordpress/
 Description: Plugin to show a link to the last post from the commenters blog by parsing the feed at their given URL when they leave a comment. Rewards your readers and encourage more comments.
-Version: 2.7
+Version: 2.7.1
 Author: Andy Bailey
 Author URI: http://fiddyp.comluv.com/
 
@@ -15,11 +15,11 @@ if ( !class_exists('commentluv') ) {
 	class commentluv
 	{
 		//localization domain
-		public $plugin_domain = 'commentluv';
-		public $plugin_url;
-		public $db_option = 'commentluv_options';
-		public $cl_version = 270;
-		public $api_url;
+		var $plugin_domain = 'commentluv';
+		var $plugin_url;
+		var $db_option = 'commentluv_options';
+		var $cl_version = 270;
+		var $api_url;
 
 		//initialize the plugin
 		function commentluv()
@@ -241,9 +241,9 @@ if ( !class_exists('commentluv') ) {
 				}
 				$options['badge'] = $this->plugin_url . 'images/' . $options['badge'];
 				if($badge_text == ''){
-					$badge='<a href="http://comluv.com" target="_new"><img src="' . $options['badge'] . '" border=0 alt="' . $options['show_text'] .'" title="'.$options['show_text'].'"/></a>';
+					$badge='<a href="http://comluv.com" target="_blank"><img src="' . $options['badge'] . '" border=0 alt="' . $options['show_text'] .'" title="'.$options['show_text'].'"/></a>';
 				} else {
-					$badge=$options['badge_text'];
+					$badge='<a href="http://comluv.com" target="_blank">'.$options['show_text'].'</a>';
 				}
 				echo '<div id="commentluv">' . $options['prepend'] . '<input type="checkbox" id="doluv" name="doluv" ' .
 				$default_on . ' style="width:25px;"></input><span id="mylastpost" style="clear: both">' .
@@ -332,12 +332,15 @@ if ( !class_exists('commentluv') ) {
 						curl_setopt($curl,CURLOPT_TIMEOUT,7);
 						$content=curl_exec($curl);
 						if(!curl_error($curl)){
-							$data=json_decode($content);
-							curl_close($curl);
-							if($data->status != 200){
-								// unsuccessful confirmation.
-								// have a tantrum here if you want.
+							if(function_exists(json_decode)){
+								$data=json_decode($content);
+								if($data->status != 200){
+									// unsuccessful confirmation.
+									// have a tantrum here if you want.
+								}
 							}
+							curl_close($curl);
+
 						}
 					} elseif(ini_get('allow_url_fopen')){
 						$result = @file_get_contents($url);
