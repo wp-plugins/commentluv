@@ -2,7 +2,7 @@
 Plugin Name: CommentLuv
 Plugin URI: http://comluv.com/download/commentluv-wordpress/
 Description: Plugin to show a link to the last post from the commenters blog by parsing the feed at their given URL when they leave a comment. Rewards your readers and encourage more comments.
-Version: 2.7.3
+Version: 2.7.4
 Author: Andy Bailey
 Author URI: http://fiddyp.comluv.com/
 
@@ -12,6 +12,7 @@ Author URI: http://fiddyp.comluv.com/
 11 Jun 2009 - Small bug in using text as badge fixed. Changed strpos to strrpos to find last tag code in text. priority 1 for comment_text
 removed request id data from being inserted (too many complaints!) and adjusted the way comment status change is handled. approve is done at post submission and
 delete is done at change status (with no request id sent)
+12 Jun 2009 - small fixes for valid xhtml on images and checkbox . remove identifying .-= / =-. from inserted link on display time. happy birthday to me
 
 */
 // Avoid name collision
@@ -23,7 +24,7 @@ if ( !class_exists('commentluv') ) {
 		var $plugin_domain = 'commentluv';
 		var $plugin_url;
 		var $db_option = 'commentluv_options';
-		var $cl_version = 273;
+		var $cl_version = 274;
 		var $api_url;
 
 		//initialize the plugin
@@ -57,7 +58,7 @@ if ( !class_exists('commentluv') ) {
 			add_action('comment_post',array(&$this,'update_cl_status'), 2, 3); // call when comment gets posted
 			add_action('comment_form',array(&$this, 'add_fields')); // add hidden fields during comment form display time
 			add_filter('plugin_action_links', array(&$this,'commentluv_action'), -10, 2); // add a settings page link to the plugin description. use 2 for allowed vars
-			add_filter('comment_text', array(&$this,'do_shortcode'),1);	// replace inserted data with hidden span on display time of comment
+			add_filter('comment_text', array(&$this,'do_shortcode'),10);	// replace inserted data with hidden span on display time of comment
 			add_filter('pre_comment_content',array(&$this,'cl_post'),10); // extract extra fields data and insert data to end of comment
 		}
 
@@ -233,7 +234,7 @@ if ( !class_exists('commentluv') ) {
 				$options = get_option($this->db_option);
 				// choose as image or as text
 				$badge_text = $options['badge'] == 'text'?'on':'';
-				$default_on = $options['default_on'] == 'on'?'checked':'';
+				$default_on = $options['default_on'] == 'on'?'checked="checked"':'';
 				// untick the box if user is admin
 				global $user_ID;
 				if( $user_ID ) {
@@ -351,15 +352,37 @@ if ( !class_exists('commentluv') ) {
 
 		// use my own shortcode that was inserted at submission time and hide the params
 		function do_shortcode($commentcontent) {
+			$options = get_option($this->db_option);
 			if(strpos($commentcontent,".-=")){
-				$options = get_option($this->db_option);
 				// get bit that was added
 				$start = strrpos($commentcontent,'.-=');
-				// append our doobries on the end of the hidden span
 				$beforelinktext = substr($commentcontent,0,$start);
-				$thelinktext = substr($commentcontent,$start);
+				$thelinktext = substr($commentcontent,$start+3,-3);
 				$commentcontent = $beforelinktext.'<span class="cluv">'.$thelinktext;
 				// do heart info
+				if($options['heart_tip'] == 'on'){
+					$commentcontent .= '<span class="heart_tip_box"><img class="heart_tip" alt="My ComLuv Profile" border="0" width="16" height="14" src="'. $this->plugin_url . 'images/littleheart.gif"/></span>';
+				}
+				$commentcontent .= '</span>';
+			}
+			// remove old codes
+			if(strpos($commentcontent,"[rq=") && strpos($commentcontent,"[/rq]")){
+				// get bit that was added
+				$start = strpos($commentcontent,'[rq=');
+				$end = strpos($commentcontent,'[/rq]') + 5;
+				$params = substr($commentcontent,$start,$end-$start);
+				global $comment;
+				$author_name = $comment->comment_author;
+				$author_url = $comment->comment_author_url;
+				// get array of params
+				$params_arr = explode(",",substr($params,4,-6));
+				// get and prepare the text specified by the user
+				$prepend_text = $options['comment_text'];
+				$search = array('[name]','[type]','[lastpost]');
+				$replace = array($author_name,$params_arr[2],'');
+				$inserted = '<span class="cluv">';
+				$inserted .= str_replace($search,$replace,$prepend_text);
+				$commentcontent = str_replace($params,$inserted,$commentcontent);
 				if($options['heart_tip'] == 'on'){
 					$commentcontent .= '<span class="heart_tip_box"><img class="heart_tip" alt="My ComLuv Profile" border="0" width="16" height="14" src="'. $this->plugin_url . 'images/littleheart.gif"/></span>';
 				}
