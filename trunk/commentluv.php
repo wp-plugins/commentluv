@@ -2,12 +2,17 @@
 Plugin Name: CommentLuv
 Plugin URI: http://comluv.com/download/commentluv-wordpress/
 Description: Plugin to show a link to the last post from the commenters blog by parsing the feed at their given URL when they leave a comment. Rewards your readers and encourage more comments.
-Version: 2.7.1
+Version: 2.7.3
 Author: Andy Bailey
 Author URI: http://fiddyp.comluv.com/
 
 26 Apr 2009 - Start the new version using a class and updated localization (thanks Vladimir Prelovac for your great book on Wordpress Plugin Development!)
 05 Jun 2009 - Finalized last functions and integrated API. big up to @wpmuguru for API coding!
+10 Jun 2009 - Fix for php4 hosting. changed "public" to "var" and check function exists for json_decode
+11 Jun 2009 - Small bug in using text as badge fixed. Changed strpos to strrpos to find last tag code in text. priority 1 for comment_text
+removed request id data from being inserted (too many complaints!) and adjusted the way comment status change is handled. approve is done at post submission and
+delete is done at change status (with no request id sent)
+
 */
 // Avoid name collision
 if ( !class_exists('commentluv') ) {
@@ -18,7 +23,7 @@ if ( !class_exists('commentluv') ) {
 		var $plugin_domain = 'commentluv';
 		var $plugin_url;
 		var $db_option = 'commentluv_options';
-		var $cl_version = 270;
+		var $cl_version = 273;
 		var $api_url;
 
 		//initialize the plugin
@@ -52,11 +57,8 @@ if ( !class_exists('commentluv') ) {
 			add_action('comment_post',array(&$this,'update_cl_status'), 2, 3); // call when comment gets posted
 			add_action('comment_form',array(&$this, 'add_fields')); // add hidden fields during comment form display time
 			add_filter('plugin_action_links', array(&$this,'commentluv_action'), -10, 2); // add a settings page link to the plugin description. use 2 for allowed vars
-			add_filter('comment_text', array(&$this,'do_shortcode'));	// replace inserted data with hidden span on display time of comment
+			add_filter('comment_text', array(&$this,'do_shortcode'),1);	// replace inserted data with hidden span on display time of comment
 			add_filter('pre_comment_content',array(&$this,'cl_post'),10); // extract extra fields data and insert data to end of comment
-			add_filter('get_comment_excerpt',array(&$this,'excerpt_tag_remove')); // remove the tags when get comment excerpt is used
-			add_filter('comment_excerpt',array(&$this,'excerpt_tag_remove')); // remove the tags when comment excerpt is used
-
 		}
 
 		// hook the options page
@@ -80,7 +82,7 @@ if ( !class_exists('commentluv') ) {
 				wp_enqueue_script('jquery');
 				global $wp_version;
 				// see if hoverintent library is already included (2.7 >)
-				if (version_compare($wp_version,"2.7","<")){
+				if (version_compare($wp_version,"2.8","<")){
 					wp_enqueue_script('hoverIntent','/'.PLUGINDIR.'/'.dirname( plugin_basename(__FILE__)).'/js/hoverIntent.js',array('jquery'));
 				} else {
 					wp_enqueue_script('hoverIntent','/'.WPINC.'/js/hoverIntent.js',array('jquery'));
@@ -287,7 +289,7 @@ if ( !class_exists('commentluv') ) {
 			return $id;
 		}
 
-		// hook the pre_comment_content to add the link using a tag after the user submits their comment but before it gets saved in db
+		// hook the pre_comment_content to add the link
 		function cl_post($commentdata){
 			if( isset($_POST['cl_post']) && $_POST['request_id'] !='' && is_numeric($_POST['choice_id']) && isset($_POST['cl_type']) ) {
 				// get values posted
@@ -298,8 +300,23 @@ if ( !class_exists('commentluv') ) {
 				$request_id = $_POST['request_id'];
 				$choice_id = $_POST['choice_id'];
 				$cl_type = $_POST['cl_type'];
-				// insert identifying data to end of comment
-				$commentdata.= "\n[rq=$request_id,$choice_id,$cl_type][/rq]$luvlink";
+				// convert data to put into comment content
+				$options = get_option($this->db_option);
+				$prepend_text = $options['comment_text'];
+				$search = array('[name]','[type]','[lastpost]');
+				$replace = array($_POST["{$options['author_name']}"],$cl_type,$luvlink);
+				$inserted = str_replace($search,$replace,$prepend_text);
+				// insert identifying data and insert text/link to end of comment
+				$commentdata.= "\n.-= $inserted =-.";
+				// tell comluv that the comment was submitted
+				$luvlink = stripslashes($luvlink);
+				$thelinkstart = strpos($luvlink,'="');
+				$cutit = substr($luvlink,$thelinkstart+2);
+				$hrefend=strpos($cutit,'"');
+				$thelink = substr($cutit,0,$hrefend);
+				// got the url, construct url to tell comluv
+				$url = $this->api_url . "?type=approve&request_id=$request_id&post_id=$choice_id&url=$thelink";
+				$content = $this->call_comluv($url);
 			}
 			return $commentdata;
 		}
@@ -311,89 +328,44 @@ if ( !class_exists('commentluv') ) {
 					$status = 'approve';
 				}
 				$comment = get_comment($cid);
-				if(strpos($comment->comment_content,"[rq=")){
+				if(strpos($comment->comment_content,".-=")){
 					// comment can be approved or deleted in the comluv db
 					$url = $this->api_url ."?type={$status}&url=";
-					// get the added bits from comment
+					// get the link
 					$commentcontent = $comment->comment_content;
-					$start = strpos($commentcontent,'[rq=');
-					$end = strpos($commentcontent,'[/rq]');
-					$params = substr($commentcontent,$start+4,$end-$start-5);
-					$arr = explode(",",$params);
+					$start = strrpos($commentcontent,'.-=');
+					$thelink = substr($commentcontent,$start+4,strlen($commentcontent)-$start-5);	
+					$hrefstart= strpos($thelink,'="');
+					$cutit = substr($thelink,$hrefstart+2);
+					$hrefend=strpos($cutit,'"');
+					$thelink=substr($cutit,0,$hrefend);
+					// get comment date
+					$date = $comment->comment_date_gmt;
 					// construct url with added params for approving comment to comluv
-					$url.=$comment->comment_author_url . "&request_id=" . $arr[0] . "&post_id=" . $arr[1] . "&version=" . $this->cl_version;
+					$url.=$thelink . "&comment_date=$date&version=" . $this->cl_version;
 					// call the url ..
-					if(function_exists("curl_init")){
-						//setup curl values
-						$curl=curl_init();
-						curl_setopt($curl,CURLOPT_URL,$url);
-						curl_setopt($curl,CURLOPT_HEADER,0);
-						curl_setopt($curl,CURLOPT_RETURNTRANSFER,TRUE);
-						curl_setopt($curl,CURLOPT_TIMEOUT,7);
-						$content=curl_exec($curl);
-						if(!curl_error($curl)){
-							if(function_exists(json_decode)){
-								$data=json_decode($content);
-								if($data->status != 200){
-									// unsuccessful confirmation.
-									// have a tantrum here if you want.
-								}
-							}
-							curl_close($curl);
-
-						}
-					} elseif(ini_get('allow_url_fopen')){
-						$result = @file_get_contents($url);
-					}
-				} // end if comment content contains a rq var
-			}
+					$content = $this->call_comluv($url);
+				} // end if comment content contains a .-=
+			} 
 		}
 
 		// use my own shortcode that was inserted at submission time and hide the params
 		function do_shortcode($commentcontent) {
-			if(strpos($commentcontent,"[rq=")){
-				// get bit that was added
-				$start = strpos($commentcontent,'[rq=');
-				$end = strpos($commentcontent,'[/rq]') + 5;
-				$params = substr($commentcontent,$start,$end-$start);
-				$luvlink = substr($commentcontent,$end);
-				// insert hidden span for params and chop off luvlink for now
-				$commentcontent = substr($commentcontent,0,$start) . '<span class="cl_hidden" style="display:none;">' . $params . '</span>';
-				// get name and site of comment author
+			if(strpos($commentcontent,".-=")){
 				$options = get_option($this->db_option);
-				global $comment;
-				$author_name = $comment->comment_author;
-				$author_url = $comment->comment_author_url;
-				// get array of params
-				$params = explode(",",substr($params,4,-6));
-				// get and prepare the text specified by the user
-				$prepend_text = $options['comment_text'];
-				$search = array('[name]','[type]','[lastpost]');
-				$replace = array($author_name,$params[2],$luvlink);
-				$inserted = str_replace($search,$replace,$prepend_text);
+				// get bit that was added
+				$start = strrpos($commentcontent,'.-=');
 				// append our doobries on the end of the hidden span
-				$commentcontent .= '<span class="cluv">'.$inserted;
+				$beforelinktext = substr($commentcontent,0,$start);
+				$thelinktext = substr($commentcontent,$start);
+				$commentcontent = $beforelinktext.'<span class="cluv">'.$thelinktext;
 				// do heart info
 				if($options['heart_tip'] == 'on'){
-					$commentcontent .= '<span class="heart_tip_box"><img class="heart_tip" alt="My ComLuv Profile" border=0 width="16" height="14" src="'. $this->plugin_url . 'images/littleheart.gif"/></span>';
+					$commentcontent .= '<span class="heart_tip_box"><img class="heart_tip" alt="My ComLuv Profile" border="0" width="16" height="14" src="'. $this->plugin_url . 'images/littleheart.gif"/></span>';
 				}
 				$commentcontent .= '</span>';
 			}
 			return $commentcontent;
-		}
-		// hook the get_comment_excerpt filter to remove tags
-		function excerpt_tag_remove($theexcerpt){
-			if(strpos($theexcerpt,"[rq=")){
-				$start = strpos($theexcerpt,'[rq=');
-				if(strpos($theexcerpt,"[/rq]")) {
-					$end=strpos($theexcerpt,'[/rq]') + 5;
-					$params= substr($theexcerpt,$start,$end-$start);
-					$theexcerpt = str_replace($params,"",$theexcerpt);
-				} else {
-					$theexcerpt = substr($theexcerpt,0,$start) . '...';
-				}
-			}
-			return $theexcerpt;
 		}
 
 		// set up default values
@@ -414,6 +386,32 @@ if ( !class_exists('commentluv') ) {
 
 			// load translation
 			load_textdomain($this->plugin_domain, $mofile);
+		}
+		// call home to tell about comment submission or status
+		function call_comluv($url){
+			if(function_exists("curl_init")){
+				//setup curl values
+				$curl=curl_init();
+				curl_setopt($curl,CURLOPT_URL,$url);
+				curl_setopt($curl,CURLOPT_HEADER,0);
+				curl_setopt($curl,CURLOPT_RETURNTRANSFER,TRUE);
+				curl_setopt($curl,CURLOPT_TIMEOUT,7);
+				$content=curl_exec($curl);
+				if(!curl_error($curl)){
+					if(function_exists(json_decode)){
+						$data=json_decode($content);
+						if($data->status != 200){
+							// unsuccessful confirmation.
+							// have a tantrum here if you want.
+						}
+					}
+					curl_close($curl);
+
+				}
+			} elseif(ini_get('allow_url_fopen')){
+				$content = @file_get_contents($url);
+			}
+			return $content;
 		}
 
 
