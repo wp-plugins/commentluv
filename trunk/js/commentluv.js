@@ -37,18 +37,14 @@ jQuery.noConflict();
 		});
 		// set the event listener for the click action
 		$('.cluv a').click(function(){
-
-			// get request_id from within hidden span and url that was clicked			
-			var str = $(this).parents("span").prev("span").text();
-			var params = str.substr(4).split(",");
 			var url=$(this).attr('href');
 			// set link to open in a new window
-			$(this).attr("target","_blank");	
-			var addit= "?type=click&request_id=" + params[0] + "&url=" + url + "&callback=?";
+			$(this).attr("target","_blank");
+			var addit= "?type=click&url=" + url + "&callback=?";
 			var clurl=cl_settings['api_url'] + addit;
 			// call api, don't worry about returned data
 			$.getJSON(clurl);
-			return true;		
+			return true;
 		});
 		// set the event listener for the click of the checkbox
 		$('#doluv').click(function(){
@@ -68,10 +64,10 @@ jQuery.noConflict();
 		});
 		// set hover event for heart tip
 		if(cl_settings['heart_tip'] == "on"){
-			$('.heart_tip_box').hoverIntent({over:heart_big,out: heart_small,interval : 250,timeout: 350});
+			$('.heart_tip_box').hoverIntent({over:heart_big,out: do_nowt,interval : 50,timeout: 50});
 		}
 		function heart_big(){
-			$(this).append('<span id="heart_tip_big" style="position:absolute; z-index: 1000; background-color: pink; width: 62px;"><img src="' + cl_settings['images'] + 'loader.gif" alt="Loading" width="62" height="13" /></span>');
+			$("body").append('<span id="heart_tip_big" style="position:absolute; z-index: 101; background-color: pink; width: 62px;"><img src="' + cl_settings['images'] + 'loader.gif" alt="Loading" width="62" height="13" /></span>');
 			// find where to put left edge of info box (in case at right hand side of screen
 			//opera Netscape 6 Netscape 4x Mozilla
 			if (window.innerWidth || window.innerHeight){
@@ -83,19 +79,28 @@ jQuery.noConflict();
 				docwidth = document.body.clientWidth;
 				docheight = document.body.clientHeight;
 			}
-
-			var xpos = getAbsoluteLeft(this);
+			var hasarea = docwidth - getAbsoluteLeft(this);
+			if(hasarea > 350){
+				var xpos = getAbsoluteLeft(this);
+			} else {
+				var xpos = getAbsoluteLeft(this) - 300;
+			}
 			if(xpos > (docwidth - 350)){
 				xpos = xpos - 320;
 			}
-			$('#heart_tip_big').css({'left':xpos + "px", 'margin-top' : '-17px'});
-			var linkspan = $(this).parents(".cluv"); 
+			var ypos = getAbsoluteTop(this);
+			$('#heart_tip_big').css({'left':xpos + "px", 'top' :ypos + "px" });
+			$('#heart_tip_big').hoverIntent({over:do_nowt,out: heart_small, interval : 50, timeout: 350});
+			var linkspan = $(this).parents(".cluv");
 			var link = $(linkspan).find("a:first").attr("href");
 			var url = cl_settings['api_url'] + "?type=info&url=" + link + '&version='+ cl_settings['cl_version'] + '&callback=?';
 			do_info(url);
 		}
 		function heart_small(){
-			$(this).find("#heart_tip_big").remove();
+			$("body").find("#heart_tip_big").remove();
+		}
+		function do_nowt(){
+			return;
 		}
 
 
@@ -111,6 +116,17 @@ jQuery.noConflict();
 			o = oParent
 		}
 		return oLeft
+	}
+	function getAbsoluteTop(objectId) {
+		// Get an object top position from the upper left viewport corner
+		o = objectId;
+		oTop = o.offsetTop            // Get top position from the parent object
+		while(o.offsetParent!=null) { // Parse the parent hierarchy up to the document element
+			oParent = o.offsetParent  // Get parent object reference
+			oTop += oParent.offsetTop // Add parent top position
+			o = oParent
+		}
+		return oTop
 	}
 
 	function do_info(url){
@@ -161,7 +177,7 @@ jQuery.noConflict();
 			});
 			// disable focus event
 			$("textarea[name='" + cl_settings['comment'] + "']").unbind();
-		} 
+		}
 	}
 
 })(jQuery);
