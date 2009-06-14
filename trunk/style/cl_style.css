@@ -5,7 +5,7 @@
 
 }
 #commentluv {
-	clear: both;
+	clear: both !important;
 }
 #commentluv img{
 	border: 0 !important;
@@ -14,7 +14,9 @@
 .cluv {
 border:1px solid #fff;
 padding: 5px;
-display: block
+display: block;
+font-size: 100% !important;
+text-transform: none !important;
 }
 #lastposts {
         width: 500px;

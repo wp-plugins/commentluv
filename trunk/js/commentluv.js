@@ -66,6 +66,8 @@ jQuery.noConflict();
 		if(cl_settings['heart_tip'] == "on"){
 			$('.heart_tip_box').hoverIntent({over:heart_big,out: do_nowt,interval : 50,timeout: 50});
 		}
+		// set click on anywhere closes info box 
+		$(document).click(heart_small);
 		function heart_big(){
 			$("body").append('<span id="heart_tip_big" style="position:absolute; z-index: 101; background-color: pink; width: 62px;"><img src="' + cl_settings['images'] + 'loader.gif" alt="Loading" width="62" height="13" /></span>');
 			// find where to put left edge of info box (in case at right hand side of screen
