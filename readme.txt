@@ -4,7 +4,7 @@ Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv
 Requires at least: 2.6.5
 Tested up to: 2.8
-Stable tag: 2.7.5
+Stable tag: 2.7.6
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -23,18 +23,13 @@ You can visit http://comluv.com to find out more about this plugin.
 == Details ==
 
 CommentLuv functionality
-* Works with Wordpress 2.65, 2.7.1 and 2.8
-* Compatible with WPmu and logged on users
-* Language support
-* Communicates with remote API when comment is deleted or spammed
-* Uses WP includes for jQuery and hoverIntent for improved compatibility with other plugins
-* Auto configures to recognize comment form
+* Works with Wordpress 2.65, 2.7.1 and 2.8, Compatible with WPmu and logged on users, Language support, Communicates with remote API when comment is deleted or spammed, Uses WP includes for jQuery and hoverIntent for improved compatibility with other plugins, Auto configures to recognize comment form
 
 == Installation ==
 
 Wordpress : Extract the zip file and just drop the contents in the wp-content/plugins/ directory of your WordPress installation and then activate the Plugin from Plugins page.
 
-WordpressMu : Same as above
+WordpressMu : Same as above (do not place in mu-plugins)
 
 == Configuration ==
 
@@ -42,7 +37,7 @@ Display Options :
 Enter the text you want displayed in the comment for the link that is added.
 [name] -> replaced with comment author name
 [type] -> replaced with blog, twitter or digg depending on what type of link the author chose to include.
-[lastpot] -> replaced with the titled link.
+[lastpost] -> replaced with the titled link.
 
 Text displayed in the select box -> shows in the pull down box when a user has more than one post to choose from
 
@@ -58,8 +53,11 @@ CommentLuv member area -> for future use
 
 Technical Settings:
 Authors name field name -> The name value of the field used on your comment form for the comment authors name
+
 Email field name -> The name value of the field used on your comment form for the comment authors email
+
 Authors URL field name -> The name value of the field used on your comment form for the comment authors site URL
+
 Comments Text Area Name -> The name value of the field used on your comment form for the comment 
 
 update -> updates the settings
@@ -67,7 +65,7 @@ update -> updates the settings
 reset -> if you get in trouble, click this to reset to default settings
 
 == Adding to your template ==
-Use &lt;php cl_show_badge(); ?&gt; in your comments.php file where you want the badge and checkbox to be shown
+Use &lt;php cl\_display\_badge(); ?&gt; in your comments.php file where you want the badge and checkbox to be shown
 
 == Frequently Asked Questions ==
 
@@ -87,6 +85,7 @@ You can submit a support ticket at http://comluv.com
 1. settings page
 
 2. in use
+
 This plugin inserts fields to the comment form at run time. If you find there is no badge shown on the comment form after you first install it, please check your comments.php file for the command &lt;?php do\_action('comment\_form', $post->ID); ?&gt; before the &lt;/form> tag
 
 For logged on users and administrators, be sure to check your profile on your own dashboard and make sure there is a url entered.

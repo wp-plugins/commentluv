@@ -1,5 +1,4 @@
 // commentluv.js 2.7
-jQuery.noConflict();
 (function($) {
 	$(document).ready(function(){
 		// get form object that is parent of textarea named "comment"

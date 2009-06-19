@@ -2,7 +2,7 @@
 Plugin Name: CommentLuv
 Plugin URI: http://comluv.com/download/commentluv-wordpress/
 Description: Plugin to show a link to the last post from the commenters blog by parsing the feed at their given URL when they leave a comment. Rewards your readers and encourage more comments.
-Version: 2.7.5
+Version: 2.7.6
 Author: Andy Bailey
 Author URI: http://fiddyp.comluv.com/
 
@@ -13,8 +13,12 @@ Author URI: http://fiddyp.comluv.com/
 removed request id data from being inserted (too many complaints!) and adjusted the way comment status change is handled. approve is done at post submission and
 delete is done at change status (with no request id sent)
 12 Jun 2009 - small fixes for valid xhtml on images and checkbox . remove identifying .-= / =-. from inserted link on display time. happy birthday to me
-12 Jun 2009 - fix php4 from not allowing last string pos (strrpos) (thanks http://www.makeupandbeautyblog.com/ && http://jahangiri.us/news/)
-			- validates for Kelson (speedforce.org)
+13 Jun 2009 - fix php4 from not allowing last string pos (strrpos) (thanks http://www.makeupandbeautyblog.com/ && http://jahangiri.us/news/)
+			- validates for Kelson (speedforce.org) (had a big cake yesterday nomnom)
+14 Jun 2009 - Italian translation added (and fix CR in string on manager page). Thanks go to Gianni Diurno
+16 Jun 2009 - Bug fix, use_template checkbox not displaying when selected on settings page (breaker). typo in settings page now uses <?php cl_display_badge(); ?> (oops!)
+			- added global variable for badgeshown to prevent mulitple instances (template contains function call AND use template check is off)
+			- fixed output of prepend html using decode html and stripslashes. Added green background to update settings button.
 
 */
 // Avoid name collision
@@ -25,7 +29,7 @@ if (! class_exists ( 'commentluv' )) {
 		var $plugin_domain = 'commentluv';
 		var $plugin_url;
 		var $db_option = 'commentluv_options';
-		var $cl_version = 275;
+		var $cl_version = 276;
 		var $api_url;
 		
 		//initialize the plugin
@@ -157,6 +161,7 @@ if (! class_exists ( 'commentluv' )) {
 				$options ['url_name'] = $_POST ['cl_url_name'];
 				$options ['comment_name'] = $_POST ['cl_comment_name'];
 				$options ['email_name'] = $_POST ['cl_email_name'];
+				$options ['use_template'] = $_POST['cl_use_template'];
 				
 				// check for errors
 				if (count ( $errors->errors ) > 0) {
@@ -181,13 +186,13 @@ if (! class_exists ( 'commentluv' )) {
 			// set value to checked if option is on (for showing correct status of checkbox and radio button in settings page)
 			$default_on = $options ['default_on'] == 'on' ? 'checked' : '';
 			$heart_tip = $options ['heart_tip'] == 'on' ? 'checked' : '';
-			$badge1 = $options ['badge'] == 'ACL88x31-black2.gif' ? 'checked' : '';
-			$badge2 = $options ['badge'] == 'ACL88x31-white2.gif' ? 'checked' : '';
-			$badge3 = $options ['badge'] == 'CL91x17-black2.gif' ? 'checked' : '';
-			$badge4 = $options ['badge'] == 'CL91x17-white2.gif' ? 'checked' : '';
-			$badge5 = $options ['badge'] == 'nothing.gif' ? 'checked' : '';
-			$use_template = $options ['use_template'] == 'on' ? 'checked' : '';
-			$badge_text = $options ['badge'] == 'text' ? 'checked' : '';
+			$badge1 = $options ['badge'] == 'ACL88x31-black2.gif' ? 'checked="checked"' : '';
+			$badge2 = $options ['badge'] == 'ACL88x31-white2.gif' ? 'checked="checked"' : '';
+			$badge3 = $options ['badge'] == 'CL91x17-black2.gif' ? 'checked="checked"' : '';
+			$badge4 = $options ['badge'] == 'CL91x17-white2.gif' ? 'checked="checked"' : '';
+			$badge5 = $options ['badge'] == 'nothing.gif' ? 'checked="checked"' : '';
+			$use_template = $options ['use_template'] == 'on' ? 'checked="checked"' : '';
+			$badge_text = $options ['badge'] == 'text' ? 'checked="checked"' : '';
 			
 			// url for form submit
 			$action_url = $_SERVER ['REQUEST_URI'];
@@ -196,6 +201,7 @@ if (! class_exists ( 'commentluv' )) {
 		// shortcode for showing badge and drop down box
 		function display_badge() {
 			if (is_single ()) {
+				global $badgeshown;
 				$options = get_option ( $this->db_option );
 				// choose as image or as text
 				$badge_text = $options ['badge'] == 'text' ? 'on' : '';
@@ -213,7 +219,8 @@ if (! class_exists ( 'commentluv' )) {
 				} else {
 					$badge = '<a href="http://comluv.com" target="_blank">' . $options ['show_text'] . '</a>';
 				}
-				echo '<div id="commentluv">' . $options ['prepend'] . '<input type="checkbox" id="doluv" name="doluv" ' . $default_on . ' style="width:25px;"></input><span id="mylastpost" style="clear: both">' . $badge . '</span><img class="clarrow" id="showmore" src="' . $this->plugin_url . 'images/down-arrow.gif" alt="show more" style="display:none;"/></div><div id="lastposts" style="display: none;"></div>';
+				echo '<div id="commentluv">' . htmlspecialchars_decode(stripslashes($options ['prepend'])) . '<input type="checkbox" id="doluv" name="doluv" ' . $default_on . ' style="width:25px;"></input><span id="mylastpost" style="clear: both">' . $badge . '</span><img class="clarrow" id="showmore" src="' . $this->plugin_url . 'images/down-arrow.gif" alt="show more" style="display:none;"/></div><div id="lastposts" style="display: none;"></div>';
+				$badgeshown = TRUE;
 			}
 		}
 		// hook the comment form to add fields for url for logged in users
@@ -246,7 +253,8 @@ if (! class_exists ( 'commentluv' )) {
 			echo '<input type="hidden" name="request_id" />';
 			echo '<input type="hidden" name="cl_post" id="cl_post"/>';
 			// check if using php call comments.php or not
-			if ($options ['use_template'] == '') {
+			global $badgeshown;
+			if ($options ['use_template'] == '' && !$badgeshown) {
 				$this->display_badge ();
 			}
 			return $id;
@@ -416,6 +424,7 @@ if (! class_exists ( 'commentluv' )) {
 
 // start commentluv class engines
 if (class_exists ( 'commentluv' )) :
+	$badgeshown=FALSE;
 	$commentluv = new commentluv ( );
 	
 	// confirm warp capability
@@ -427,6 +436,7 @@ if (class_exists ( 'commentluv' )) :
 
 
 endif;
+
 
 // function for template call
 function cl_display_badge() {
