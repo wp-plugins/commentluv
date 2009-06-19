@@ -8,8 +8,7 @@
 				<form action="<?php echo $action_url ?>" method="POST">
 					<input type="hidden" name="submitted" value="1" />
 					<?php wp_nonce_field('commentluv-nonce');?>
-					<p><?php _e('This plugin takes the url from the comment form and tries to parse the feed of the site and display the last entry made. 
-					If you have any questions, comments or if you have a good idea that you would like to see in the next version of CommentLuv, please visit http://comluv.com and let me know.',$this->plugin_domain);?></p>
+					<p><?php _e('This plugin takes the url from the comment form and tries to parse the feed of the site and display the last entry made. If you have any questions, comments or if you have a good idea that you would like to see in the next version of CommentLuv, please visit http://comluv.com and let me know.',$this->plugin_domain);?></p>
 					<h3><?php _e('Display Options',$this->plugin_domain);?></h3>
 					<label for="cl_comment_text"><?php _e('Enter the text you want displayed in the comment',$this->plugin_domain);?></label> <br/>
 					<input type="text" size="50" name="cl_comment_text" value="<?php echo stripslashes($comment_text);?>"/>
@@ -25,7 +24,7 @@
 					</p>
 					<p>
 					<input type="checkbox" name="cl_use_template" <?php echo $use_template;?>/>
-					<label for="cl_use_template"><?php _e('Use template insert to show badge and checkbox?',$this->plugin_domain);?> ( &lt;?php cl_show_badge(); ?&gt; )</label>
+					<label for="cl_use_template"><?php _e('Use template insert to show badge and checkbox?',$this->plugin_domain);?> ( &lt;?php cl_display_badge(); ?&gt; )</label>
 					</p>
 					<h3><?php _e('Display Badge',$this->plugin_domain);?></h3>
 					<p><?php _e('Many thanks to <a href="http://byteful.com">Byteful Traveller</a> for creating these images.',$this->plugin_domain);?></p>
@@ -66,7 +65,7 @@
     					<td><input value="<?php echo $comment_name;?>" type="text" name="cl_comment_name"/></td>
   						</tr>
 						</tbody></table>
-					<div class="submit"><input type="submit" name="Submit" value="update" /></div>
+					<div class="submit" style="width: 70px; background-color: green; padding-left: 5px;"><input type="submit" name="Submit" value="update" /></div>
 					
 					
 				</form>
