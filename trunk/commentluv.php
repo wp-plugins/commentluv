@@ -2,7 +2,7 @@
 Plugin Name: CommentLuv
 Plugin URI: http://comluv.com/download/commentluv-wordpress/
 Description: Plugin to show a link to the last post from the commenters blog by parsing the feed at their given URL when they leave a comment. Rewards your readers and encourage more comments.
-Version: 2.7.6
+Version: 2.7.61
 Author: Andy Bailey
 Author URI: http://fiddyp.comluv.com/
 
@@ -14,12 +14,12 @@ removed request id data from being inserted (too many complaints!) and adjusted 
 delete is done at change status (with no request id sent)
 12 Jun 2009 - small fixes for valid xhtml on images and checkbox . remove identifying .-= / =-. from inserted link on display time. happy birthday to me
 13 Jun 2009 - fix php4 from not allowing last string pos (strrpos) (thanks http://www.makeupandbeautyblog.com/ && http://jahangiri.us/news/)
-			- validates for Kelson (speedforce.org) (had a big cake yesterday nomnom)
-14 Jun 2009 - Italian translation added (and fix CR in string on manager page). Thanks go to Gianni Diurno
+- validates for Kelson (speedforce.org) (had a big cake yesterday nomnom)
+14 Jun 2009 - Italian translation added (and fix CR in string on manager page). Thanks go to Gianni Diurno http://gidibao.net
 16 Jun 2009 - Bug fix, use_template checkbox not displaying when selected on settings page (breaker). typo in settings page now uses <?php cl_display_badge(); ?> (oops!)
-			- added global variable for badgeshown to prevent mulitple instances (template contains function call AND use template check is off)
-			- fixed output of prepend html using decode html and stripslashes. Added green background to update settings button.
-
+- added global variable for badgeshown to prevent mulitple instances (template contains function call AND use template check is off)
+- fixed output of prepend html using decode html and stripslashes. Added green background to update settings button.
+19 Jun 2009 -  fix for htmlspecialchars_decode causing error in wp < 2.8 (thanks @mitch_m for testing)
 */
 // Avoid name collision
 if (! class_exists ( 'commentluv' )) {
@@ -31,7 +31,7 @@ if (! class_exists ( 'commentluv' )) {
 		var $db_option = 'commentluv_options';
 		var $cl_version = 276;
 		var $api_url;
-		
+
 		//initialize the plugin
 		function commentluv() {
 			global $wp_version, $pagenow;
@@ -42,12 +42,12 @@ if (! class_exists ( 'commentluv' )) {
 				$this->handle_load_domain ();
 			}
 			$exit_msg = __ ( 'CommentLuv requires Wordpress 2.6.5 or newer.', $this->plugin_domain ) . '<a href="http://codex.wordpress.org/Upgrading_Wordpress">' . __ ( 'Please Update!', $this->plugin_domain ) . '</a>';
-			
+
 			// can you dig it?
 			if (version_compare ( $wp_version, "2.6.5", "<" )) {
 				exit ( $exit_msg ); // no diggedy
 			}
-			
+
 			// action hooks
 			$this->plugin_url = trailingslashit ( WP_PLUGIN_URL . '/' . dirname ( plugin_basename ( __FILE__ ) ) );
 			$this->api_url = 'http://api.comluv.com/cl_api/commentluvapi.php';
@@ -61,7 +61,7 @@ if (! class_exists ( 'commentluv' )) {
 			add_filter ( 'comment_text', array (&$this, 'do_shortcode' ), 10 ); // replace inserted data with hidden span on display time of comment
 			add_filter ( 'pre_comment_content', array (&$this, 'cl_post' ), 10 ); // extract extra fields data and insert data to end of comment
 		}
-		
+
 		// hook the options page
 		function admin_menu() {
 			$menutitle = '<img src="' . $this->plugin_url . 'images/littleheart.gif" alt=""/> ';
@@ -113,7 +113,7 @@ if (! class_exists ( 'commentluv' )) {
 		function commentluv_style() {
 			echo '<link rel="stylesheet" href="' . $this->plugin_url . 'style/cl_style.css" type="text/css" />';
 		}
-		
+
 		// get plugin options
 		function get_options() {
 			// default values
@@ -123,7 +123,7 @@ if (! class_exists ( 'commentluv' )) {
 			if (! isset ( $_POST ['reset'] )) {
 				$saved = get_option ( $this->db_option );
 			}
-			
+
 			// assign values
 			if (! empty ( $saved )) {
 				foreach ( $saved as $key => $option ) {
@@ -137,18 +137,18 @@ if (! class_exists ( 'commentluv' )) {
 			// return the options
 			return $options;
 		}
-		
+
 		// handle saving and displaying options
 		function handle_options() {
 			$options = $this->get_options ();
 			if (isset ( $_POST ['submitted'] )) {
-				
+
 				// initialize the error class
 				$errors = new WP_Error ( );
-				
+
 				// check security
 				check_admin_referer ( 'commentluv-nonce' );
-				
+
 				$options = array ();
 				$options ['comment_text'] = htmlspecialchars ( $_POST ['cl_comment_text'] );
 				$options ['select_text'] = htmlspecialchars ( $_POST ['cl_select_text'] );
@@ -162,7 +162,7 @@ if (! class_exists ( 'commentluv' )) {
 				$options ['comment_name'] = $_POST ['cl_comment_name'];
 				$options ['email_name'] = $_POST ['cl_email_name'];
 				$options ['use_template'] = $_POST['cl_use_template'];
-				
+
 				// check for errors
 				if (count ( $errors->errors ) > 0) {
 					echo '<div class="error"><h3>';
@@ -177,7 +177,7 @@ if (! class_exists ( 'commentluv' )) {
 					update_option ( $this->db_option, $options );
 					echo '<div class="updated fade"><p>Plugin settings saved.</p></div>';
 				}
-			
+
 			}
 			// loop through each option and assign it as key=value
 			foreach ( $options as $key => $value ) {
@@ -193,7 +193,7 @@ if (! class_exists ( 'commentluv' )) {
 			$badge5 = $options ['badge'] == 'nothing.gif' ? 'checked="checked"' : '';
 			$use_template = $options ['use_template'] == 'on' ? 'checked="checked"' : '';
 			$badge_text = $options ['badge'] == 'text' ? 'checked="checked"' : '';
-			
+
 			// url for form submit
 			$action_url = $_SERVER ['REQUEST_URI'];
 			include ('commentluv-manager.php');
@@ -219,7 +219,11 @@ if (! class_exists ( 'commentluv' )) {
 				} else {
 					$badge = '<a href="http://comluv.com" target="_blank">' . $options ['show_text'] . '</a>';
 				}
-				echo '<div id="commentluv">' . htmlspecialchars_decode(stripslashes($options ['prepend'])) . '<input type="checkbox" id="doluv" name="doluv" ' . $default_on . ' style="width:25px;"></input><span id="mylastpost" style="clear: both">' . $badge . '</span><img class="clarrow" id="showmore" src="' . $this->plugin_url . 'images/down-arrow.gif" alt="show more" style="display:none;"/></div><div id="lastposts" style="display: none;"></div>';
+				if($options['prepend']){
+					$prepend = stripslashes($options['prepend']);
+					$decodeprepend = htmlspecialchars_decode_own($prepend);
+				}
+				echo '<div id="commentluv">' . $decodeprepend . '<input type="checkbox" id="doluv" name="doluv" ' . $default_on . ' style="width:25px;"></input><span id="mylastpost" style="clear: both">' . $badge . '</span><img class="clarrow" id="showmore" src="' . $this->plugin_url . 'images/down-arrow.gif" alt="show more" style="display:none;"/></div><div id="lastposts" style="display: none;"></div>';
 				$badgeshown = TRUE;
 			}
 		}
@@ -228,7 +232,7 @@ if (! class_exists ( 'commentluv' )) {
 			$options = get_option ( $this->db_option );
 			$cl_author_id = $options ['author_name'];
 			$cl_site_id = $options ['url_name'];
-			
+
 			if (is_user_logged_in ()) {
 				// get options values and insert as hidden fields
 				global $userdata;
@@ -243,7 +247,7 @@ if (! class_exists ( 'commentluv' )) {
 						$url = $userbloginfo [1]->siteurl;
 					}
 				}
-				
+
 				echo "<input type='hidden' id='$cl_author_id' name='$cl_author_id' value='$author' />";
 				echo "<input type='hidden' id='$cl_site_id' name='$cl_site_id' value='$url' />";
 			}
@@ -259,7 +263,7 @@ if (! class_exists ( 'commentluv' )) {
 			}
 			return $id;
 		}
-		
+
 		// hook the pre_comment_content to add the link
 		function cl_post($commentdata) {
 			if (isset ( $_POST ['cl_post'] ) && $_POST ['request_id'] != '' && is_numeric ( $_POST ['choice_id'] ) && isset ( $_POST ['cl_type'] )) {
@@ -334,7 +338,7 @@ if (! class_exists ( 'commentluv' )) {
 				}
 				$commentcontent .= '</span>';
 			}
-			
+
 			// remove old codes
 			if (strpos ( $commentcontent, "[rq=" ) && strpos ( $commentcontent, "[/rq]" )) {
 				// get bit that was added
@@ -360,21 +364,21 @@ if (! class_exists ( 'commentluv' )) {
 			}
 			return $commentcontent;
 		}
-		
+
 		// set up default values
 		function install() {
 			// set default options
 			$this->get_options ();
 		}
-		
+
 		// Localization support
 		function handle_load_domain() {
 			// get current language
 			$locale = get_locale ();
-			
+
 			// locate translation file
 			$mofile = WP_PLUGIN_DIR . '/' . plugin_basename ( dirname ( __FILE__ ) ) . '/lang/' . $this->plugin_domain . '-' . $locale . '.mo';
-			
+
 			// load translation
 			load_textdomain ( $this->plugin_domain, $mofile );
 		}
@@ -393,11 +397,11 @@ if (! class_exists ( 'commentluv' )) {
 						$data = json_decode ( $content );
 						if ($data->status != 200) {
 							// unsuccessful confirmation.
-						// have a tantrum here if you want.
+							// have a tantrum here if you want.
 						}
 					}
 					curl_close ( $curl );
-				
+
 				}
 			} elseif (ini_get ( 'allow_url_fopen' )) {
 				$content = @file_get_contents ( $url );
@@ -406,7 +410,7 @@ if (! class_exists ( 'commentluv' )) {
 		}
 		// find last occurrence of string in string (for php 4)
 		function my_strrpos($haystack, $needle, $offset = 0) {
-			// same as strrpos, except $needle can be a string 
+			// same as strrpos, except $needle can be a string
 			// http://www.webmasterworld.com/forum88/10570.htm
 			$strrpos = false;
 			if (is_string ( $haystack ) && is_string ( $needle ) && is_numeric ( $offset )) {
@@ -418,21 +422,21 @@ if (! class_exists ( 'commentluv' )) {
 			}
 			return $strrpos;
 		}
-	
+
 	}
 }
 
 // start commentluv class engines
 if (class_exists ( 'commentluv' )) :
-	$badgeshown=FALSE;
-	$commentluv = new commentluv ( );
-	
-	// confirm warp capability
-	if (isset ( $commentluv )) {
-		// engage
-		register_activation_hook ( __FILE__, array (&$commentluv, 'install' ) );
-	
-	}
+$badgeshown=FALSE;
+$commentluv = new commentluv ( );
+
+// confirm warp capability
+if (isset ( $commentluv )) {
+	// engage
+	register_activation_hook ( __FILE__, array (&$commentluv, 'install' ) );
+
+}
 
 
 endif;
@@ -444,4 +448,10 @@ function cl_display_badge() {
 	$temp->display_badge ();
 }
 
+function htmlspecialchars_decode_own($string,$style=ENT_COMPAT)
+{
+	$translation = array_flip(get_html_translation_table(HTML_SPECIALCHARS,$style));
+	if($style === ENT_QUOTES){ $translation['&#039;'] = '\''; }
+	return strtr($string,$translation);
+}
 ?>

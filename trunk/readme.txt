@@ -4,7 +4,7 @@ Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv
 Requires at least: 2.6.5
 Tested up to: 2.8
-Stable tag: 2.7.6
+Stable tag: 2.7.61
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -23,13 +23,18 @@ You can visit http://comluv.com to find out more about this plugin.
 == Details ==
 
 CommentLuv functionality
-* Works with Wordpress 2.65, 2.7.1 and 2.8, Compatible with WPmu and logged on users, Language support, Communicates with remote API when comment is deleted or spammed, Uses WP includes for jQuery and hoverIntent for improved compatibility with other plugins, Auto configures to recognize comment form
+* Works with Wordpress 2.65, 2.7.1 and 2.8
+* Compatible with WPmu and logged on users
+* Language support
+* Communicates with remote API when comment is deleted or spammed
+* Uses WP includes for jQuery and hoverIntent for improved compatibility with other plugins
+* Auto configures to recognize comment form
 
 == Installation ==
 
 Wordpress : Extract the zip file and just drop the contents in the wp-content/plugins/ directory of your WordPress installation and then activate the Plugin from Plugins page.
 
-WordpressMu : Same as above (do not place in mu-plugins)
+WordpressMu : Same as above
 
 == Configuration ==
 
@@ -37,7 +42,7 @@ Display Options :
 Enter the text you want displayed in the comment for the link that is added.
 [name] -> replaced with comment author name
 [type] -> replaced with blog, twitter or digg depending on what type of link the author chose to include.
-[lastpost] -> replaced with the titled link.
+[lastpot] -> replaced with the titled link.
 
 Text displayed in the select box -> shows in the pull down box when a user has more than one post to choose from
 
@@ -53,11 +58,8 @@ CommentLuv member area -> for future use
 
 Technical Settings:
 Authors name field name -> The name value of the field used on your comment form for the comment authors name
-
 Email field name -> The name value of the field used on your comment form for the comment authors email
-
 Authors URL field name -> The name value of the field used on your comment form for the comment authors site URL
-
 Comments Text Area Name -> The name value of the field used on your comment form for the comment 
 
 update -> updates the settings
@@ -65,7 +67,7 @@ update -> updates the settings
 reset -> if you get in trouble, click this to reset to default settings
 
 == Adding to your template ==
-Use &lt;php cl\_display\_badge(); ?&gt; in your comments.php file where you want the badge and checkbox to be shown
+Use &lt;php cl_show_badge(); ?&gt; in your comments.php file where you want the badge and checkbox to be shown
 
 == Frequently Asked Questions ==
 
@@ -85,7 +87,26 @@ You can submit a support ticket at http://comluv.com
 1. settings page
 
 2. in use
-
 This plugin inserts fields to the comment form at run time. If you find there is no badge shown on the comment form after you first install it, please check your comments.php file for the command &lt;?php do\_action('comment\_form', $post->ID); ?&gt; before the &lt;/form> tag
 
 For logged on users and administrators, be sure to check your profile on your own dashboard and make sure there is a url entered.
+
+== ChangeLog ==
+05 Jun 2009 - Finalized last functions and integrated API. big up to @wpmuguru for API coding!
+
+10 Jun 2009 - Fix for php4 hosting. changed "public" to "var" and check function exists for json_decode
+
+11 Jun 2009 - Small bug in using text as badge fixed. Changed strpos to strrpos to find last tag code in text. priority 1 for comment_text
+removed request id data from being inserted (too many complaints!) and adjusted the way comment status change is handled. approve is done at post submission and delete is done at change status (with no request id sent)
+
+12 Jun 2009 - small fixes for valid xhtml on images and checkbox . remove identifying .-= / =-. from inserted link on display time. 
+
+13 Jun 2009 - fix php4 from not allowing last string pos (strrpos) 
+- validates for Kelson (speedforce.org) (had a big cake yesterday nomnom)
+
+14 Jun 2009 - Italian translation added (and fix CR in string on manager page). Thanks go to Gianni Diurno
+
+16 Jun 2009 - Bug fix, use_template checkbox not displaying when selected on settings page (breaker). typo in settings page now uses &lt;?php cl\_display\_badge(); ?&gt;
+- added global variable for badgeshown to prevent mulitple instances (template contains function call AND use template check is off)
+- fixed output of prepend html using decode html and stripslashes. Added green background to update settings button.
+19 Jun 2009 -  fix for htmlspecialchars\_decode causing error in wp < 2.8
