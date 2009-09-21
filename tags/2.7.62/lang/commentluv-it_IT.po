@@ -1,0 +1,127 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: CommentLuv 2.7.5\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-06-19 10:27-0000\n"
+"PO-Revision-Date: \n"
+"Last-Translator: Andy Bailey <admin@comluv.com>\n"
+"Language-Team: @commentluv, Gianni Diurno <admin@comluv.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: English\n"
+"X-Poedit-Country: UNITED KINGDOM\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SearchPath-0: ..\n"
+
+#: ../commentluv-manager.php:11
+msgid "This plugin takes the url from the comment form and tries to parse the feed of the site and display the last entry made. If you have any questions, comments or if you have a good idea that you would like to see in the next version of CommentLuv, please visit http://comluv.com and let me know."
+msgstr ""
+"Questo plugin ottiene l'url dal modulo dei commenti provando di conseguenza l'analisi del feed del sito facendo sì che sia possibile mostrarne i contenuti più recenti. \n"
+"Qualora avessi qualche domanda, commento o avessi una brillante idea da proporre per la prossima versione di CommentLuv, visita il FiddyP Blog oppure il forum di supporto e fammi sapere."
+
+#: ../commentluv-manager.php:12
+msgid "Display Options"
+msgstr "Mostra opzioni"
+
+#: ../commentluv-manager.php:13
+msgid "Enter the text you want displayed in the comment"
+msgstr "Inserisci il testo che desideri sia mostrato nel commento"
+
+#: ../commentluv-manager.php:16
+msgid "Text displayed in the select box"
+msgstr "Testo visibile nella casella di selezione"
+
+#: ../commentluv-manager.php:20
+msgid "CommentLuv on by default?"
+msgstr "CommentLuv attivo come predefinita?"
+
+#: ../commentluv-manager.php:23
+msgid "Show heart on links?"
+msgstr "Desideri mostrare il cuore nei link?"
+
+#: ../commentluv-manager.php:27
+msgid "Use template insert to show badge and checkbox?"
+msgstr "Desideri utilizzare il template per mostrare il badge e la casella di testo?"
+
+#: ../commentluv-manager.php:29
+msgid "Display Badge"
+msgstr "Mostra badge"
+
+#: ../commentluv-manager.php:30
+msgid "Many thanks to <a href=\"http://byteful.com\">Byteful Traveller</a> for creating these images."
+msgstr "Un grazie sincero a <a href=\"http://byteful.com\">Byteful Traveller</a> per avere realizzato queste immagini."
+
+#: ../commentluv-manager.php:33
+msgid "Choose badge to display"
+msgstr "Scegli il badge da mostrare"
+
+#: ../commentluv-manager.php:39
+msgid "Show nothing"
+msgstr "niente"
+
+#: ../commentluv-manager.php:42
+msgid "Show text"
+msgstr "Mostra testo"
+
+#: ../commentluv-manager.php:42
+msgid "Prepend html before badge or text (optional)"
+msgstr "Prefisso html per il badge o testo (facoltativo)"
+
+#: ../commentluv-manager.php:44
+msgid "CommentLuv Member Area"
+msgstr "Area membri CommentLuv"
+
+#: ../commentluv-manager.php:45
+msgid "If you register your site for free at <a href=\"http://comluv.com\">ComLuv.com</a> you will be able to open up lots of features that are for members only like link tracking so you can see which of the comments you make on CommentLuv blogs are getting the last blog post clicked and the ability to send back more than just blog posts. You can even create your own WP2.7 blog there with commentluv pre-installed!."
+msgstr "Qualora registrassi gratuitamente il tuo sito a <a href=\"http://comluv.com\">ComLuv.com</a>, avrai la possibilità di aggiungere delle ulteriori funzioni riservate esclusivamente ai soli membri: il tracciamento dei link in modo tale che tu possa vedere quali commenti effettuati sui blog CommentLuv abbiano generato delle visite al tuo ultimo articolo nonché la possibilità di rimandare non solo gli articoli. Potrai infine creare il tuo blog WP2.8 con commentluv pre-installato!."
+
+#: ../commentluv-manager.php:47
+msgid "Technical Settings"
+msgstr "Impostazioni tecniche"
+
+#: ../commentluv-manager.php:48
+msgid "In most cases you shouldn't need to change these settings unless you have a customized comment form"
+msgstr "Non dovrai modificare queste impostazioni sino a quando non avrai personalizzato il modulo dei commenti"
+
+#: ../commentluv-manager.php:52
+msgid "Authors Name field name"
+msgstr "Nome per il campo autore"
+
+#: ../commentluv-manager.php:56
+msgid "Email field name"
+msgstr "Nome per il campo email"
+
+#: ../commentluv-manager.php:60
+msgid "Authors URL field name"
+msgstr "Nome per il campo URL autore"
+
+#: ../commentluv-manager.php:64
+msgid "Comment Text Area name"
+msgstr "Nome per l'area di testo dei commenti"
+
+#: ../commentluv-manager.php:72
+msgid "Reset to Default Settings"
+msgstr "Ripristina alle impostazioni predefinite"
+
+#: ../commentluv-manager.php:77
+msgid "Are you sure you want to reset your settings? Press OK to continue"
+msgstr "Sei certo di volere ripristinare le tue impostazioni? Premi OK per proseguire"
+
+#: ../commentluv.php:44
+msgid "CommentLuv requires Wordpress 2.6.5 or newer."
+msgstr "CommentLuv richiede una versione di Wordpress 2.6.5 o superiore."
+
+#: ../commentluv.php:44
+msgid "Please Update!"
+msgstr "Aggiorna!"
+
+#: ../commentluv.php:75
+msgid "Settings"
+msgstr "Impostazioni"
+
+#: ../commentluv.php:169
+msgid "There were errors with your chosen settings"
+msgstr "Si sono verificati alcuni errori in relazione alle impostazioni che hai scelto"
+
