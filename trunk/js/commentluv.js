@@ -94,7 +94,7 @@
 			$('#heart_tip_big').hoverIntent({over:do_nowt,out: heart_small, interval : 50, timeout: 350});
 			var linkspan = $(this).parents(".cluv");
 			var link = $(linkspan).find("a:first").attr("href");
-			var url = cl_settings['api_url'] + "?type=info&url=" + link + '&version='+ cl_settings['cl_version'] + '&callback=?';
+			var url = cl_settings['api_url'] + "?type=info&refer=" + cl_settings['refer'] + "&url=" + link + '&version='+ cl_settings['cl_version'] + '&callback=?';
 			do_info(url);
 		}
 		function heart_small(){
@@ -144,11 +144,12 @@
 	function cl_dostuff(){
 		// only fire if checkbox is checked
 		if($('#doluv').is(":checked")){
-			var check=$(cl_settings['urlObj']).val();
+			var check=$(cl_settings['urlObj']).val().toLowerCase();
 			// and there is a url provided
-			if(!check) { return }
+			if(!check) { return; }
+			if(check.indexOf('http://') < 0) { return;}
 			$('#mylastpost img').attr("src",cl_settings['images'] + "loader.gif");
-			var url=cl_settings['api_url'] + "?type=request&url="+check+"&version="+ cl_settings['cl_version'] +"&callback=?";
+			var url=cl_settings['api_url'] + "?type=request&refer=" + cl_settings['refer'] + "&url="+check+"&version="+ cl_settings['cl_version'] +"&callback=?";
 			// do the ajax call
 			$.getJSON(url,function(data){
 				$('#showmore').show();

@@ -2,24 +2,9 @@
 Plugin Name: CommentLuv
 Plugin URI: http://comluv.com/download/commentluv-wordpress/
 Description: Plugin to show a link to the last post from the commenters blog by parsing the feed at their given URL when they leave a comment. Rewards your readers and encourage more comments.
-Version: 2.7.61
+Version: 2.7.62
 Author: Andy Bailey
 Author URI: http://fiddyp.comluv.com/
-
-26 Apr 2009 - Start the new version using a class and updated localization (thanks Vladimir Prelovac for your great book on Wordpress Plugin Development!)
-05 Jun 2009 - Finalized last functions and integrated API. big up to @wpmuguru for API coding!
-10 Jun 2009 - Fix for php4 hosting. changed "public" to "var" and check function exists for json_decode
-11 Jun 2009 - Small bug in using text as badge fixed. Changed strpos to strrpos to find last tag code in text. priority 1 for comment_text
-removed request id data from being inserted (too many complaints!) and adjusted the way comment status change is handled. approve is done at post submission and
-delete is done at change status (with no request id sent)
-12 Jun 2009 - small fixes for valid xhtml on images and checkbox . remove identifying .-= / =-. from inserted link on display time. happy birthday to me
-13 Jun 2009 - fix php4 from not allowing last string pos (strrpos) (thanks http://www.makeupandbeautyblog.com/ && http://jahangiri.us/news/)
-- validates for Kelson (speedforce.org) (had a big cake yesterday nomnom)
-14 Jun 2009 - Italian translation added (and fix CR in string on manager page). Thanks go to Gianni Diurno http://gidibao.net
-16 Jun 2009 - Bug fix, use_template checkbox not displaying when selected on settings page (breaker). typo in settings page now uses <?php cl_display_badge(); ?> (oops!)
-- added global variable for badgeshown to prevent mulitple instances (template contains function call AND use template check is off)
-- fixed output of prepend html using decode html and stripslashes. Added green background to update settings button.
-19 Jun 2009 -  fix for htmlspecialchars_decode causing error in wp < 2.8 (thanks @mitch_m for testing)
 */
 // Avoid name collision
 if (! class_exists ( 'commentluv' )) {
@@ -105,8 +90,12 @@ if (! class_exists ( 'commentluv' )) {
 				}
 				$badge = $this->plugin_url . "images/" . $badge;
 				$badge_text = $options ['badge'] == 'text' ? 'on' : '';
+				// get permalink for refer value
+				$refer_page = get_permalink();
 				// insert options to header
-				wp_localize_script ( 'commentluv', 'cl_settings', array ('name' => $author_name, 'url' => $url_name, 'comment' => $comment_name, 'email' => $email_name, 'prepend' => $prepend, 'badge' => $badge, 'show_text' => $show_text, 'badge_text' => $badge_text, 'heart_tip' => $heart_tip, 'default_on' => $default_on, 'select_text' => $select_text, 'cl_version' => $this->cl_version, 'images' => $this->plugin_url . 'images/', 'api_url' => $this->api_url ) );
+				wp_localize_script ( 'commentluv', 'cl_settings', array ('name' => $author_name, 'url' => $url_name, 'comment' => $comment_name, 'email' => $email_name, 'prepend' => $prepend, 'badge' => $badge,
+											 'show_text' => $show_text, 'badge_text' => $badge_text, 'heart_tip' => $heart_tip, 'default_on' => $default_on, 'select_text' => $select_text,
+											 'cl_version' => $this->cl_version, 'images' => $this->plugin_url . 'images/', 'api_url' => $this->api_url, 'refer' => $refer_page ) );
 			}
 		}
 		// hook the head function for adding stylesheet
@@ -290,7 +279,7 @@ if (! class_exists ( 'commentluv' )) {
 				$hrefend = strpos ( $cutit, '"' );
 				$thelink = substr ( $cutit, 0, $hrefend );
 				// got the url, construct url to tell comluv
-				$url = $this->api_url . "?type=approve&request_id=$request_id&post_id=$choice_id&url=$thelink";
+				$url = $this->api_url . "?type=approve&request_id=$request_id&post_id=$choice_id&url=$thelink&refer=".get_permalink();
 				$content = $this->call_comluv ( $url );
 			}
 			return $commentdata;
@@ -298,6 +287,7 @@ if (! class_exists ( 'commentluv' )) {
 		// hook the set comment status action
 		function update_cl_status($cid, $status) {
 			// get comment stuff from id
+			
 			if ($status != 'spam') {
 				if ($status != 'delete') {
 					$status = 'approve';
