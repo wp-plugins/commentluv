@@ -4,7 +4,7 @@ Plugin URI: http://comluv.com/download/commentluv-wordpress/
 Description: Plugin to show a link to the last post from the commenters blog by parsing the feed at their given URL when they leave a comment. Rewards your readers and encourage more comments.
 Version: 2.7.62
 Author: Andy Bailey
-Author URI: http://fiddyp.comluv.com/
+Author URI: http://fiddyp.co.uk/
 */
 // Avoid name collision
 if (! class_exists ( 'commentluv' )) {
@@ -229,6 +229,9 @@ if (! class_exists ( 'commentluv' )) {
 				$author = $userdata->display_name;
 				$userid = $userdata->ID;
 				$url = $userdata->user_url;
+				if(!stristr($url,"http://")){
+					$url = "http://".$url;
+				}
 				// check for MU blog
 				if (function_exists ( 'is_site_admin' )) {
 					if (! $url || $url == "http://") {
