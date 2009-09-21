@@ -229,6 +229,9 @@ if (! class_exists ( 'commentluv' )) {
 				$author = $userdata->display_name;
 				$userid = $userdata->ID;
 				$url = $userdata->user_url;
+				if(!stristr($url,"http://")){
+					$url = "http://".$url;
+				}
 				// check for MU blog
 				if (function_exists ( 'is_site_admin' )) {
 					if (! $url || $url == "http://") {
