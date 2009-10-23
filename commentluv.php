@@ -2,7 +2,7 @@
 Plugin Name: CommentLuv
 Plugin URI: http://comluv.com/download/commentluv-wordpress/
 Description: Plugin to show a link to the last post from the commenters blog by parsing the feed at their given URL when they leave a comment. Rewards your readers and encourage more comments.
-Version: 2.7.62
+Version: 2.7.63
 Author: Andy Bailey
 Author URI: http://fiddyp.co.uk/
 */
@@ -243,11 +243,15 @@ if (! class_exists ( 'commentluv' )) {
 				echo "<input type='hidden' id='$cl_author_id' name='$cl_author_id' value='$author' />";
 				echo "<input type='hidden' id='$cl_site_id' name='$cl_site_id' value='$url' />";
 			}
-			// add hidden fields for holding information about type,choice,html and request for every user
-			echo '<input type="hidden" name="cl_type" />';
-			echo '<input type="hidden" name="choice_id" />';
-			echo '<input type="hidden" name="request_id" />';
-			echo '<input type="hidden" name="cl_post" id="cl_post"/>';
+			global $fieldsadded;
+			if(!$fieldsadded){
+				// add hidden fields for holding information about type,choice,html and request for every user
+				echo '<input type="hidden" name="cl_type" />';
+				echo '<input type="hidden" name="choice_id" />';
+				echo '<input type="hidden" name="request_id" />';
+				echo '<input type="hidden" name="cl_post" id="cl_post"/>';
+				$fieldsadded = TRUE;
+			}
 			// check if using php call comments.php or not
 			global $badgeshown;
 			if ($options ['use_template'] == '' && !$badgeshown) {
@@ -422,6 +426,7 @@ if (! class_exists ( 'commentluv' )) {
 // start commentluv class engines
 if (class_exists ( 'commentluv' )) :
 $badgeshown=FALSE;
+$fieldsadded = FALSE;
 $commentluv = new commentluv ( );
 
 // confirm warp capability
