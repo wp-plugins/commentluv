@@ -3,8 +3,8 @@ Contributors: @commentluv (concept & coding)
 Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv
 Requires at least: 2.8
-Tested up to: 2.8.2
-Stable tag: 2.7.62
+Tested up to: 2.8.5
+Stable tag: 2.7.63
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -48,6 +48,11 @@ You can submit a support ticket at http://comluv.com
 
 == ChangeLog ==
 
+= 2.763 =
+* Added check for hidden fields display to prevent double instances.
+* Make css file valid
+* Added French translation by Leo http://referenceurfreelance.com
+
 = 2.762 =
 * Added permalink as refer variable in ajax calls for better stat collecting since WP started to use paginated comments
 * Added Chinese translation by Denis http://zuoshen.com/
@@ -75,10 +80,12 @@ You can submit a support ticket at http://comluv.com
 
 == Configuration ==
 
-Display Options : 
-Enter the text you want displayed in the comment for the link that is added.
+Display Options : Enter the text you want displayed in the comment for the link that is added.
+
 * [name] -> replaced with comment author name
+
 * [type] -> replaced with blog, twitter or digg depending on what type of link the author chose to include.
+
 * [lastpost] -> replaced with the titled link.
 
 * Text displayed in the select box -> shows in the pull down box when a user has more than one post to choose from
@@ -87,16 +94,20 @@ Enter the text you want displayed in the comment for the link that is added.
 
 * Show heart on links -> Shows the heart icon next to links so users can find out more about the comment author
 
-* Use teamplate insert to show badge and checkbox -> check this box if you want to place the badge and pull down box in a particular place on your page by using the template code.
+* Use template insert to show badge and checkbox -> check this box if you want to place the badge and pull down box in a particular place on your page by using the template code.
 
 * display badge -> choose from 4 different badges, choose no badge or use your own specified text
 
 * CommentLuv member area -> for future use
 
 Technical Settings:
+
 * Authors name field name -> The name value of the field used on your comment form for the comment authors name
+
 * Email field name -> The name value of the field used on your comment form for the comment authors email
+
 * Authors URL field name -> The name value of the field used on your comment form for the comment authors site URL
+
 * Comments Text Area Name -> The name value of the field used on your comment form for the comment 
 
 * update -> updates the settings
