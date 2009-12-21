@@ -2,7 +2,7 @@
 Plugin Name: CommentLuv
 Plugin URI: http://comluv.com/download/commentluv-wordpress/
 Description: Plugin to show a link to the last post from the commenters blog by parsing the feed at their given URL when they leave a comment. Rewards your readers and encourage more comments.
-Version: 2.7.63
+Version: 2.7.64
 Author: Andy Bailey
 Author URI: http://fiddyp.co.uk/
 */
@@ -390,6 +390,7 @@ if (! class_exists ( 'commentluv' )) {
 				curl_setopt ( $curl, CURLOPT_TIMEOUT, 7 );
 				$content = curl_exec ( $curl );
 				if (! curl_error ( $curl )) {
+					/* removed json_decode until fix from wp 2.9 is released
 					if (function_exists ( json_decode )) {
 						$data = json_decode ( $content );
 						if ($data->status != 200) {
@@ -397,6 +398,7 @@ if (! class_exists ( 'commentluv' )) {
 							// have a tantrum here if you want.
 						}
 					}
+					*/
 					curl_close ( $curl );
 
 				}

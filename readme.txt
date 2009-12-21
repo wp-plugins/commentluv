@@ -3,8 +3,8 @@ Contributors: @commentluv (concept & coding)
 Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv
 Requires at least: 2.8
-Tested up to: 2.8.5
-Stable tag: 2.7.63
+Tested up to: 2.9
+Stable tag: 2.7.64
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -47,6 +47,9 @@ You can submit a support ticket at http://comluv.com
 2. in use
 
 == ChangeLog ==
+
+= 2.764 =
+* Removed json_decode. Some wp2.9 installs were getting errors
 
 = 2.763 =
 * Added check for hidden fields display to prevent double instances.
