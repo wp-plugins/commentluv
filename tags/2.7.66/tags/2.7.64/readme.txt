@@ -1,0 +1,126 @@
+=== CommentLuv ===
+Contributors: @commentluv (concept & coding) 
+Donate link:http://comluv.com/about/donate
+Tags: commentluv, comments, last blog post, linkluv
+Requires at least: 2.8
+Tested up to: 2.9
+Stable tag: 2.7.64
+	
+Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
+
+== Description ==
+
+This plugin will visit the site of the comment author while they type their comment and retrieve a selection of their last blog posts, tweets or digg submissions which they can choose one from to include at the bottom of their comment when they click submit.
+
+It has been found to increase comments and the community spirit for the thousands of blogs that have installed it. With a simple install you will immediately start to find new and interesting blog posts, tweets and diggs from your own blog and community.
+
+The plugin requires WP or WPMU version of at least 2.65 and will work with administrators and logged on users provided they have their homepage url set in their profile page in the dashboard of the site.
+
+With a full support site where you can unlock great new features, start your own WP2.7 blog with CommentLuv already installed and set up, view your stats for comments made and received and much more.
+
+You can visit http://comluv.com to find out more about this plugin.
+
+== Installation ==
+
+Wordpress : Extract the zip file and just drop the contents in the wp-content/plugins/ directory of your WordPress installation and then activate the Plugin from Plugins page.
+
+WordpressMu : Same as above (do not place in mu-plugins)
+
+== Frequently Asked Questions ==
+
+= Does this plugin add any database tables? =
+
+No. The link and a small bit of associated data is appended to the comment content at the time of submission
+
+= Will this plugin work with Disqus/Intense Debate/js-kit? =
+
+There is currently a version available for JS-Kit (Echo).
+Intense Debate and Disqus may be suppported soon.
+
+= I am having a problem getting it to work =
+
+You can submit a support ticket at http://comluv.com
+
+== Screenshots ==
+1. settings page
+
+2. in use
+
+== ChangeLog ==
+
+= 2.764 =
+* Removed json_decode. Some wp2.9 installs were getting errors
+
+= 2.763 =
+* Added check for hidden fields display to prevent double instances.
+* Make css file valid
+* Added French translation by Leo http://referenceurfreelance.com
+
+= 2.762 =
+* Added permalink as refer variable in ajax calls for better stat collecting since WP started to use paginated comments
+* Added Chinese translation by Denis http://zuoshen.com/
+* Added Hebrew translation by Maor http://www.maorb.info/
+* Added Russian translation by FatCow http://www.fatcow.com/
+* Updated readme.txt to use new features like changelog
+* Check for http:// in url field before firing (to prevent errors for forms that use js hints in form fields)
+
+= 2.761 =
+* 19 Jun 2009 -  fix for htmlspecialchars decode causing error in wp < 2.8
+
+= 2.76 = 
+* 16 Jun 2009 - Bug fix, use_template checkbox not displaying when selected on settings page (breaker). typo in settings page now uses &lt;?php cl\_display\_badge(); ?&gt;
+* added global variable for badgeshown to prevent mulitple instances (template contains function call AND use template check is off)
+* fixed output of prepend html using decode html and stripslashes. Added green background to update settings button.
+
+= 2.74 =
+* 14 Jun 2009 - Italian translation added (and fix CR in string on manager page). Thanks go to Gianni Diurno
+
+= 2.71 =
+* 13 Jun 2009 - fix php4 from not allowing last string pos (strrpos)
+
+= 2.7 =
+* 12 Jun 2009 - small fixes for valid xhtml on images and checkbox . remove identifying .-= / =-. from inserted link on display time. 
+
+== Configuration ==
+
+Display Options : Enter the text you want displayed in the comment for the link that is added.
+
+* [name] -> replaced with comment author name
+
+* [type] -> replaced with blog, twitter or digg depending on what type of link the author chose to include.
+
+* [lastpost] -> replaced with the titled link.
+
+* Text displayed in the select box -> shows in the pull down box when a user has more than one post to choose from
+
+* CommentLuv on by default -> check this box to enable CommentLuv by default
+
+* Show heart on links -> Shows the heart icon next to links so users can find out more about the comment author
+
+* Use template insert to show badge and checkbox -> check this box if you want to place the badge and pull down box in a particular place on your page by using the template code.
+
+* display badge -> choose from 4 different badges, choose no badge or use your own specified text
+
+* CommentLuv member area -> for future use
+
+Technical Settings:
+
+* Authors name field name -> The name value of the field used on your comment form for the comment authors name
+
+* Email field name -> The name value of the field used on your comment form for the comment authors email
+
+* Authors URL field name -> The name value of the field used on your comment form for the comment authors site URL
+
+* Comments Text Area Name -> The name value of the field used on your comment form for the comment 
+
+* update -> updates the settings
+
+* reset -> if you get in trouble, click this to reset to default settings
+
+== Adding to your template ==
+
+Use `<?php cl_display_badge(); ?>` in your comments.php file where you want the badge and checkbox to be shown
+
+This plugin inserts fields to the comment form at run time. If you find there is no badge shown on the comment form after you first install it, please check your comments.php file for the command `<?php do_action('comment_form', $post->ID); ?>` before the `</form>` tag
+
+For logged on users and administrators, be sure to check your profile on your own dashboard and make sure there is a url entered.
