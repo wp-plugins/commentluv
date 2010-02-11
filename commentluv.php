@@ -2,7 +2,7 @@
 Plugin Name: CommentLuv
 Plugin URI: http://comluv.com/download/commentluv-wordpress/
 Description: Plugin to show a link to the last post from the commenters blog by parsing the feed at their given URL when they leave a comment. Rewards your readers and encourage more comments.
-Version: 2.7.64
+Version: 2.7.66 
 Author: Andy Bailey
 Author URI: http://fiddyp.co.uk/
 */
@@ -36,6 +36,7 @@ if (! class_exists ( 'commentluv' )) {
 			// action hooks
 			$this->plugin_url = trailingslashit ( WP_PLUGIN_URL . '/' . dirname ( plugin_basename ( __FILE__ ) ) );
 			$this->api_url = 'http://api.comluv.com/cl_api/commentluvapi.php';
+			//$this->api_url = 'http://firedwok.com/api/cl_api/commentluvapi.php';
 			add_action ( 'admin_menu', array (&$this, 'admin_menu' ) );
 			add_action ( 'template_redirect', array (&$this, 'commentluv_scripts' ) ); // template_redirect always called when page is displayed to user
 			add_action ( 'wp_head', array (&$this, 'commentluv_style' ) ); // add style sheet to header
@@ -95,7 +96,8 @@ if (! class_exists ( 'commentluv' )) {
 				// insert options to header
 				wp_localize_script ( 'commentluv', 'cl_settings', array ('name' => $author_name, 'url' => $url_name, 'comment' => $comment_name, 'email' => $email_name, 'prepend' => $prepend, 'badge' => $badge,
 											 'show_text' => $show_text, 'badge_text' => $badge_text, 'heart_tip' => $heart_tip, 'default_on' => $default_on, 'select_text' => $select_text,
-											 'cl_version' => $this->cl_version, 'images' => $this->plugin_url . 'images/', 'api_url' => $this->api_url, 'refer' => $refer_page ) );
+											 'cl_version' => $this->cl_version, 'images' => $this->plugin_url . 'images/', 'api_url' => $this->api_url, 'refer' => $refer_page,
+											 'infoback' => $infoback,'usetemplate'=>$use_template) );
 			}
 		}
 		// hook the head function for adding stylesheet
@@ -106,7 +108,7 @@ if (! class_exists ( 'commentluv' )) {
 		// get plugin options
 		function get_options() {
 			// default values
-			$options = array ('comment_text' => '[name]&#180;s last [type] ..[lastpost]', 'select_text' => 'choose a different post to show', 'default_on' => 'on', 'heart_tip' => 'on', 'use_template' => '', 'badge' => 'CL91x17-white2.gif', 'show_text' => 'CommentLuv Enabled', 'author_name' => 'author', 'url_name' => 'url', 'comment_name' => 'comment', 'email_name' => 'email', 'prepend' => '' );
+			$options = array ('comment_text' => '[name]&#180;s last [type] ..[lastpost]', 'select_text' => 'choose a different post to show', 'default_on' => 'on', 'heart_tip' => 'on', 'use_template' => '', 'badge' => 'CL91x17-white2.gif', 'show_text' => 'CommentLuv Enabled', 'author_name' => 'author', 'url_name' => 'url', 'comment_name' => 'comment', 'email_name' => 'email', 'prepend' => '', 'infoback' => 'pink' );
 			// get saved options unless reset button was pressed
 			$saved = '';
 			if (! isset ( $_POST ['reset'] )) {
@@ -151,6 +153,7 @@ if (! class_exists ( 'commentluv' )) {
 				$options ['comment_name'] = $_POST ['cl_comment_name'];
 				$options ['email_name'] = $_POST ['cl_email_name'];
 				$options ['use_template'] = $_POST['cl_use_template'];
+				$options ['infoback'] = htmlspecialchars($_POST['infoback']);
 
 				// check for errors
 				if (count ( $errors->errors ) > 0) {
@@ -263,6 +266,12 @@ if (! class_exists ( 'commentluv' )) {
 		// hook the pre_comment_content to add the link
 		function cl_post($commentdata) {
 			if (isset ( $_POST ['cl_post'] ) && $_POST ['request_id'] != '' && is_numeric ( $_POST ['choice_id'] ) && isset ( $_POST ['cl_type'] )) {
+				if(!defined('LUVEDIT')){
+					define("LUVEDIT",1);
+				} else {
+					// already been here so shoo!
+					return $commentdata;
+				}
 				// get values posted
 				$luvlink = $_POST ['cl_post'];
 				if (strstr ( $luvlink, "commentluv.com/error-check" ) || $_POST ['request_id'] == 0) {

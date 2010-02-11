@@ -4,7 +4,7 @@ Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv
 Requires at least: 2.8
 Tested up to: 2.9
-Stable tag: 2.7.64
+Stable tag: 2.7.66
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -34,8 +34,7 @@ No. The link and a small bit of associated data is appended to the comment conte
 
 = Will this plugin work with Disqus/Intense Debate/js-kit? =
 
-There is currently a version available for JS-Kit (Echo).
-Intense Debate and Disqus may be suppported soon.
+Intense Debate comments have a commentluv plugin built in. Just enable from your ID dashboard
 
 = I am having a problem getting it to work =
 
@@ -47,6 +46,13 @@ You can submit a support ticket at http://comluv.com
 2. in use
 
 == ChangeLog ==
+
+= 2.766 =
+* Check if function has been called before to prevent two links being added.
+* updated images (supplied by http://byteful.com)
+
+= 2.765 =
+* Hollys changes. Allow user choice of colour for the info panel background.
 
 = 2.764 =
 * Removed json_decode. Some wp2.9 installs were getting errors
