@@ -23,6 +23,11 @@
 					<label for="cl_heart_tip"><?php _e('Show heart on links?',$this->plugin_domain);?></label>
 					</p>
 					<p>
+					<label for="infoback"><?php _e('Info panel background color',$this->plugin_domain);?></label><br>
+					<input type="text" size ="8" name="infoback" value="<?php echo stripslashes($infoback);?>"/>
+					<span style="background-color:<?php echo stripslashes($infoback);?>">....</span>
+					</p>
+					<p>
 					<input type="checkbox" name="cl_use_template" <?php echo $use_template;?>/>
 					<label for="cl_use_template"><?php _e('Use template insert to show badge and checkbox?',$this->plugin_domain);?> ( &lt;?php cl_display_badge(); ?&gt; )</label>
 					</p>
@@ -42,7 +47,7 @@
   <tr><td><label><input type="radio" <?php echo $badge_text;?> name="cl_badge" value="text"><?php _e('Show text','commentluv')?></label> <input class="form-table" type="text" name="cl_show_text" value="<?php echo stripslashes($show_text);?>"></input></td><td></td><td></td><td></td><td><label><?php _e('Prepend html before badge or text (optional)',$this->plugin_domain);?></label><input class="form-table" type="text" name="cl_prepend" value="<?php echo stripslashes($prepend);?>"></input></tr>
     </table> <p></p>
 		<h3><?php _e('CommentLuv Member Area',$this->plugin_domain);?></h3>			
-		<p><?php _e('If you register your site for free at <a href="http://comluv.com">ComLuv.com</a> you will be able to open up lots of features that are for members only like link tracking so you can see which of the comments you make on CommentLuv blogs are getting the last blog post clicked and the ability to send back more than just blog posts. You can even create your own WP2.7 blog there with commentluv pre-installed!.',$this->plugin_domain);?></p>
+		<p><?php _e('If you register your site for free at <a href="http://comluv.com">ComLuv.com</a> you will be able to choose from your 10 last posts when you comment on other CommentLuv blogs. You can even add more urls and default links. .',$this->plugin_domain);?></p>
 										
 					<h3><?php _e('Technical Settings',$this->plugin_domain);?></h3>
 					<small><?php _e('In most cases you shouldn\'t need to change these settings unless you have a customized comment form',$this->plugin_domain);?></small>
