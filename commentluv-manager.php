@@ -29,7 +29,8 @@
 					</p>
 					<p>
 					<input type="checkbox" name="cl_use_template" <?php echo $use_template;?>/>
-					<label for="cl_use_template"><?php _e('Use template insert to show badge and checkbox?',$this->plugin_domain);?> ( &lt;?php cl_display_badge(); ?&gt; )</label>
+					<label for="cl_use_template"><?php _e('Use template insert to show badge and checkbox?',$this->plugin_domain);?>
+					<br><strong><?php _e('Do NOT check this unless you have manually inserted the code into your comments.php file ',$this->plugin_domain);?> </strong><br>( &lt;?php cl_display_badge(); ?&gt; )</label>
 					</p>
 					<h3><?php _e('Display Badge',$this->plugin_domain);?></h3>
 					<p><?php _e('Many thanks to <a href="http://byteful.com">Byteful Traveller</a> for creating these images.',$this->plugin_domain);?></p>
