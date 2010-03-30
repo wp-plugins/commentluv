@@ -3,7 +3,7 @@ Contributors: @commentluv (concept & coding)
 Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv
 Requires at least: 2.8
-Tested up to: 2.9
+Tested up to: 2.8
 Stable tag: 2.7.67
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
@@ -46,6 +46,9 @@ You can submit a support ticket at http://comluv.com
 2. in use
 
 == ChangeLog ==
+
+= 2.768 =
+* Added nothing.gif to images (for updated error message from API)
 
 = 2.767 =
 * Added conncettimeout to curl call
