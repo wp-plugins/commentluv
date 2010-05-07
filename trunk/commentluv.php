@@ -2,7 +2,7 @@
 Plugin Name: CommentLuv
 Plugin URI: http://comluv.com/download/commentluv-wordpress/
 Description: Plugin to show a link to the last post from the commenters blog by parsing the feed at their given URL when they leave a comment. Rewards your readers and encourage more comments.
-Version: 2.7.68
+Version: 2.7.69
 Author: Andy Bailey
 Author URI: http://fiddyp.co.uk/
 */
@@ -252,7 +252,8 @@ if (! class_exists ( 'commentluv' )) {
 				echo '<input type="hidden" name="cl_type" />';
 				echo '<input type="hidden" name="choice_id" />';
 				echo '<input type="hidden" name="request_id" />';
-				echo '<input type="hidden" name="cl_post" id="cl_post"/>';
+				echo '<input type="hidden" name="cl_post_title" id="cl_post_title"/>';
+				echo '<input type="hidden" name="cl_post_url" id="cl_post_url"/>';
 				$fieldsadded = TRUE;
 			}
 			// check if using php call comments.php or not
@@ -265,7 +266,7 @@ if (! class_exists ( 'commentluv' )) {
 
 		// hook the pre_comment_content to add the link
 		function cl_post($commentdata) {
-			if (isset ( $_POST ['cl_post'] ) && $_POST ['request_id'] != '' && is_numeric ( $_POST ['choice_id'] ) && isset ( $_POST ['cl_type'] )) {
+			if (isset ( $_POST ['cl_post_title'] ) && $_POST ['request_id'] != '' && is_numeric ( $_POST ['choice_id'] ) && isset ( $_POST ['cl_type'] )) {
 				if(!defined('LUVEDIT')){
 					define("LUVEDIT",1);
 				} else {
@@ -273,7 +274,7 @@ if (! class_exists ( 'commentluv' )) {
 					return $commentdata;
 				}
 				// get values posted
-				$luvlink = $_POST ['cl_post'];
+				$luvlink = '<a href="'.$_POST ['cl_post_url'].'">'.$_POST['cl_post_title'].'</a>';
 				if (strstr ( $luvlink, "commentluv.com/error-check" ) || $_POST ['request_id'] == 0) {
 					return $commentdata;
 				}

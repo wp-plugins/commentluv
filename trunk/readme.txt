@@ -4,7 +4,7 @@ Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv
 Requires at least: 2.8
 Tested up to: 2.9.2
-Stable tag: 2.7.68
+Stable tag: 2.7.69
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -46,6 +46,12 @@ You can submit a support ticket at http://comluv.com
 2. in use
 
 == ChangeLog ==
+
+= 2.769 =
+* Modified hidden post fields so only URL and title sent instead of html A href link
+* Modified javascript to take account of new hidden fields.
+* Temporary fix to try and fix 404 on wp-post-comments.php when commentluv enabled for logged out user
+* thanks to @kwbridge @duane_scott @dannybrown @morpheas7887 for testing and feedback!
 
 = 2.768 =
 * Added nothing.gif to images (for updated error message from API)
