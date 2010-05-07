@@ -2,7 +2,7 @@
 (function($) {
 	$(document).ready(function(){
 		// get form object that is parent of textarea named "comment"
-		var formObj = $("#cl_post").parents("form");
+		var formObj = $("#cl_post_title").parents("form");
 
 		// set url, email, comment and author field objects
 		var urlObj = cl_settings['urlObj'] = $("input[name='" + cl_settings['url'] + "']",formObj);
@@ -175,7 +175,9 @@
 				$('input[name="request_id"]').val(cl_settings['request_id']);
 				$('input[name="choice_id"]').val("0");
 				$('input[name="cl_type"]').val(data.items[0]['type']);
-				$('#cl_post').val('<a href="' + data.items[0].url + '">' + data.items[0]['title'] + '</a>');
+				//$('#cl_post').val('<a href="' + data.items[0].url + '">' + data.items[0]['title'] + '</a>');
+				$('#cl_post_url').val(data.items[0].url);
+				$('#cl_post_title').val(data.items[0]['title']);
 			});
 			// disable focus event
 			$("textarea[name='" + cl_settings['comment'] + "']").unbind();
