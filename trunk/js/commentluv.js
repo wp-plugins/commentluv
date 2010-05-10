@@ -197,7 +197,8 @@ function clchoose(ptype,purl,pstr,pid,preq){
 	$('input[name="request_id"]').val(preq);
 	$('input[name="cl_type"]').val(ptype);
 	$('#mylastpost a').attr("href",purl).text(pstr);
-	$('input[name="cl_post"]').val('<a href="' + purl + '">' + pstr + '</a>');
+	$('input[name="cl_post_title"]').val( pstr );
+	$('input[name="cl_post_url"]').val(purl);
 	$('#mylastpost img').attr({src: cl_settings['images'] + ptype + '.gif',alt: ptype});
 	if($('#luv').is(":checked")){
 		$('input[name="cl_post"]').val('<a href="' + purl + '">' + pstr + '</a>');

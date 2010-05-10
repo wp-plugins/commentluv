@@ -4,7 +4,7 @@ Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv
 Requires at least: 2.8
 Tested up to: 2.9.2
-Stable tag: 2.7.69
+Stable tag: 2.7.691
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -46,6 +46,9 @@ You can submit a support ticket at http://comluv.com
 2. in use
 
 == ChangeLog ==
+
+= 2.7691 =
+* bugfix : choosing a link from an additional url's posts would result in wrong link being included
 
 = 2.769 =
 * Modified hidden post fields so only URL and title sent instead of html A href link
