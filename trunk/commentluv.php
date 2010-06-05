@@ -1,8 +1,8 @@
-<?php /* CommentLuv 2.7
+<?php /* CommentLuv 2.8
 Plugin Name: CommentLuv
 Plugin URI: http://comluv.com/download/commentluv-wordpress/
 Description: Plugin to show a link to the last post from the commenters blog by parsing the feed at their given URL when they leave a comment. Rewards your readers and encourage more comments.
-Version: 2.7.691
+Version: 2.80
 Author: Andy Bailey
 Author URI: http://fiddyp.co.uk/
 */
@@ -14,8 +14,9 @@ if (! class_exists ( 'commentluv' )) {
 		var $plugin_domain = 'commentluv';
 		var $plugin_url;
 		var $db_option = 'commentluv_options';
-		var $cl_version = 276;
+		var $cl_version = 280;
 		var $api_url;
+		var $test = false;
 
 		//initialize the plugin
 		function commentluv() {
@@ -26,26 +27,36 @@ if (! class_exists ( 'commentluv' )) {
 			if (in_array ( $pagenow, $local_pages ) || in_array ( $_GET ['page'], $local_pages )) {
 				$this->handle_load_domain ();
 			}
-			$exit_msg = __ ( 'CommentLuv requires Wordpress 2.6.5 or newer.', $this->plugin_domain ) . '<a href="http://codex.wordpress.org/Upgrading_Wordpress">' . __ ( 'Please Update!', $this->plugin_domain ) . '</a>';
+			$exit_msg = __ ( 'CommentLuv requires Wordpress 2.9.2 or newer.', $this->plugin_domain ) . '<a href="http://codex.wordpress.org/Upgrading_Wordpress">' . __ ( 'Please Update!', $this->plugin_domain ) . '</a>';
 
 			// can you dig it?
-			if (version_compare ( $wp_version, "2.6.5", "<" )) {
+			if (version_compare ( $wp_version, "2.9.2", "<" )) {
 				exit ( $exit_msg ); // no diggedy
 			}
 
 			// action hooks
 			$this->plugin_url = trailingslashit ( WP_PLUGIN_URL . '/' . dirname ( plugin_basename ( __FILE__ ) ) );
-			$this->api_url = 'http://api.comluv.com/cl_api/commentluvapi.php';
-			//$this->api_url = 'http://firedwok.com/api/cl_api/commentluvapi.php';
-			add_action ( 'admin_menu', array (&$this, 'admin_menu' ) );
+			if($this->test){
+				$this->api_url = 'http://firedwok.com/cl_api/commentluvapi.php';	
+			} else {
+				$this->api_url = 'http://api.comluv.com/cl_api/commentluvapi.php';	
+			}
+			
+			//
+			add_action ( 'admin_menu', array (&$this, 'admin_menu' ) ); // add image to admin link and setup options page
+			add_action ( 'admin_print_scripts-post.php', array (&$this, 'add_removeluv_script') ); // add the removeluv script to admin page
+			add_action ( 'admin_print_scripts-edit-comments.php', array (&$this, 'add_removeluv_script') ); // add the removeluv script to admin page
+			add_action ( 'wp_ajax_removeluv', array (&$this, 'cl_remove_luv') ); // handle the call to the admin-ajax for removing luv
 			add_action ( 'template_redirect', array (&$this, 'commentluv_scripts' ) ); // template_redirect always called when page is displayed to user
 			add_action ( 'wp_head', array (&$this, 'commentluv_style' ) ); // add style sheet to header
 			add_action ( 'wp_set_comment_status', array (&$this, 'update_cl_status' ), 1, 3 ); // call when status of comment gets changed
 			add_action ( 'comment_post', array (&$this, 'update_cl_status' ), 2, 3 ); // call when comment gets posted
 			add_action ( 'comment_form', array (&$this, 'add_fields' ) ); // add hidden fields during comment form display time
+			add_action ( 'wp_insert_comment', array (&$this, 'cl_post'),1,2); // add member id and other data to comment meta priority 1, 2 vars
 			add_filter ( 'plugin_action_links', array (&$this, 'commentluv_action' ), - 10, 2 ); // add a settings page link to the plugin description. use 2 for allowed vars
-			add_filter ( 'comment_text', array (&$this, 'do_shortcode' ), 10 ); // replace inserted data with hidden span on display time of comment
-			add_filter ( 'pre_comment_content', array (&$this, 'cl_post' ), 10 ); // extract extra fields data and insert data to end of comment
+			add_filter ( 'comments_array', array (&$this, 'do_shortcode' ), 1 ); // replace inserted data with hidden span on display time of comment
+			add_filter ( 'comment_text', array (&$this, 'do_shortcode' ), 1 ); // add last blog post data to comment content on admin screen
+			add_filter ( 'comment_row_actions', array (&$this,'add_removeluv_link')); // adds a link to remove the luv from a comment on the comments admin screen
 		}
 
 		// hook the options page
@@ -53,6 +64,9 @@ if (! class_exists ( 'commentluv' )) {
 			$menutitle = '<img src="' . $this->plugin_url . 'images/littleheart.gif" alt=""/> ';
 			$menutitle .= 'CommentLuv';
 			add_options_page ( 'CommentLuv Settings', $menutitle, 8, basename ( __FILE__ ), array (&$this, 'handle_options' ) );
+		}
+		function add_removeluv_script(){
+			wp_enqueue_script ( 'commentluv', $this->plugin_url . 'js/adminremoveluv.js', array ('jquery' ) );
 		}
 		// add the settings link
 		function commentluv_action($links, $file) {
@@ -62,18 +76,47 @@ if (! class_exists ( 'commentluv' )) {
 			}
 			return $links;
 		}
+		// add removeluv link
+		function add_removeluv_link($actions){
+			global $post;
+			$user_can = current_user_can('edit_post', $post->ID);
+			if(get_comment_meta(get_comment_ID(),'cl_data')){
+				if($user_can){
+					$nonce= wp_create_nonce  ('removeluv'.get_comment_ID());
+				        $actions['Remove-luv'] = '<a class="removeluv :'.get_comment_ID().':'.$nonce.'" href="wp-admin/edit-comments.php">Remove Luv</a>';
+				}
+			}
+			return $actions;
+		}
+		// remove luvlink from comment when called by admin-ajax
+		function cl_remove_luv(){
+			// check user is allowed to do this
+			$nonce=$_REQUEST['_wpnonce'];
+			$cid = $_REQUEST['c'];
+			if (! wp_verify_nonce($nonce, 'removeluv'.$cid) ) die("Epic fail");
+			// delete meta if comment id sent with request
+			if($cid){
+				// get meta and set vars if exists
+				$cmeta =get_comment_meta($cid,'cl_data','true');
+				if($cmeta) extract($cmeta);
+				// delete it and call comluv to tell it what happened
+				if(delete_comment_meta($cid,'cl_data')){
+				    $url = $this->api_url.'?type=update&updatetype=delete&request_id='.$cl_requestid.'&choice_id='.$cl_choiceid.'&version='.$temp->cl_version;
+				    $status = $this->call_comluv($url);
+				    // return the comment id and status code for js processing to hide luv
+				    echo "$cid*$status*";
+				    return;
+				}
+			} else {
+				echo '0';
+			}
+		}
 		// hook the template_redirect for inserting style and javascript (using wp_head would make it too late to add dependencies)
 		function commentluv_scripts() {
 			// only load scripts if on a single page
 			if (is_single ()) {
 				wp_enqueue_script ( 'jquery' );
-				global $wp_version;
-				// see if hoverintent library is already included (2.7 >)
-				if (version_compare ( $wp_version, "2.8", "<" )) {
-					wp_enqueue_script ( 'hoverIntent', '/' . PLUGINDIR . '/' . dirname ( plugin_basename ( __FILE__ ) ) . '/js/hoverIntent.js', array ('jquery' ) );
-				} else {
-					wp_enqueue_script ( 'hoverIntent', '/' . WPINC . '/js/hoverIntent.js', array ('jquery' ) );
-				}
+				wp_enqueue_script ( 'hoverIntent', '/' . WPINC . '/js/hoverIntent.js', array ('jquery' ) );
 				wp_enqueue_script ( 'commentluv', $this->plugin_url . 'js/commentluv.js', array ('jquery' ) );
 				// get options
 				$options = $this->get_options ();
@@ -108,7 +151,7 @@ if (! class_exists ( 'commentluv' )) {
 		// get plugin options
 		function get_options() {
 			// default values
-			$options = array ('comment_text' => '[name]&#180;s last [type] ..[lastpost]', 'select_text' => 'choose a different post to show', 'default_on' => 'on', 'heart_tip' => 'on', 'use_template' => '', 'badge' => 'CL91x17-white2.gif', 'show_text' => 'CommentLuv Enabled', 'author_name' => 'author', 'url_name' => 'url', 'comment_name' => 'comment', 'email_name' => 'email', 'prepend' => '', 'infoback' => 'pink' );
+			$options = array ('comment_text' => '[name] recently posted..[lastpost]', 'select_text' => 'choose a different post to show', 'default_on' => 'on', 'heart_tip' => 'on', 'use_template' => '', 'badge' => 'CL91x17-white2.gif', 'show_text' => 'CommentLuv Enabled', 'author_name' => 'author', 'url_name' => 'url', 'comment_name' => 'comment', 'email_name' => 'email', 'prepend' => '', 'infoback' => 'pink' );
 			// get saved options unless reset button was pressed
 			$saved = '';
 			if (! isset ( $_POST ['reset'] )) {
@@ -254,6 +297,7 @@ if (! class_exists ( 'commentluv' )) {
 				echo '<input type="hidden" name="request_id" />';
 				echo '<input type="hidden" name="cl_post_title" id="cl_post_title"/>';
 				echo '<input type="hidden" name="cl_post_url" id="cl_post_url"/>';
+				echo '<input type="hidden" name="cl_memberid" id="cl_memberid"/>';
 				$fieldsadded = TRUE;
 			}
 			// check if using php call comments.php or not
@@ -265,111 +309,109 @@ if (! class_exists ( 'commentluv' )) {
 		}
 
 		// hook the pre_comment_content to add the link
-		function cl_post($commentdata) {
-			if (isset ( $_POST ['cl_post_title'] ) && $_POST ['request_id'] != '' && is_numeric ( $_POST ['choice_id'] ) && isset ( $_POST ['cl_type'] )) {
-				if(!defined('LUVEDIT')){
-					define("LUVEDIT",1);
-				} else {
-					// already been here so shoo!
-					return $commentdata;
-				}
-				// get values posted
-				$luvlink = '<a href="'.$_POST ['cl_post_url'].'">'.$_POST['cl_post_title'].'</a>';
-				if (strstr ( $luvlink, "commentluv.com/error-check" ) || $_POST ['request_id'] == 0) {
-					return $commentdata;
-				}
-				$request_id = $_POST ['request_id'];
-				$choice_id = $_POST ['choice_id'];
-				$cl_type = $_POST ['cl_type'];
-				// convert data to put into comment content
-				$options = get_option ( $this->db_option );
-				$prepend_text = $options ['comment_text'];
-				$search = array ('[name]', '[type]', '[lastpost]' );
-				$replace = array ($_POST ["{$options['author_name']}"], $cl_type, $luvlink );
-				$inserted = str_replace ( $search, $replace, $prepend_text );
-				// insert identifying data and insert text/link to end of comment
-				$commentdata .= "\n.-= $inserted =-.";
-				// tell comluv that the comment was submitted
-				$luvlink = stripslashes ( $luvlink );
-				$thelinkstart = strpos ( $luvlink, '="' );
-				$cutit = substr ( $luvlink, $thelinkstart + 2 );
-				$hrefend = strpos ( $cutit, '"' );
-				$thelink = substr ( $cutit, 0, $hrefend );
-				// got the url, construct url to tell comluv
-				$url = $this->api_url . "?type=approve&request_id=$request_id&post_id=$choice_id&url=$thelink&refer=".get_permalink();
-				$content = $this->call_comluv ( $url );
+		function cl_post($id,$commentdata) {
+			$cl_requestid = intval($_POST['request_id']);
+			if($cl_requestid > 1){
+				// only do stuff if the comment had a successful last blog post
+				// and if the meta hasn't been added yet.
+				// (request id will be -1 if error, or no posts returned.)
+				$cl_memberid = intval($_POST['cl_memberid']);
+				$cl_choiceid = intval($_POST['choice_id']);
+				$cl_post_title = apply_filters('kses',$_POST['cl_post_title']);
+				$cl_post_url = apply_filters('kses',$_POST['cl_post_url']);
+				$cl_type = apply_filters('kses',$_POST['cl_type']);
+				$data = array('cl_memberid'=>$cl_memberid,'cl_requestid'=>$cl_requestid,'cl_choiceid'=>$cl_choiceid,'cl_post_title'=>$cl_post_title,'cl_post_url'=>$cl_post_url,'cl_type'=>$cl_type);
+				add_comment_meta($id,'cl_data',$data,'true');				
 			}
-			return $commentdata;
 		}
 		// hook the set comment status action
 		function update_cl_status($cid, $status) {
-			// get comment stuff from id
-			
-			if ($status != 'spam') {
-				if ($status != 'delete') {
-					$status = 'approve';
+			// get comment stuff from meta
+			$data = get_comment_meta($cid,'cl_data','true');
+			if($data && is_array($data)){
+				extract($data);
+				$url = $this->api_url.'?type=update&updatetype='.$status.'&request_id='.$cl_requestid.'&choice_id='.$cl_choiceid.'&version='.$this->cl_version;
+				$content = $this->call_comluv ( $url );
+				if($this->test){
+					update_option('cl_last_comment_status',"$cid was $status");
+					update_option('cl_last_response',$content);
 				}
-				$comment = get_comment ( $cid );
-				if (strpos ( $comment->comment_content, ".-=" )) {
-					// comment can be approved or deleted in the comluv db
-					$url = $this->api_url . "?type={$status}&url=";
-					// get the link
-					$commentcontent = $comment->comment_content;
-					$start = $this->my_strrpos( $commentcontent, '.-=' );
-					$thelink = substr ( $commentcontent, $start + 4, strlen ( $commentcontent ) - $start - 5 );
-					$hrefstart = strpos ( $thelink, '="' );
-					$cutit = substr ( $thelink, $hrefstart + 2 );
-					$hrefend = strpos ( $cutit, '"' );
-					$thelink = substr ( $cutit, 0, $hrefend );
-					// get comment date
-					$date = $comment->comment_date_gmt;
-					// construct url with added params for approving comment to comluv
-					$url .= $thelink . "&comment_date=$date&version=" . $this->cl_version;
-					// call the url ..
-					$content = $this->call_comluv ( $url );
-				} // end if comment content contains a .-=
 			}
 		}
+		
 		// use my own shortcode that was inserted at submission time and hide the params
-		function do_shortcode($commentcontent) {
+		function do_shortcode($commentarray) {
+			$isadminpage = 0;
 			$options = get_option ( $this->db_option );
-			if (strpos ( $commentcontent, ".-=" ) && strpos ( $commentcontent, "=-." )) {
-				$last_pos = $this->my_strrpos ( $commentcontent, ".-=" ); // position number for last occurence of .-=
-				$beforecltext = substr ( $commentcontent, 0, $last_pos ); // get text before last position of .-=
-				$cltext = substr ( $commentcontent, $last_pos ); // get the bit between .-= and =-.
-				$cltext = str_replace ( array (".-=", "=-." ), array ('<span class="cluv">', '' ), $cltext ); // replace .-= with span and chop off last =-.
-				$commentcontent = $beforecltext . $cltext;
-				// do heart info
-				if ($options ['heart_tip'] == 'on') {
-					$commentcontent .= '<span class="heart_tip_box"><img class="heart_tip" alt="My ComLuv Profile" border="0" width="16" height="14" src="' . $this->plugin_url . 'images/littleheart.gif"/></span>';
+			if(!is_array($commentarray)){
+				// if it's an array then it was called by comments_array filter,
+				// otherwise it was called by comment_content (admin screen)
+				// has it been done before?
+				if(strpos($commentarray,'class="cluv"')){
+					return $commentarray;
 				}
-				$commentcontent .= '</span>';
-			}
-
-			// remove old codes
-			if (strpos ( $commentcontent, "[rq=" ) && strpos ( $commentcontent, "[/rq]" )) {
-				// get bit that was added
-				$start = strpos ( $commentcontent, '[rq=' );
-				$end = strpos ( $commentcontent, '[/rq]' ) + 5;
-				$params = substr ( $commentcontent, $start, $end - $start );
-				global $comment;
-				$author_name = $comment->comment_author;
-				$author_url = $comment->comment_author_url;
-				// get array of params
-				$params_arr = explode ( ",", substr ( $params, 4, - 6 ) );
-				// get and prepare the text specified by the user
-				$prepend_text = $options ['comment_text'];
-				$search = array ('[name]', '[type]', '[lastpost]' );
-				$replace = array ($author_name, $params_arr [2], '' );
-				$inserted = '<span class="cluv">';
-				$inserted .= str_replace ( $search, $replace, $prepend_text );
-				$commentcontent = str_replace ( $params, $inserted, $commentcontent );
-				if ($options ['heart_tip'] == 'on') {
-					$commentcontent .= '<span class="heart_tip_box"><img class="heart_tip" alt="My ComLuv Profile" border="0" width="16" height="14" src="' . $this->plugin_url . 'images/littleheart.gif"/></span>';
+				// make a fake array of 1 object so below treats the comment_content filter nicely for admin screen
+				$temparray = array('comment_ID'=>get_comment_ID(),'comment_content'=>$commentarray,'comment_author'=>get_comment_author());
+				$tempobject = (object) $temparray;
+				$commentarray = array($tempobject);
+				$isadminpage = 1;
+			} 
+			// step through each comment in the array and add the shizzle to the nizzle (stoopid thesis make me do this instead of filtering comment_text)
+			$new_commentarray = array();
+			foreach($commentarray as $comment){
+				$data = get_comment_meta($comment->comment_ID,'cl_data','true');
+				$commentcontent = $comment->comment_content;
+				if (strpos ( $commentcontent, ".-=" ) && strpos ( $commentcontent, "=-." )) {
+			// handle old 2.7691 comments with hardcoded link
+					$last_pos = $this->my_strrpos ( $commentcontent, ".-=" ); // position number for last occurence of .-=
+					$beforecltext = substr ( $commentcontent, 0, $last_pos ); // get text before last position of .-=
+					$cltext = substr ( $commentcontent, $last_pos ); // get the bit between .-= and =-.
+					$cltext = str_replace ( array (".-=", "=-." ), array ('<span class="cluv">', '' ), $cltext ); // replace .-= with span and chop off last =-.
+					$commentcontent = $beforecltext . $cltext;
+					// do heart info
+					if ($options ['heart_tip'] == 'on') {
+						$commentcontent .= '<span class="heart_tip_box"><img class="heart_tip" alt="My ComLuv Profile" border="0" width="16" height="14" src="' . $this->plugin_url . 'images/littleheart.gif"/></span>';
+					}
+					$commentcontent .= '</span>';
 				}
-				$commentcontent .= '</span>';
+			// handle new 2.80+ comments with hidden post data
+				if($data){
+					// has meta data associated
+					extract($data,EXTR_OVERWRITE);
+					//array('cl_memberid'=>$cl_memberid,'cl_requestid'=>$cl_requestid,'cl_choiceid'=>$cl_choiceid,'cl_post_title'=>$cl_post_title,'cl_post_url'=>$cl_post_url,'cl_type'=>$cl_type);
+				// add link to comment
+					$luvlink = '<a href="'.$cl_post_url.'">'.$cl_post_title.'</a>';
+					$prepend_text = $options ['comment_text'];
+					$search = array ('[name]', '[type]', '[lastpost]' );
+					$replace = array ($comment->comment_author, $cl_type, $luvlink );
+					$inserted = str_replace ( $search, $replace, $prepend_text );
+					// insert identifying data and insert text/link to end of comment
+					$commentcontent .= "\n<span class=\"cluv\">$inserted";
+				// prepare heart icon
+					$hearticon = '';
+					if($cl_memberid > 2 ){
+					// use PLUS heart for members
+						$hearticon = 'plus';
+					}
+					if ($options ['heart_tip'] == 'on') {
+						$commentcontent .= '<span class="heart_tip_box"><img class="heart_tip '.$cl_memberid.'" alt="My ComLuv Profile" border="0" width="16" height="14" src="' . $this->plugin_url . 'images/littleheart'.$hearticon.'.gif"/></span>';
+					}
+					$commentcontent.= '</span>';
+				}
+				// store new content in this comments comment_content cell
+				$comment->comment_content = $commentcontent;
+				// fill new array with this comment
+				$new_commentarray[] = $comment;
 			}
-			return $commentcontent;
+			
+			// admin page or public page?
+			if($isadminpage){
+				// is being called by comment_text filter so expecting just content
+				return $commentcontent;
+			} else {
+				// called from comments_array filter so expecting array of objects
+				return $new_commentarray;
+			}
 		}
 
 		// set up default values

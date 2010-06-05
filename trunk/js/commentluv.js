@@ -1,4 +1,4 @@
-// commentluv.js 2.7
+// commentluv.js 2.8
 (function($) {
 	$(document).ready(function(){
 		// get form object that is parent of textarea named "comment"
@@ -94,7 +94,12 @@
 			$('#heart_tip_big').hoverIntent({over:do_nowt,out: heart_small, interval : 50, timeout: 350});
 			var linkspan = $(this).parents(".cluv");
 			var link = $(linkspan).find("a:first").attr("href");
-			var url = cl_settings['api_url'] + "?type=info&refer=" + cl_settings['refer'] + '&version='+ cl_settings['cl_version'] + '&callback=?' + "&url=" + link ;
+			// get member id from last class of image
+			var memberid = $('img',this).attr('class').split(' ').slice(-1);
+			if(memberid != ''){
+				memberid = '&memberid='+memberid;
+			}
+			var url = cl_settings['api_url'] + "?type=info&refer=" + cl_settings['refer'] + '&version='+ cl_settings['cl_version'] + memberid + '&callback=?' + "&url=" + link ;
 			do_info(url);
 		}
 		function heart_small(){
@@ -156,6 +161,7 @@
 				$('#lastposts').empty();
 				// get if is a member and other meta data
 				var ismember = data.meta[0].ismember;
+				$('#cl_memberid').val(ismember);
 				cl_settings['request_id'] = data.meta[0].request_id;
 				cl_settings['alert_message'] = data.meta[0].alert_message;
 				// add the returned data to select box (or div)
