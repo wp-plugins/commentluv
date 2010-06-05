@@ -14,7 +14,7 @@ This plugin will visit the site of the comment author while they type their comm
 
 It has been found to increase comments and the community spirit for the thousands of blogs that have installed it. With a simple install you will immediately start to find new and interesting blog posts, tweets and diggs from your own blog and community.
 
-The plugin requires WP or WPMU version of at least 2.65 and will work with administrators and logged on users provided they have their homepage url set in their profile page in the dashboard of the site.
+The plugin requires WP or WPMU version of at least 2.92 and will work with administrators and logged on users provided they have their homepage url set in their profile page in the dashboard of the site.
 
 With a full support site where you can unlock great new features, start your own WP2.7 blog with CommentLuv already installed and set up, view your stats for comments made and received and much more.
 
