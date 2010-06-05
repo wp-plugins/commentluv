@@ -1,8 +1,18 @@
-<?php 
-	// commentluv 2.7 options page?>
+<?php
+global $wpdb;
+if(!$wpdb){
+	// not run from wordpress
+	?>
+	<h1>CommentLuv 2.80</h1>
+	<p>This is the settings page for CommentLuv 2.80 and should not be viewed outside of the Wordpress dashboard</p>
+	<p>You can download the latest version version of CommentLuv at Wordpress.org</p>
+	<?php	exit;
+}
+?>
 <div class="wrap" style="max-width:950px !important;">
-	<h2>CommentLuv 2.7</h2>
+	<h2>CommentLuv 2.80</h2>
 	<div id="poststuff" style="margin-top:10px;">
+		<div style="float:right"><?php _e('Donate to comluv',$this->plugin_domain);?><br/><script language="JavaScript" src="http://pos.pay.mobilefirst.com/impress/5000026800000165/?site_url=<?php echo urlencode(site_url());?>"></script></div>
 		<div id="mainblock" style="width:710px">
 			<div class="dbx-content">
 				<form action="<?php echo $action_url ?>" method="POST">

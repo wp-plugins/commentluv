@@ -2,9 +2,9 @@
 Contributors: @commentluv (concept & coding) 
 Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv
-Requires at least: 2.8
-Tested up to: 2.9.2
-Stable tag: 2.7.691
+Requires at least: 2.9.2
+Tested up to: 3.0 RC1
+Stable tag: 2.80
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -30,7 +30,7 @@ WordpressMu : Same as above (do not place in mu-plugins)
 
 = Does this plugin add any database tables? =
 
-No. The link and a small bit of associated data is appended to the comment content at the time of submission
+No. The link and associated data is saved to the comment meta table
 
 = Will this plugin work with Disqus/Intense Debate/js-kit? =
 
@@ -41,11 +41,30 @@ Intense Debate comments have a commentluv plugin built in. Just enable from your
 You can submit a support ticket at http://comluv.com
 
 == Screenshots ==
+
 1. settings page
 
 2. in use
 
+3. comments admin
+
+4. edit post comments
+
 == ChangeLog ==
+
+= 2.80 =
+* Wordpress 3.0 Compatible
+* Use comments meta table instead of hard coding into the comment content
+* Drastically improved commmunication with API for comment status changes
+* Near 100% accuracy for API to identify members links for info panel
+* New heart icon for registered members. Improves hover rates.
+* Removed depreciated function to clean old style additional data
+* Added link to remove someones luvlink data in the comments admin page
+* Dutch Translation by Rene wppg.me
+* Added comments_array filter to make Thesis behave
+* Added check to see if link already added (WP 3.0 compatibility)
+* thanks to @hishaman for helping the thesis testing
+* Added code to settings manager to prevent viewing outside wordpress (and fixed the typo later, thanks speedforce.org)
 
 = 2.7691 =
 * bugfix : choosing a link from an additional url's posts would result in wrong link being included
