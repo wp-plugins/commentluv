@@ -53,7 +53,7 @@ You can submit a support ticket at http://comluv.com
 4. edit post comments
 
 == ChangeLog ==
-= 2.81.1
+= 2.81.1 =
 * Prevent empty last post from being included. Also included in API
 * added Dutch translation (thanks Rene http://wpwebshop.com)
 * Also have commentluv on pages
