@@ -1,8 +1,8 @@
-<?php /* CommentLuv 2.8
+<?php /* CommentLuv 2.8.1.1
 Plugin Name: CommentLuv
 Plugin URI: http://comluv.com/download/commentluv-wordpress/
 Description: Plugin to show a link to the last post from the commenters blog by parsing the feed at their given URL when they leave a comment. Rewards your readers and encourage more comments.
-Version: 2.80
+Version: 2.8.1.1
 Author: Andy Bailey
 Author URI: http://fiddyp.co.uk/
 */
@@ -14,7 +14,7 @@ if (! class_exists ( 'commentluv' )) {
 		var $plugin_domain = 'commentluv';
 		var $plugin_url;
 		var $db_option = 'commentluv_options';
-		var $cl_version = 280;
+		var $cl_version = 281.1;
 		var $api_url;
 		var $test = false;
 
@@ -80,7 +80,8 @@ if (! class_exists ( 'commentluv' )) {
 		function add_removeluv_link($actions){
 			global $post;
 			$user_can = current_user_can('edit_post', $post->ID);
-			if(get_comment_meta(get_comment_ID(),'cl_data')){
+			$cid = get_comment_ID();
+			if(get_comment_meta($cid,'cl_data') && wp_get_comment_status($cid) == 'approved'){
 				if($user_can){
 					$nonce= wp_create_nonce  ('removeluv'.get_comment_ID());
 				        $actions['Remove-luv'] = '<a class="removeluv :'.get_comment_ID().':'.$nonce.'" href="wp-admin/edit-comments.php">Remove Luv</a>';
@@ -114,7 +115,7 @@ if (! class_exists ( 'commentluv' )) {
 		// hook the template_redirect for inserting style and javascript (using wp_head would make it too late to add dependencies)
 		function commentluv_scripts() {
 			// only load scripts if on a single page
-			if (is_single ()) {
+			if (is_single () || is_page()) {
 				wp_enqueue_script ( 'jquery' );
 				wp_enqueue_script ( 'hoverIntent', '/' . WPINC . '/js/hoverIntent.js', array ('jquery' ) );
 				wp_enqueue_script ( 'commentluv', $this->plugin_url . 'js/commentluv.js', array ('jquery' ) );
@@ -151,7 +152,7 @@ if (! class_exists ( 'commentluv' )) {
 		// get plugin options
 		function get_options() {
 			// default values
-			$options = array ('comment_text' => '[name] recently posted..[lastpost]', 'select_text' => 'choose a different post to show', 'default_on' => 'on', 'heart_tip' => 'on', 'use_template' => '', 'badge' => 'CL91x17-white2.gif', 'show_text' => 'CommentLuv Enabled', 'author_name' => 'author', 'url_name' => 'url', 'comment_name' => 'comment', 'email_name' => 'email', 'prepend' => '', 'infoback' => 'pink' );
+			$options = array ('comment_text' => '[name] recently posted..[lastpost]', 'select_text' => 'choose a different post to show', 'default_on' => 'on', 'heart_tip' => 'on', 'use_template' => '', 'badge' => 'CL91_White.gif', 'show_text' => 'CommentLuv Enabled', 'author_name' => 'author', 'url_name' => 'url', 'comment_name' => 'comment', 'email_name' => 'email', 'prepend' => '', 'infoback' => 'white' );
 			// get saved options unless reset button was pressed
 			$saved = '';
 			if (! isset ( $_POST ['reset'] )) {
@@ -221,10 +222,10 @@ if (! class_exists ( 'commentluv' )) {
 			// set value to checked if option is on (for showing correct status of checkbox and radio button in settings page)
 			$default_on = $options ['default_on'] == 'on' ? 'checked' : '';
 			$heart_tip = $options ['heart_tip'] == 'on' ? 'checked' : '';
-			$badge1 = $options ['badge'] == 'ACL88x31-black2.gif' ? 'checked="checked"' : '';
-			$badge2 = $options ['badge'] == 'ACL88x31-white2.gif' ? 'checked="checked"' : '';
-			$badge3 = $options ['badge'] == 'CL91x17-black2.gif' ? 'checked="checked"' : '';
-			$badge4 = $options ['badge'] == 'CL91x17-white2.gif' ? 'checked="checked"' : '';
+			$badge1 = $options ['badge'] == 'CL88_Black.gif' ? 'checked="checked"' : '';
+			$badge2 = $options ['badge'] == 'CL88_White.gif' ? 'checked="checked"' : '';
+			$badge3 = $options ['badge'] == 'CL91_Black.gif' ? 'checked="checked"' : '';
+			$badge4 = $options ['badge'] == 'CL91_White.gif' ? 'checked="checked"' : '';
 			$badge5 = $options ['badge'] == 'nothing.gif' ? 'checked="checked"' : '';
 			$use_template = $options ['use_template'] == 'on' ? 'checked="checked"' : '';
 			$badge_text = $options ['badge'] == 'text' ? 'checked="checked"' : '';
@@ -311,7 +312,7 @@ if (! class_exists ( 'commentluv' )) {
 		// hook the pre_comment_content to add the link
 		function cl_post($id,$commentdata) {
 			$cl_requestid = intval($_POST['request_id']);
-			if($cl_requestid > 1){
+			if($cl_requestid > 1 && $_POST['cl_type'] != 'undefined'){
 				// only do stuff if the comment had a successful last blog post
 				// and if the meta hasn't been added yet.
 				// (request id will be -1 if error, or no posts returned.)
@@ -373,9 +374,10 @@ if (! class_exists ( 'commentluv' )) {
 						$commentcontent .= '<span class="heart_tip_box"><img class="heart_tip" alt="My ComLuv Profile" border="0" width="16" height="14" src="' . $this->plugin_url . 'images/littleheart.gif"/></span>';
 					}
 					$commentcontent .= '</span>';
+					$luvedit = TRUE;
 				}
 			// handle new 2.80+ comments with hidden post data
-				if($data){
+				if($data && !$luvedit){
 					// has meta data associated
 					extract($data,EXTR_OVERWRITE);
 					//array('cl_memberid'=>$cl_memberid,'cl_requestid'=>$cl_requestid,'cl_choiceid'=>$cl_choiceid,'cl_post_title'=>$cl_post_title,'cl_post_url'=>$cl_post_url,'cl_type'=>$cl_type);
