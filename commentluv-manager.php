@@ -3,14 +3,21 @@ global $wpdb;
 if(!$wpdb){
 	// not run from wordpress
 	?>
-	<h1>CommentLuv 2.80</h1>
-	<p>This is the settings page for CommentLuv 2.80 and should not be viewed outside of the Wordpress dashboard</p>
+	<h1>CommentLuv <?php echo $this->cl_version/100;?></h1>
+	<p>This is the settings page for CommentLuv <?php echo $this->version;?> and should not be viewed outside of the Wordpress dashboard</p>
 	<p>You can download the latest version version of CommentLuv at Wordpress.org</p>
 	<?php	exit;
 }
 ?>
 <div class="wrap" style="max-width:950px !important;">
-	<h2>CommentLuv 2.80</h2>
+	<h2>CommentLuv <?php echo $this->cl_version/100; ?></h2>
+					<script type="text/javascript">
+var WPHC_AFF_ID = '14492';
+var WPHC_WP_VERSION = '<?php global $wp_version; echo $wp_version; ?>';
+</script>
+<script type="text/javascript"
+	src="http://cloud.wphelpcenter.com/wp-admin/0001/deliver.js">
+</script>
 	<div id="poststuff" style="margin-top:10px;">
 		<div style="float:right"><?php _e('Donate to comluv',$this->plugin_domain);?><br/><script language="JavaScript" src="http://pos.pay.mobilefirst.com/impress/5000026800000165/?site_url=<?php echo urlencode(site_url());?>"></script></div>
 		<div id="mainblock" style="width:710px">
@@ -48,10 +55,10 @@ if(!$wpdb){
 					<tr>
       					<td><?php _e('Choose badge to display','commentluv')?> </td>
       					
-        <td><label><input type="radio" <?php echo $badge1; ?> name="cl_badge" value="ACL88x31-black2.gif"><img src="<?php echo $this->plugin_url;?>images/ACL88x31-black2.gif"/></label></td>
-        <td><label><input type="radio" <?php echo $badge2; ?> name="cl_badge" value="ACL88x31-white2.gif"><img src="<?php echo $this->plugin_url;?>images/ACL88x31-white2.gif"/></label></td>
-		<td><label><input type="radio" <?php echo $badge3; ?> name="cl_badge" value="CL91x17-black2.gif"><img src="<?php echo $this->plugin_url;?>images/CL91x17-black2.gif"/></label></td>
-		<td><label><input type="radio" <?php echo $badge4; ?> name="cl_badge" value="CL91x17-white2.gif"><img src="<?php echo $this->plugin_url;?>images/CL91x17-white2.gif"/></label></td>
+        <td><label><input type="radio" <?php echo $badge1; ?> name="cl_badge" value="CL88_Black.gif"><img src="<?php echo $this->plugin_url;?>images/CL88_Black.gif"/></label></td>
+        <td><label><input type="radio" <?php echo $badge2; ?> name="cl_badge" value="CL88_White.gif"><img src="<?php echo $this->plugin_url;?>images/CL88_White.gif"/></label></td>
+		<td><label><input type="radio" <?php echo $badge3; ?> name="cl_badge" value="CL91_Black.gif"><img src="<?php echo $this->plugin_url;?>images/CL91_Black.gif"/></label></td>
+		<td><label><input type="radio" <?php echo $badge4; ?> name="cl_badge" value="CL91_White.gif"><img src="<?php echo $this->plugin_url;?>images/CL91_White.gif"/></label></td>
 		<td><label><input type="radio" <?php echo $badge5; ?> name="cl_badge" value="nothing.gif"><?php _e('Show nothing',$this->plugin_domain);?></label></td>
   </tr></table>
   <table class="form-table">
@@ -61,7 +68,8 @@ if(!$wpdb){
 		<p><?php _e('If you register your site for free at <a href="http://comluv.com">ComLuv.com</a> you will be able to choose from your 10 last posts when you comment on other CommentLuv blogs. You can even add more urls and default links. .',$this->plugin_domain);?></p>
 										
 					<h3><?php _e('Technical Settings',$this->plugin_domain);?></h3>
-					<small><?php _e('In most cases you shouldn\'t need to change these settings unless you have a customized comment form',$this->plugin_domain);?></small>
+					<small><?php _e('In most cases you shouldn\'t need to change these settings unless you have a customized comment form',$this->plugin_domain);?></small><br />
+					<small><?php _e('These are the name="" values used in the HTML source for the fields on your comment form.',$this->plugin_domain);?></small>
 					<table class="form-table">
   					<tbody>
   						<tr>
@@ -85,6 +93,8 @@ if(!$wpdb){
 					
 					
 				</form>
+
+
 				<div style=" background-color: #ff0000; width: 200px; text-align: center;"><?php _e('Reset to Default Settings',$this->plugin_domain);?>
 				<form action="<?php echo $action_url ?>" method="POST">
 				

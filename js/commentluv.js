@@ -211,3 +211,15 @@ function clchoose(ptype,purl,pstr,pid,preq){
 	}
 })(jQuery);
 }
+
+function cl_infolink_click(clickurl){
+	(function($){
+			// set link to open in a new window
+			$('a[href="' + clickurl + '"]').attr("target","_blank");
+			var addit= "?type=click&url=" + clickurl + "&callback=?";
+			var clurl=cl_settings['api_url'] + addit;
+			// call api, don't worry about returned data
+			$.getJSON(clurl);
+			return true;
+	})(jQuery);
+}

@@ -1,10 +1,10 @@
 === CommentLuv ===
-Contributors: @commentluv (concept & coding) 
+Contributors: @commentluv (concept & coding) @hishaman (css additions)
 Donate link:http://comluv.com/about/donate
-Tags: commentluv, comments, last blog post, linkluv
+Tags: commentluv, comments, last blog post, linkluv, comment luv
 Requires at least: 2.9.2
-Tested up to: 3.0 RC1
-Stable tag: 2.80
+Tested up to: 3.0.1
+Stable tag: 2.8.1.1
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -14,9 +14,9 @@ This plugin will visit the site of the comment author while they type their comm
 
 It has been found to increase comments and the community spirit for the thousands of blogs that have installed it. With a simple install you will immediately start to find new and interesting blog posts, tweets and diggs from your own blog and community.
 
-The plugin requires WP or WPMU version of at least 2.92 and will work with administrators and logged on users provided they have their homepage url set in their profile page in the dashboard of the site.
+The plugin requires WP or WP MS version of at least 2.92 and will work with administrators and logged on users provided they have their homepage url set in their profile page in the dashboard of the site.
 
-With a full support site where you can unlock great new features, start your own WP2.7 blog with CommentLuv already installed and set up, view your stats for comments made and received and much more.
+With a full support site where you can unlock great new features, show off your site, upgrade your urls and feed locations, view your stats for comments made and received and much more.
 
 You can visit http://comluv.com to find out more about this plugin.
 
@@ -25,6 +25,8 @@ You can visit http://comluv.com to find out more about this plugin.
 Wordpress : Extract the zip file and just drop the contents in the wp-content/plugins/ directory of your WordPress installation and then activate the Plugin from Plugins page.
 
 WordpressMu : Same as above (do not place in mu-plugins)
+
+If you're upgrading from an older version, please use the 'reset to default settings' button.
 
 == Frequently Asked Questions ==
 
@@ -51,6 +53,16 @@ You can submit a support ticket at http://comluv.com
 4. edit post comments
 
 == ChangeLog ==
+= 2.81.1
+* Prevent empty last post from being included. Also included in API
+* added Dutch translation (thanks Rene http://wpwebshop.com)
+* Also have commentluv on pages
+* updated badges to new version (thanks Byteful Traveller)
+
+= 2.81 =
+* New style.css format for info panel (thanks @Hishaman)
+* Only show remove luv link for approved comments
+* bug fix : sometimes showed two cluv spans (on beta version comments)
 
 = 2.80 =
 * Wordpress 3.0 Compatible
