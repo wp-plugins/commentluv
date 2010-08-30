@@ -1,10 +1,10 @@
 === CommentLuv ===
-Contributors: @commentluv (concept & coding) @hishaman (css additions)
+Contributors: teamplaylotto, @commentluv, @hishaman (css additions)
 Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv, comment luv
 Requires at least: 2.9.2
 Tested up to: 3.0.1
-Stable tag: 2.8.1.1
+Stable tag: 2.81.2
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -53,9 +53,14 @@ You can submit a support ticket at http://comluv.com
 4. edit post comments
 
 == ChangeLog ==
+= 2.81.2 =
+* silly me, put the version number wrong!
+* Set back to default settings if upgrading from less than 2.81
+* Show url field for logged on user if buddypress is active 
+
 = 2.81.1 =
 * Prevent empty last post from being included. Also included in API
-* added Dutch translation (thanks Rene http://wpwebshop.com)
+* Fixed Dutch translation (thanks Rene http://wpwebshop.com)
 * Also have commentluv on pages
 * updated badges to new version (thanks Byteful Traveller)
 
@@ -133,6 +138,13 @@ You can submit a support ticket at http://comluv.com
 
 = 2.7 =
 * 12 Jun 2009 - small fixes for valid xhtml on images and checkbox . remove identifying .-= / =-. from inserted link on display time. 
+
+== Upgrade Notice ==
+
+= 2.81.2 =
+
+Shows url field on buddypress and fixes version number and badge display.
+
 
 == Configuration ==
 

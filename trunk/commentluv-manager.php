@@ -3,8 +3,8 @@ global $wpdb;
 if(!$wpdb){
 	// not run from wordpress
 	?>
-	<h1>CommentLuv <?php echo $this->cl_version/100;?></h1>
-	<p>This is the settings page for CommentLuv <?php echo $this->version;?> and should not be viewed outside of the Wordpress dashboard</p>
+	<h1>CommentLuv </h1>
+	<p>This is the settings page for CommentLuv and should not be viewed outside of the Wordpress dashboard</p>
 	<p>You can download the latest version version of CommentLuv at Wordpress.org</p>
 	<?php	exit;
 }

@@ -1,8 +1,8 @@
-<?php /* CommentLuv 2.8.1.1
+<?php /* CommentLuv 2.81.2
 Plugin Name: CommentLuv
 Plugin URI: http://comluv.com/download/commentluv-wordpress/
 Description: Plugin to show a link to the last post from the commenters blog by parsing the feed at their given URL when they leave a comment. Rewards your readers and encourage more comments.
-Version: 2.8.1.1
+Version: 2.81.2
 Author: Andy Bailey
 Author URI: http://fiddyp.co.uk/
 */
@@ -14,7 +14,7 @@ if (! class_exists ( 'commentluv' )) {
 		var $plugin_domain = 'commentluv';
 		var $plugin_url;
 		var $db_option = 'commentluv_options';
-		var $cl_version = 281.1;
+		var $cl_version = 281.2;
 		var $api_url;
 		var $test = false;
 
@@ -31,7 +31,17 @@ if (! class_exists ( 'commentluv' )) {
 
 			// can you dig it?
 			if (version_compare ( $wp_version, "2.9.2", "<" )) {
-				exit ( $exit_msg ); // no diggedy
+				echo ( $exit_msg ); // no diggedy
+			}
+			// check if update changes needed
+			$installed_version = get_option('cl_version');
+			if(!$installed_version || $installed_version < $this->cl_version){
+				update_option('cl_version',$this->cl_version);
+				$options = $this->get_options();
+				// set new defaults for info back color and badge
+				$options['badge'] = 'CL91_White.gif';
+				$options['infoback'] = "white";
+				update_option($this->db_option,$options);
 			}
 
 			// action hooks
@@ -288,7 +298,13 @@ if (! class_exists ( 'commentluv' )) {
 				}
 
 				echo "<input type='hidden' id='$cl_author_id' name='$cl_author_id' value='$author' />";
-				echo "<input type='hidden' id='$cl_site_id' name='$cl_site_id' value='$url' />";
+				// check for buddypress
+				if(function_exists('bp_core_setup_globals')){
+					$input_type = 'text';
+				} else {
+					$input_type = 'hidden';
+				}
+				echo "<input type='$input_type' id='$cl_site_id' name='$cl_site_id' value='$url' />";
 			}
 			global $fieldsadded;
 			if(!$fieldsadded){
