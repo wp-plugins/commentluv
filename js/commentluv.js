@@ -161,6 +161,11 @@
 				$('#lastposts').empty();
 				// get if is a member and other meta data
 				var ismember = data.meta[0].ismember;
+				if(ismember < 2){
+					// uncomment below to only show luv to registered comluv users.
+					//$('#mylastpost').html('Only registered comluv users can receive luv');
+					//return;
+				}
 				$('#cl_memberid').val(ismember);
 				cl_settings['request_id'] = data.meta[0].request_id;
 				cl_settings['alert_message'] = data.meta[0].alert_message;
