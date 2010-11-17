@@ -1,8 +1,8 @@
-<?php /* CommentLuv 2.81.2
+<?php /* CommentLuv 2.81.3
 Plugin Name: CommentLuv
 Plugin URI: http://comluv.com/download/commentluv-wordpress/
 Description: Plugin to show a link to the last post from the commenters blog by parsing the feed at their given URL when they leave a comment. Rewards your readers and encourage more comments.
-Version: 2.81.2
+Version: 2.81.3
 Author: Andy Bailey
 Author URI: http://fiddyp.co.uk/
 */
@@ -14,7 +14,7 @@ if (! class_exists ( 'commentluv' )) {
 		var $plugin_domain = 'commentluv';
 		var $plugin_url;
 		var $db_option = 'commentluv_options';
-		var $cl_version = 281.2;
+		var $cl_version = 281.3;
 		var $api_url;
 		var $test = false;
 
@@ -290,7 +290,7 @@ if (! class_exists ( 'commentluv' )) {
 					$url = "http://".$url;
 				}
 				// check for MU blog
-				if (function_exists ( 'is_site_admin' )) {
+				if ($this->check_this_is_multsite()) {
 					if (! $url || $url == "http://") {
 						$userbloginfo = get_blogs_of_user ( $userid, 1 );
 						$url = $userbloginfo [1]->siteurl;
@@ -477,6 +477,21 @@ if (! class_exists ( 'commentluv' )) {
 				$content = @file_get_contents ( $url );
 			}
 			return $content;
+		}
+		
+		// from http://frumph.net/wordpress/wordpress-plugin-theme-check-for-multisitewpmu/
+		// check for multisite. Returns boolean
+		function check_this_is_multsite() {
+			global $wpmu_version;
+			if (function_exists('is_multisite')){
+				if (is_multisite()) {
+					return true;
+				}
+				if (!empty($wpmu_version)){
+					return true;
+				}
+			}
+			return false;
 		}
 		// find last occurrence of string in string (for php 4)
 		function my_strrpos($haystack, $needle, $offset = 0) {

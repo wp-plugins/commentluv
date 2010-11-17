@@ -1,10 +1,10 @@
 === CommentLuv ===
-Contributors: teamplaylotto, @commentluv, @hishaman (css additions)
+Contributors: commentluv, @hishaman (css additions)
 Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv, comment luv
 Requires at least: 2.9.2
 Tested up to: 3.0.1
-Stable tag: 2.81.2
+Stable tag: 2.81.3
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -53,6 +53,10 @@ You can submit a support ticket at http://comluv.com
 4. edit post comments
 
 == ChangeLog ==
+= 2.81.3 =
+* Change the way to detect if on a multi site install or not
+* updated one of the badges
+
 = 2.81.2 =
 * silly me, put the version number wrong!
 * Set back to default settings if upgrading from less than 2.81
@@ -141,9 +145,9 @@ You can submit a support ticket at http://comluv.com
 
 == Upgrade Notice ==
 
-= 2.81.2 =
+= 2.81.3 =
 
-Shows url field on buddypress and fixes version number and badge display.
+Fix : change the way multisite is detected to prevent errors on versions of wordpress less than 3.0
 
 
 == Configuration ==
