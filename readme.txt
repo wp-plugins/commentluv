@@ -3,14 +3,14 @@ Contributors: commentluv, @hishaman (css additions)
 Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv, comment luv
 Requires at least: 2.9.2
-Tested up to: 3.0.1
+Tested up to: 3.1b
 Stable tag: 2.81.5
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
 == Description ==
 
-This plugin will visit the site of the comment author while they type their comment and retrieve a selection of their last blog posts, tweets or digg submissions which they can choose one from to include at the bottom of their comment when they click submit.
+This plugin will visit the site of the comment author while they type their comment and retrieve a selection of their last blog posts, tweets or digg submissions which they can choose to include at the bottom of their comment when they click submit.
 
 It has been found to increase comments and the community spirit for the thousands of blogs that have installed it. With a simple install you will immediately start to find new and interesting blog posts, tweets and diggs from your own blog and community.
 
@@ -60,7 +60,7 @@ You can submit a support ticket at http://comluv.com
 * update : settings page prettifying (hmm perdy!)
 * update : set drop down for last blogs posts event to hover instead of click
 
-=2.81.4 =
+= 2.81.4 =
 * Fixed : removeluv link in comments admin would result in 404 (thanks @techpatio)
 
 = 2.81.3 =
