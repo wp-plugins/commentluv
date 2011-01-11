@@ -1,8 +1,8 @@
-<?php /* CommentLuv 2.81.3
+<?php /* CommentLuv 2.81.5
 Plugin Name: CommentLuv
 Plugin URI: http://comluv.com/download/commentluv-wordpress/
 Description: Plugin to show a link to the last post from the commenters blog by parsing the feed at their given URL when they leave a comment. Rewards your readers and encourage more comments.
-Version: 2.81.3
+Version: 2.81.5
 Author: Andy Bailey
 Author URI: http://fiddyp.co.uk/
 */
@@ -14,7 +14,7 @@ if (! class_exists ( 'commentluv' )) {
 		var $plugin_domain = 'commentluv';
 		var $plugin_url;
 		var $db_option = 'commentluv_options';
-		var $cl_version = 281.3;
+		var $cl_version = 281.5;
 		var $api_url;
 		var $test = false;
 
@@ -23,8 +23,13 @@ if (! class_exists ( 'commentluv' )) {
 			global $wp_version, $pagenow;
 			// pages where commentluv needs translation
 			$local_pages = array ('plugins.php', 'commentluv.php' );
+            if(isset($_GET['page'])){
+                $page = $_GET['page'];
+            } else {
+                $page = '';
+            }
 			// check if translation needed on current page
-			if (in_array ( $pagenow, $local_pages ) || in_array ( $_GET ['page'], $local_pages )) {
+			if (in_array ( $pagenow, $local_pages ) || in_array ( $page, $local_pages )) {
 				$this->handle_load_domain ();
 			}
 			$exit_msg = __ ( 'CommentLuv requires Wordpress 2.9.2 or newer.', $this->plugin_domain ) . '<a href="http://codex.wordpress.org/Upgrading_Wordpress">' . __ ( 'Please Update!', $this->plugin_domain ) . '</a>';
@@ -51,8 +56,6 @@ if (! class_exists ( 'commentluv' )) {
 			} else {
 				$this->api_url = 'http://api.comluv.com/cl_api/commentluvapi.php';	
 			}
-			
-			//
 			add_action ( 'admin_menu', array (&$this, 'admin_menu' ) ); // add image to admin link and setup options page
 			add_action ( 'admin_print_scripts-post.php', array (&$this, 'add_removeluv_script') ); // add the removeluv script to admin page
 			add_action ( 'admin_print_scripts-edit-comments.php', array (&$this, 'add_removeluv_script') ); // add the removeluv script to admin page
@@ -94,7 +97,7 @@ if (! class_exists ( 'commentluv' )) {
 			if(get_comment_meta($cid,'cl_data') && wp_get_comment_status($cid) == 'approved'){
 				if($user_can){
 					$nonce= wp_create_nonce  ('removeluv'.get_comment_ID());
-				        $actions['Remove-luv'] = '<a class="removeluv :'.get_comment_ID().':'.$nonce.'" href="wp-admin/edit-comments.php">Remove Luv</a>';
+				        $actions['Remove-luv'] = '<a class="removeluv :'.get_comment_ID().':'.$nonce.'" href="'.admin_url('edit-comments.php').'">Remove Luv</a>';
 				}
 			}
 			return $actions;
@@ -125,7 +128,7 @@ if (! class_exists ( 'commentluv' )) {
 		// hook the template_redirect for inserting style and javascript (using wp_head would make it too late to add dependencies)
 		function commentluv_scripts() {
 			// only load scripts if on a single page
-			if (is_single () || is_page()) {
+			if (is_singular()) {
 				wp_enqueue_script ( 'jquery' );
 				wp_enqueue_script ( 'hoverIntent', '/' . WPINC . '/js/hoverIntent.js', array ('jquery' ) );
 				wp_enqueue_script ( 'commentluv', $this->plugin_url . 'js/commentluv.js', array ('jquery' ) );
@@ -246,7 +249,7 @@ if (! class_exists ( 'commentluv' )) {
 		}
 		// shortcode for showing badge and drop down box
 		function display_badge() {
-			if (is_single ()) {
+			if (is_singular()) {
 				global $badgeshown;
 				$options = get_option ( $this->db_option );
 				// choose as image or as text
@@ -269,7 +272,7 @@ if (! class_exists ( 'commentluv' )) {
 					$prepend = stripslashes($options['prepend']);
 					$decodeprepend = htmlspecialchars_decode_own($prepend);
 				}
-				echo '<div id="commentluv">' . $decodeprepend . '<input type="checkbox" id="doluv" name="doluv" ' . $default_on . ' style="width:25px;"></input><span id="mylastpost" style="clear: both">' . $badge . '</span><img class="clarrow" id="showmore" src="' . $this->plugin_url . 'images/down-arrow.gif" alt="show more" style="display:none;"/></div><div id="lastposts" style="display: none;"></div>';
+				echo '<div id="commentluv">' . $decodeprepend . '<input type="checkbox" id="doluv" name="doluv" ' . $default_on . ' style="width:25px;"></input><span id="mylastpost" style="clear: both">' . $badge . '</span><span id="showmorespan" style="width: 30px; height: 15px; cursor: pointer;"><img class="clarrow" id="showmore" src="' . $this->plugin_url . 'images/down-arrow.gif" alt="show more" style="display:none;"/></span></div><div id="lastposts" style="display: none;"></div>';
 				$badgeshown = TRUE;
 			}
 		}

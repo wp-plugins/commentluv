@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CommentLuv 2.7.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-06-19 10:27-0000\n"
+"POT-Creation-Date: 2011-01-10 15:17-0000\n"
 "PO-Revision-Date: \n"
-"Last-Translator: WordPressPluginGuide.com <info@wppg.me>\n"
+"Last-Translator: Andy Bailey <admin@comluv.com>\n"
 "Language-Team: @commentluv, Gianni Diurno <admin@comluv.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -17,111 +17,197 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Poedit-SearchPath-0: ..\n"
 
-#: ../commentluv-manager.php:11
+#: ../commentluv-manager.php:26
 msgid "This plugin takes the url from the comment form and tries to parse the feed of the site and display the last entry made. If you have any questions, comments or if you have a good idea that you would like to see in the next version of CommentLuv, please visit http://comluv.com and let me know."
 msgstr "Deze plugin haalt de url uit het reactieformulier, probeert de feed van de website te ontleden en geeft het laatste bericht weer. Als je nog vragen, opmerkingen of als je een goed idee hebt dat je zou willen zien in de volgende versie van CommentLuv bezoek dan http://comluv.com en laat het me weten."
 
-#: ../commentluv-manager.php:12
+#: ../commentluv-manager.php:36
 msgid "Display Options"
 msgstr "Weergave Opties"
 
-#: ../commentluv-manager.php:13
+#: ../commentluv-manager.php:40
 msgid "Enter the text you want displayed in the comment"
 msgstr "Voer de tekst in die je weer wilt geven in het commentaar"
 
-#: ../commentluv-manager.php:16
+#: ../commentluv-manager.php:43
 msgid "Text displayed in the select box"
 msgstr "Tekst weergegeven in het selectievak"
 
-#: ../commentluv-manager.php:20
+#: ../commentluv-manager.php:47
 msgid "CommentLuv on by default?"
 msgstr "CommentLuv standaard aan?"
 
-#: ../commentluv-manager.php:23
+#: ../commentluv-manager.php:50
 msgid "Show heart on links?"
 msgstr "Laat een hartje zien bij links?"
 
-#: ../commentluv-manager.php:27
+#: ../commentluv-manager.php:52
+msgid "Info panel background color"
+msgstr ""
+
+#: ../commentluv-manager.php:57
 msgid "Use template insert to show badge and checkbox?"
 msgstr "Gebruik sjabloon plaatsing om badge en selectiebox te laten zien?"
 
-#: ../commentluv-manager.php:29
+#: ../commentluv-manager.php:58
+msgid "Do NOT check this unless you have manually inserted the code into your comments.php file "
+msgstr ""
+
+#: ../commentluv-manager.php:64
 msgid "Display Badge"
 msgstr "Weergeven Badge"
 
-#: ../commentluv-manager.php:30
+#: ../commentluv-manager.php:68
 msgid "Many thanks to <a href=\"http://byteful.com\">Byteful Traveller</a> for creating these images."
 msgstr "Dank aan <a href=\"http://byteful.com\">Byteful Traveller</a> voor het maken van deze afbeeldingen."
 
-#: ../commentluv-manager.php:33
+#: ../commentluv-manager.php:72
 msgid "Choose badge to display"
 msgstr "Kies een badge ter weergave"
 
-#: ../commentluv-manager.php:39
+#: ../commentluv-manager.php:77
 msgid "Show nothing"
 msgstr "Laat niets zien"
 
-#: ../commentluv-manager.php:42
+#: ../commentluv-manager.php:80
 msgid "Show text"
 msgstr "Laat tekst zien"
 
-#: ../commentluv-manager.php:42
+#: ../commentluv-manager.php:80
 msgid "Prepend html before badge or text (optional)"
 msgstr "Voeg de html vooraan toe voor de badge of tekst (optioneel)"
 
-#: ../commentluv-manager.php:44
-msgid "CommentLuv Member Area"
-msgstr "CommentLuv Leden Omgeving"
-
-#: ../commentluv-manager.php:45
-msgid "If you register your site for free at <a href=\"http://comluv.com\">ComLuv.com</a> you will be able to open up lots of features that are for members only like link tracking so you can see which of the comments you make on CommentLuv blogs are getting the last blog post clicked and the ability to send back more than just blog posts. You can even create your own WP2.7 blog there with commentluv pre-installed!."
-msgstr "Als je je website gratis registreert op <a href=\"http://comluv.com\">ComLuv.com</a> kun je veel functies activeren welke alleen voor leden bestemd zijn, zoals link tracking waarmee je kunt zien op welke van de commentaren die je op CommentLuv blogs gemaakt hebt geklikt wordt en de mogelijkheid om meer terug te sturen dan alleen blogberichten. Je kan zelfs je eigen blog maken met WP2.7 CommentLuv vooraf geïnstalleerd !"
-
-#: ../commentluv-manager.php:47
+#: ../commentluv-manager.php:88
 msgid "Technical Settings"
 msgstr "Technische Instellingen"
 
-#: ../commentluv-manager.php:48
+#: ../commentluv-manager.php:92
 msgid "In most cases you shouldn't need to change these settings unless you have a customized comment form"
 msgstr "In de meeste gevallen hoef je deze instellingen niet te wijzigen tenzij je een aangepast reactieformulier hebt"
 
-#: ../commentluv-manager.php:52
+#: ../commentluv-manager.php:93
+msgid "These are the name=\"\" values used in the HTML source for the fields on your comment form."
+msgstr ""
+
+#: ../commentluv-manager.php:99
 msgid "Authors Name field name"
 msgstr "Veldnaam Naam Auteur"
 
-#: ../commentluv-manager.php:56
+#: ../commentluv-manager.php:103
 msgid "Email field name"
 msgstr "Veldnaam Email"
 
-#: ../commentluv-manager.php:60
+#: ../commentluv-manager.php:107
 msgid "Authors URL field name"
 msgstr "Veldnaam URL Auteur"
 
-#: ../commentluv-manager.php:64
+#: ../commentluv-manager.php:111
 msgid "Comment Text Area name"
 msgstr "Reactie Tekstruimte naam"
 
-#: ../commentluv-manager.php:72
+#: ../commentluv-manager.php:124
 msgid "Reset to Default Settings"
 msgstr "Resetten naar de standaardinstellingen"
 
-#: ../commentluv-manager.php:77
+#: ../commentluv-manager.php:129
 msgid "Are you sure you want to reset your settings? Press OK to continue"
 msgstr "Weet u zeker dat je je instellingen wilt resetten? Druk op OK om verder te gaan"
 
-#: ../commentluv.php:44
-msgid "CommentLuv requires Wordpress 2.6.5 or newer."
+#: ../commentluv-manager.php:139
+msgid "Plugin Info"
+msgstr ""
+
+#: ../commentluv-manager.php:142
+msgid "Author"
+msgstr ""
+
+#: ../commentluv-manager.php:143
+msgid "Home Page"
+msgstr ""
+
+#: ../commentluv-manager.php:143
+msgid "Visit ComLuv to register your site for more luv!"
+msgstr ""
+
+#: ../commentluv-manager.php:144
+msgid "Social"
+msgstr ""
+
+#: ../commentluv-manager.php:145
+msgid "Help"
+msgstr ""
+
+#: ../commentluv-manager.php:145
+msgid "Help Desk"
+msgstr ""
+
+#: ../commentluv-manager.php:146
+msgid "News"
+msgstr ""
+
+#: ../commentluv-manager.php:152
+msgid "Thanks to the following for translations"
+msgstr ""
+
+#: ../commentluv-manager.php:153
+msgid "Italian"
+msgstr ""
+
+#: ../commentluv-manager.php:154
+msgid "Russian"
+msgstr ""
+
+#: ../commentluv-manager.php:155
+msgid "Chinese"
+msgstr ""
+
+#: ../commentluv-manager.php:156
+msgid "Hebrew"
+msgstr ""
+
+#: ../commentluv-manager.php:157
+msgid "French"
+msgstr ""
+
+#: ../commentluv-manager.php:158
+msgid "Dutch"
+msgstr ""
+
+#: ../commentluv-manager.php:159
+msgid "Polish"
+msgstr ""
+
+#: ../commentluv.php:35
+#, fuzzy
+msgid "CommentLuv requires Wordpress 2.9.2 or newer."
 msgstr "CommentLuv vereist Wordpress versie 2.6.5 of nieuwer."
 
-#: ../commentluv.php:44
+#: ../commentluv.php:35
 msgid "Please Update!"
 msgstr "Gelieve te Updaten!"
 
-#: ../commentluv.php:75
+#: ../commentluv.php:88
 msgid "Settings"
 msgstr "Instellingen"
 
-#: ../commentluv.php:169
+#: ../commentluv.php:218
 msgid "There were errors with your chosen settings"
 msgstr "Er waren fouten met je gekozen instellingen"
 
+#~ msgid "CommentLuv Member Area"
+#~ msgstr "CommentLuv Leden Omgeving"
+
+#~ msgid ""
+#~ "If you register your site for free at <a href=\"http://comluv.com"
+#~ "\">ComLuv.com</a> you will be able to open up lots of features that are "
+#~ "for members only like link tracking so you can see which of the comments "
+#~ "you make on CommentLuv blogs are getting the last blog post clicked and "
+#~ "the ability to send back more than just blog posts. You can even create "
+#~ "your own WP2.7 blog there with commentluv pre-installed!."
+#~ msgstr ""
+#~ "Als je je website gratis registreert op <a href=\"http://comluv.com"
+#~ "\">ComLuv.com</a> kun je veel functies activeren welke alleen voor leden "
+#~ "bestemd zijn, zoals link tracking waarmee je kunt zien op welke van de "
+#~ "commentaren die je op CommentLuv blogs gemaakt hebt geklikt wordt en de "
+#~ "mogelijkheid om meer terug te sturen dan alleen blogberichten. Je kan "
+#~ "zelfs je eigen blog maken met WP2.7 CommentLuv vooraf geïnstalleerd !"
