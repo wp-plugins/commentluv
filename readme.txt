@@ -4,7 +4,7 @@ Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv, comment luv
 Requires at least: 2.9.2
 Tested up to: 3.0.1
-Stable tag: 2.81.3
+Stable tag: 2.81.5
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -53,6 +53,16 @@ You can submit a support ticket at http://comluv.com
 4. edit post comments
 
 == ChangeLog ==
+= 2.81.5 =
+* fixed : commentluv now available on pages too
+* update : change click to hover for showing drop down of last blog posts that were fetched
+* added : Polish translation
+* update : settings page prettifying (hmm perdy!)
+* update : set drop down for last blogs posts event to hover instead of click
+
+=2.81.4 =
+* Fixed : removeluv link in comments admin would result in 404 (thanks @techpatio)
+
 = 2.81.3 =
 * Change the way to detect if on a multi site install or not
 * updated one of the badges
@@ -145,9 +155,9 @@ You can submit a support ticket at http://comluv.com
 
 == Upgrade Notice ==
 
-= 2.81.3 =
+= 2.81.5 =
 
-Fix : change the way multisite is detected to prevent errors on versions of wordpress less than 3.0
+Fix : made available on pages too.
 
 
 == Configuration ==

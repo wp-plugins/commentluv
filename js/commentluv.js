@@ -21,7 +21,7 @@
 			cl_dostuff();
 		});
 		// set the event listener for the show more image
-		$("#showmore").click(function(){
+		$("#showmorespan").hover(function(){
 			// hide drop down box for click outside
 			$(document.body).click(function(){
 				$('#lastposts').hide();
