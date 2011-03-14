@@ -115,24 +115,24 @@
 	function getAbsoluteLeft(objectId) {
 		// Get an object left position from the upper left viewport corner
 		o = objectId;
-		oLeft = o.offsetLeft            // Get left position from the parent object
+		oLeft = o.offsetLeft;            // Get left position from the parent object
 		while(o.offsetParent!=null) {   // Parse the parent hierarchy up to the document element
-			oParent = o.offsetParent    // Get parent object reference
-			oLeft += oParent.offsetLeft // Add parent left position
-			o = oParent
+			oParent = o.offsetParent;    // Get parent object reference
+			oLeft += oParent.offsetLeft; // Add parent left position
+			o = oParent;
 		}
-		return oLeft
+		return oLeft;
 	}
 	function getAbsoluteTop(objectId) {
 		// Get an object top position from the upper left viewport corner
 		o = objectId;
-		oTop = o.offsetTop            // Get top position from the parent object
+		oTop = o.offsetTop;            // Get top position from the parent object
 		while(o.offsetParent!=null) { // Parse the parent hierarchy up to the document element
-			oParent = o.offsetParent  // Get parent object reference
-			oTop += oParent.offsetTop // Add parent top position
-			o = oParent
+			oParent = o.offsetParent;  // Get parent object reference
+			oTop += oParent.offsetTop; // Add parent top position
+			o = oParent;
 		}
-		return oTop
+		return oTop;
 	}
 
 	function do_info(url){

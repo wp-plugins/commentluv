@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CommentLuv 2.7.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-10 15:16-0000\n"
+"POT-Creation-Date: 2011-02-17 09:05-0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Andy Bailey <admin@comluv.com>\n"
 "Language-Team: @commentluv, Gianni Diurno <admin@comluv.com>\n"
@@ -103,76 +103,88 @@ msgstr ""
 msgid "Comment Text Area name"
 msgstr ""
 
-#: ../commentluv-manager.php:124
+#: ../commentluv-manager.php:115
+msgid "Enable js Compression Compatibility?"
+msgstr ""
+
+#: ../commentluv-manager.php:128
 msgid "Reset to Default Settings"
 msgstr ""
 
-#: ../commentluv-manager.php:129
+#: ../commentluv-manager.php:133
 msgid "Are you sure you want to reset your settings? Press OK to continue"
 msgstr ""
 
-#: ../commentluv-manager.php:139
+#: ../commentluv-manager.php:143
 msgid "Plugin Info"
 msgstr ""
 
-#: ../commentluv-manager.php:142
+#: ../commentluv-manager.php:146
 msgid "Author"
 msgstr ""
 
-#: ../commentluv-manager.php:143
+#: ../commentluv-manager.php:147
 msgid "Home Page"
 msgstr ""
 
-#: ../commentluv-manager.php:143
+#: ../commentluv-manager.php:147
 msgid "Visit ComLuv to register your site for more luv!"
 msgstr ""
 
-#: ../commentluv-manager.php:144
+#: ../commentluv-manager.php:148
 msgid "Social"
 msgstr ""
 
-#: ../commentluv-manager.php:145
+#: ../commentluv-manager.php:149
 msgid "Help"
 msgstr ""
 
-#: ../commentluv-manager.php:145
+#: ../commentluv-manager.php:149
 msgid "Help Desk"
 msgstr ""
 
-#: ../commentluv-manager.php:146
+#: ../commentluv-manager.php:150
 msgid "News"
 msgstr ""
 
-#: ../commentluv-manager.php:152
+#: ../commentluv-manager.php:156
 msgid "Thanks to the following for translations"
 msgstr ""
 
-#: ../commentluv-manager.php:153
+#: ../commentluv-manager.php:157
 msgid "Italian"
 msgstr ""
 
-#: ../commentluv-manager.php:154
+#: ../commentluv-manager.php:158
 msgid "Russian"
 msgstr ""
 
-#: ../commentluv-manager.php:155
+#: ../commentluv-manager.php:159
 msgid "Chinese"
 msgstr ""
 
-#: ../commentluv-manager.php:156
+#: ../commentluv-manager.php:160
 msgid "Hebrew"
 msgstr ""
 
-#: ../commentluv-manager.php:157
+#: ../commentluv-manager.php:161
 msgid "French"
 msgstr ""
 
-#: ../commentluv-manager.php:158
+#: ../commentluv-manager.php:162
 msgid "Dutch"
 msgstr ""
 
-#: ../commentluv-manager.php:159
+#: ../commentluv-manager.php:163
 msgid "Polish"
+msgstr ""
+
+#: ../commentluv-manager.php:164
+msgid "Portuguese"
+msgstr ""
+
+#: ../commentluv-manager.php:165
+msgid "Romanian"
 msgstr ""
 
 #: ../commentluv.php:35
@@ -187,7 +199,7 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: ../commentluv.php:218
+#: ../commentluv.php:255
 msgid "There were errors with your chosen settings"
 msgstr ""
 
