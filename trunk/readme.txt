@@ -59,6 +59,7 @@ You can submit a support ticket at http://comluv.com
 * added : option to enable compression compatibility for js files and move cl_settings js to footer
 * added : Romanian language
 * added : Arabic language
+* added : Georgian language
 
 = 2.81.5 =
 * fixed : commentluv now available on pages too
