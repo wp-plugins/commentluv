@@ -165,6 +165,7 @@
                     <tr><td><img src="<?php echo $this->plugin_url;?>images/ro.png"/> <?php _e('Romanian',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.mlb.ro/">Bogdan Martinescu</a></td></tr>
 		            <tr><td><img src="<?php echo $this->plugin_url;?>images/de.png"/> <?php _e('German',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.macozoll.de/">Astrid Spitzenberg</a></td></tr>
                     <tr><td><img src="<?php echo $this->plugin_url;?>images/sa.png"/> <?php _e('Arabic',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.melzarei.be/">Muhammad Elzarei</a></td></tr>
+                    <tr><td><img src="<?php echo $this->plugin_url;?>images/ge.png"/> <?php _e('Georgian',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.findmyhosting.com">Kasia Ciszewski</a></td></tr>
                 </tbody>
             </table>
         </div>
