@@ -4,7 +4,7 @@ Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv, comment luv
 Requires at least: 2.9.2
 Tested up to: 3.1b
-Stable tag: 2.81.5
+Stable tag: 2.81.6
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -52,7 +52,14 @@ You can submit a support ticket at http://comluv.com
 
 4. edit post comments
 
-== ChangeLog ==
+== ChangeLog ==  
+= 2.81.6 =
+* added : Portuguese translation
+* fixed : added ; to functions in js file
+* added : option to enable compression compatibility for js files and move cl_settings js to footer
+* added : Romanian language
+* added : Arabic language
+
 = 2.81.5 =
 * fixed : commentluv now available on pages too
 * update : change click to hover for showing drop down of last blog posts that were fetched
@@ -155,9 +162,9 @@ You can submit a support ticket at http://comluv.com
 
 == Upgrade Notice ==
 
-= 2.81.5 =
+= 2.81.6 =
 
-Fix : made available on pages too.
+Fix : javascript error when minifying
 
 
 == Configuration ==

@@ -51,7 +51,7 @@
                             </td></tr><tr><td>
                                 <label for="infoback"><?php _e('Info panel background color',$this->plugin_domain);?></label><br>
                                 <input type="text" size ="8" name="infoback" value="<?php echo stripslashes($infoback);?>"/>
-                                <span style="background-color:<?php echo stripslashes($infoback);?>">....</span>
+                                <span style="background-color:<?php echo stripslashes($infoback); ?>">....</span>
                             </td></tr><tr><td>
                                 <input type="checkbox" name="cl_use_template" <?php echo $use_template;?>/>
                                 <label for="cl_use_template"><?php _e('Use template insert to show badge and checkbox?',$this->plugin_domain);?>
@@ -111,6 +111,10 @@
                                     <td><?php _e('Comment Text Area name',$this->plugin_domain);?></td>
                                     <td><input value="<?php echo $comment_name;?>" type="text" name="cl_comment_name"/></td>
                                 </tr>
+                                <tr>
+                                    <td><?php _e('Enable js Compression Compatibility?',$this->plugin_domain);?></td>
+                                    <td><input <?php echo $compat;?> type="checkbox" name="cl_compat"/></td>
+                                </tr>
                             </tbody></table>
                 </td></tr>
                 </tbody>
@@ -141,7 +145,7 @@
                 <tbody>
                     <tr><td><strong><?php _e('Author',$this->plugin_domain);?>:</strong></td><td>Andy Bailey</td></tr>
                     <tr><td><strong><?php _e('Home Page',$this->plugin_domain);?>:</strong></td><td><a title="<?php _e('Visit ComLuv to register your site for more luv!',$this->plugin_domain);?>" href="http://comluv.com/" target="_blank">ComLuv.com</a></td></tr>
-                    <tr><td><strong><?php _e('Social',$this->plugin_domain);?>:</strong></td><td><a title="Follow CommentLuv on Twitter" href="http://twitter.com/commentluv/" target="_blank"><img src="<?php echo $this->plugin_url;?>images/twitter.png"/></a> <a title="Join me on LinkedIn" href="http://uk.linkedin.com/in/commentluv" target="_blank"><img src="<?php echo $this->plugin_url;?>images/linkedin.png"/></a> <a title="Join me on Facebook" href="http://www.facebook.com/commentluv" target="_blank"><img src="<?php echo $this->plugin_url;?>images/facebook.png"/></a></td></tr>
+                    <tr><td><strong><?php _e('Social',$this->plugin_domain);?>:</strong></td><td><a title="Follow CommentLuv on Twitter" href="http://twitter.com/commentluv/" target="_blank"><img src="<?php echo $this->plugin_url;?>images/twitter.png"/></a> <a title="Join me on LinkedIn" href="http://uk.linkedin.com/in/commentluv" target="_blank"><img src="<?php echo $this->plugin_url;?>images/linkedin.png"/></a> <a title="Join me on Facebook" href="http://www.facebook.com/CommentLuv" target="_blank"><img src="<?php echo $this->plugin_url;?>images/facebook.png"/></a></td></tr>
                     <tr><td><strong><?php _e('Help',$this->plugin_domain);?>:</strong></td><td><a href="http://comluv.com/help-desk/" target="_blank"><?php _e('Help Desk',$this->plugin_domain);?></a></td></tr>
                     <tr class="alt"><td colspan="2"><?php _e('News',$this->plugin_domain);?>:</td></tr>
                     <tr><td colspan="2">
@@ -157,6 +161,10 @@
                     <tr><td><img src="<?php echo $this->plugin_url;?>images/fr.png"/> <?php _e('French',$this->plugin_domain);?></td><td><a target="_blank" href="http://referenceurfreelance.com/">Leo</a></td></tr>  
                     <tr><td><img src="<?php echo $this->plugin_url;?>images/nl.png"/> <?php _e('Dutch',$this->plugin_domain);?></td><td><a target="_blank" href="http://wpwebshop.com/">Rene</a></td></tr>
                     <tr><td><img src="<?php echo $this->plugin_url;?>images/pl.png"/> <?php _e('Polish',$this->plugin_domain);?></td><td><a target="_blank" href="http://techformator.pl/">Mariusz Kolacz</a></td></tr>
+                    <tr><td><img src="<?php echo $this->plugin_url;?>images/pt.png"/> <?php _e('Portuguese',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.korvo.com.br/">Diego Uczak</a></td></tr>
+                    <tr><td><img src="<?php echo $this->plugin_url;?>images/ro.png"/> <?php _e('Romanian',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.mlb.ro/">Bogdan Martinescu</a></td></tr>
+		            <tr><td><img src="<?php echo $this->plugin_url;?>images/de.png"/> <?php _e('German',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.macozoll.de/">Astrid Spitzenberg</a></td></tr>
+                    <tr><td><img src="<?php echo $this->plugin_url;?>images/sa.png"/> <?php _e('Arabic',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.melzarei.be/">Muhammad Elzarei</a></td></tr>
                 </tbody>
             </table>
         </div>

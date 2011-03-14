@@ -1,0 +1,211 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: CommentLuv 2.7.5\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-01-10 15:16-0000\n"
+"PO-Revision-Date: \n"
+"Last-Translator: Muhammad Elzarei <mohamed_elzarie@hotmail.com>\n"
+"Language-Team: @commentluv, Gianni Diurno <admin@comluv.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: English\n"
+"X-Poedit-Country: UNITED KINGDOM\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SearchPath-0: ..\n"
+
+#: ../commentluv-manager.php:26
+msgid "This plugin takes the url from the comment form and tries to parse the feed of the site and display the last entry made. If you have any questions, comments or if you have a good idea that you would like to see in the next version of CommentLuv, please visit http://comluv.com and let me know."
+msgstr "هذه الاضافة تأخذ الموقع من نموذج التعليقات و تحاول تحليل ال Feed  و ثم تعرض اخر موضوع .اذا كان لديك اي سؤال , تعليق او لديك اي فكرة تريد ان تراها في النسخة القادمة من CommentLuv , رجاء قم بزيارة http://comluv.com و اخبرني. "
+
+#: ../commentluv-manager.php:36
+msgid "Display Options"
+msgstr "خيارات العرض"
+
+#: ../commentluv-manager.php:40
+msgid "Enter the text you want displayed in the comment"
+msgstr "ادخل النص اللذي تود ان تراه ظاهر في التعليق"
+
+#: ../commentluv-manager.php:43
+msgid "Text displayed in the select box"
+msgstr "النص المعروض في صندوق الاختيارات"
+
+#: ../commentluv-manager.php:47
+msgid "CommentLuv on by default?"
+msgstr "  مفعل افتراضيا؟ CommentLuv"
+
+#: ../commentluv-manager.php:50
+msgid "Show heart on links?"
+msgstr "اظهر القلوب علي الروابط ؟"
+
+#: ../commentluv-manager.php:52
+msgid "Info panel background color"
+msgstr "لون خلفية شاشة المعلومات"
+
+#: ../commentluv-manager.php:57
+msgid "Use template insert to show badge and checkbox?"
+msgstr "استخدم  قالب لاظهار الشعار و صندوق الاختيارات ؟"
+
+#: ../commentluv-manager.php:58
+msgid "Do NOT check this unless you have manually inserted the code into your comments.php file "
+msgstr "لا تضع علامة صح علي هذه الا اذا كنت قد وضعت الكود بنفسك في ملف comments.php"
+
+#: ../commentluv-manager.php:64
+msgid "Display Badge"
+msgstr "اظهر الشعار"
+
+#: ../commentluv-manager.php:68
+msgid "Many thanks to <a href=\"http://byteful.com\">Byteful Traveller</a> for creating these images."
+msgstr "شكرا ل <a href=\"http://byteful.com\">Byteful Traveller</a> لانشاءه هذه الصور "
+
+#: ../commentluv-manager.php:72
+msgid "Choose badge to display"
+msgstr "اختار الشعار لاظهاره"
+
+#: ../commentluv-manager.php:77
+msgid "Show nothing"
+msgstr "لا تظهر شيء"
+
+#: ../commentluv-manager.php:80
+msgid "Show text"
+msgstr "اظهر النص"
+
+#: ../commentluv-manager.php:80
+msgid "Prepend html before badge or text (optional)"
+msgstr "اضف كود الهتمل قبل الشعار او النص ( اختياري )"
+
+#: ../commentluv-manager.php:88
+msgid "Technical Settings"
+msgstr "الاعدادات التقنية"
+
+#: ../commentluv-manager.php:92
+msgid "In most cases you shouldn't need to change these settings unless you have a customized comment form"
+msgstr "في معظم الاحيان لا يجب عليك تغيير هذه الاعدادات الا اذا كنت تملك نموذج تعليقات مخصوص"
+
+#: ../commentluv-manager.php:93
+msgid "These are the name=\"\" values used in the HTML source for the fields on your comment form."
+msgstr "هذه هي قيمة الخانة name=\"\"  المستخدمة في اكواد الهتمل للخانات في نموذج النعليق"
+
+#: ../commentluv-manager.php:99
+msgid "Authors Name field name"
+msgstr "اسم حقل اسم الكتاب"
+
+#: ../commentluv-manager.php:103
+msgid "Email field name"
+msgstr "اسم حقل الايميل"
+
+#: ../commentluv-manager.php:107
+msgid "Authors URL field name"
+msgstr "اسم حقل موقغ الكاتب"
+
+#: ../commentluv-manager.php:111
+msgid "Comment Text Area name"
+msgstr "اسم حقل نص التعليق"
+
+#: ../commentluv-manager.php:124
+msgid "Reset to Default Settings"
+msgstr "إعادة تعيين إلى الإعدادات الافتراضية"
+
+#: ../commentluv-manager.php:129
+msgid "Are you sure you want to reset your settings? Press OK to continue"
+msgstr "هل انت متأكد انك تريد ان  تعيد التعيين إلى الإعدادات الافتراضية ؟ اضغط OK للمتابعة"
+
+#: ../commentluv-manager.php:139
+msgid "Plugin Info"
+msgstr "معلومات الاضافة"
+
+#: ../commentluv-manager.php:142
+msgid "Author"
+msgstr "المؤلف"
+
+#: ../commentluv-manager.php:143
+msgid "Home Page"
+msgstr "الصفحة الرئيسية"
+
+#: ../commentluv-manager.php:143
+msgid "Visit ComLuv to register your site for more luv!"
+msgstr "  لتسجيل موقعك للمزيد من الحب ComLuv قم بزيارة موقع "
+
+#: ../commentluv-manager.php:144
+msgid "Social"
+msgstr "اجتماعي"
+
+#: ../commentluv-manager.php:145
+msgid "Help"
+msgstr "المساعدة"
+
+#: ../commentluv-manager.php:145
+msgid "Help Desk"
+msgstr "مكتب المساعدة"
+
+#: ../commentluv-manager.php:146
+msgid "News"
+msgstr "الاخبار"
+
+#: ../commentluv-manager.php:152
+msgid "Thanks to the following for translations"
+msgstr "شكرا لهؤلاء للترجمة"
+
+#: ../commentluv-manager.php:153
+msgid "Italian"
+msgstr "ايطالي"
+
+#: ../commentluv-manager.php:154
+msgid "Russian"
+msgstr "روسي"
+
+#: ../commentluv-manager.php:155
+msgid "Chinese"
+msgstr "صيني"
+
+#: ../commentluv-manager.php:156
+msgid "Hebrew"
+msgstr "عبري"
+
+#: ../commentluv-manager.php:157
+msgid "French"
+msgstr "فرنسي"
+
+#: ../commentluv-manager.php:158
+msgid "Dutch"
+msgstr "ألماني"
+
+#: ../commentluv-manager.php:159
+msgid "Polish"
+msgstr "بولندي"
+
+#: ../commentluv.php:35
+msgid "CommentLuv requires Wordpress 2.9.2 or newer."
+msgstr "تتطلب اضافة CommentLuv نسخة وردبريس ٢.٩.٢ أو احدث"
+
+#: ../commentluv.php:35
+msgid "Please Update!"
+msgstr "من فضلك قم بالتحديث !"
+
+#: ../commentluv.php:88
+msgid "Settings"
+msgstr "الاعدادات"
+
+#: ../commentluv.php:218
+msgid "There were errors with your chosen settings"
+msgstr "لقد كان هناك اخطاء في اعداداتك"
+
+#~ msgid "CommentLuv Member Area"
+#~ msgstr "Espace de membres CommentLuv"
+
+#~ msgid ""
+#~ "If you register your site for free at <a href=\"http://comluv.com"
+#~ "\">ComLuv.com</a> you will be able to open up lots of features that are "
+#~ "for members only like link tracking so you can see which of the comments "
+#~ "you make on CommentLuv blogs are getting the last blog post clicked and "
+#~ "the ability to send back more than just blog posts. You can even create "
+#~ "your own WP2.7 blog there with commentluv pre-installed!."
+#~ msgstr ""
+#~ "Si vous enregistrez votre site gratuitement sur <a href=\"http://comluv."
+#~ "com\">ComLuv.com</a>, vous aurez la possibilité de débloquer des "
+#~ "fonctions réservées aux membres comme : le suivi des liens pour voir "
+#~ "lesquels de vos commentaires, publiés sur les blogs qui utilisent "
+#~ "CommentLuv, reçoivent le plus de clics et la possibilité de renvoyer plus "
+#~ "que des billets. Vous pourrez même créer là-bas votre propre blog WP2.7 "
+#~ "avec commentluv pré-installé !"

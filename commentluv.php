@@ -1,8 +1,8 @@
-<?php /* CommentLuv 2.81.5
+<?php /* CommentLuv 2.81.6
 Plugin Name: CommentLuv
 Plugin URI: http://comluv.com/download/commentluv-wordpress/
 Description: Plugin to show a link to the last post from the commenters blog by parsing the feed at their given URL when they leave a comment. Rewards your readers and encourage more comments.
-Version: 2.81.5
+Version: 2.81.6
 Author: Andy Bailey
 Author URI: http://fiddyp.co.uk/
 */
@@ -14,7 +14,7 @@ if (! class_exists ( 'commentluv' )) {
 		var $plugin_domain = 'commentluv';
 		var $plugin_url;
 		var $db_option = 'commentluv_options';
-		var $cl_version = 281.5;
+		var $cl_version = 281.6;
 		var $api_url;
 		var $test = false;
 
@@ -150,13 +150,49 @@ if (! class_exists ( 'commentluv' )) {
 				$badge_text = $options ['badge'] == 'text' ? 'on' : '';
 				// get permalink for refer value
 				$refer_page = get_permalink();
-				// insert options to header
-				wp_localize_script ( 'commentluv', 'cl_settings', array ('name' => $author_name, 'url' => $url_name, 'comment' => $comment_name, 'email' => $email_name, 'prepend' => $prepend, 'badge' => $badge,
-											 'show_text' => $show_text, 'badge_text' => $badge_text, 'heart_tip' => $heart_tip, 'default_on' => $default_on, 'select_text' => $select_text,
-											 'cl_version' => $this->cl_version, 'images' => $this->plugin_url . 'images/', 'api_url' => $this->api_url, 'refer' => $refer_page,
-											 'infoback' => $infoback,'usetemplate'=>$use_template) );
+                if($compat != 'on'){
+                    // insert options to header
+                     wp_localize_script ( 'commentluv', 'cl_settings', array ('name' => $author_name, 'url' => $url_name, 'comment' => $comment_name, 'email' => $email_name, 'prepend' => $prepend, 'badge' => $badge,
+                                             'show_text' => $show_text, 'badge_text' => $badge_text, 'heart_tip' => $heart_tip, 'default_on' => $default_on, 'select_text' => $select_text,
+                                             'cl_version' => $this->cl_version, 'images' => $this->plugin_url . 'images/', 'api_url' => $this->api_url, 'refer' => $refer_page,
+                                             'infoback' => $infoback,'usetemplate'=>$use_template) );
+                } else {
+                    add_action('wp_footer',array(& $this, 'footer_script'));
+                }
+				
 			}
 		}
+        
+        // footer script to echo out cl_settings if compression compatibility is on
+        function footer_script(){
+            $options = $this->get_options();
+            $refer_page = get_permalink();
+            echo '<script type="text/javascript">
+            /* <![CDATA[ */
+            var cl_settings = {
+            name: "'.$options['author_name'].'",
+            url: "'.$options['url_name'].'",
+            comment: "'.$options['comment_name'].'",
+            email: "'.$options['email_name'].'",
+            prepend: "'.$options['prepend'].'",
+            badge: "'.$options['badge'].'",
+            show_text: "'.$options['show_text'].'",
+            badge_text: "'.$options['badge_text'].'",
+            heart_tip: "'.$options['heart_tip'].'",
+            default_on : "'.$options['default_on'].'",
+            select_text : "'.$options['select_text'].'",
+            cl_version : "'.$this->cl_version.'",
+            images : "'.$this->plugin_url.'images/",
+            api_url : "'.$this->api_url.'",
+            refer : "'.$refer_page.'",
+            infoback : "'.$infoback.'",
+            usetemplate : "'.$use_template.'"
+            };
+            /* ]]> */
+            ';
+            echo '</script>
+            ';
+        }
 		// hook the head function for adding stylesheet
 		function commentluv_style() {
 			echo '<link rel="stylesheet" href="' . $this->plugin_url . 'style/cl_style.css" type="text/css" />';
@@ -165,7 +201,7 @@ if (! class_exists ( 'commentluv' )) {
 		// get plugin options
 		function get_options() {
 			// default values
-			$options = array ('comment_text' => '[name] recently posted..[lastpost]', 'select_text' => 'choose a different post to show', 'default_on' => 'on', 'heart_tip' => 'on', 'use_template' => '', 'badge' => 'CL91_White.gif', 'show_text' => 'CommentLuv Enabled', 'author_name' => 'author', 'url_name' => 'url', 'comment_name' => 'comment', 'email_name' => 'email', 'prepend' => '', 'infoback' => 'white' );
+			$options = array ('comment_text' => '[name] recently posted..[lastpost]', 'select_text' => 'choose a different post to show', 'default_on' => 'on', 'heart_tip' => 'on', 'use_template' => '', 'badge' => 'CL91_White.gif', 'show_text' => 'CommentLuv Enabled', 'author_name' => 'author', 'url_name' => 'url', 'comment_name' => 'comment', 'email_name' => 'email', 'prepend' => '', 'infoback' => 'white' , 'compat'=>'off');
 			// get saved options unless reset button was pressed
 			$saved = '';
 			if (! isset ( $_POST ['reset'] )) {
@@ -211,6 +247,7 @@ if (! class_exists ( 'commentluv' )) {
 				$options ['email_name'] = $_POST ['cl_email_name'];
 				$options ['use_template'] = $_POST['cl_use_template'];
 				$options ['infoback'] = htmlspecialchars($_POST['infoback']);
+                $options ['compat'] = $_POST['cl_compat'];
 
 				// check for errors
 				if (count ( $errors->errors ) > 0) {
@@ -235,6 +272,7 @@ if (! class_exists ( 'commentluv' )) {
 			// set value to checked if option is on (for showing correct status of checkbox and radio button in settings page)
 			$default_on = $options ['default_on'] == 'on' ? 'checked' : '';
 			$heart_tip = $options ['heart_tip'] == 'on' ? 'checked' : '';
+            $compat = $options ['compat'] == 'on' ? 'checked' : '';
 			$badge1 = $options ['badge'] == 'CL88_Black.gif' ? 'checked="checked"' : '';
 			$badge2 = $options ['badge'] == 'CL88_White.gif' ? 'checked="checked"' : '';
 			$badge3 = $options ['badge'] == 'CL91_Black.gif' ? 'checked="checked"' : '';
