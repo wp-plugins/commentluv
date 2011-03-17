@@ -161,11 +161,12 @@
                     <tr><td><img src="<?php echo $this->plugin_url;?>images/fr.png"/> <?php _e('French',$this->plugin_domain);?></td><td><a target="_blank" href="http://referenceurfreelance.com/">Leo</a></td></tr>  
                     <tr><td><img src="<?php echo $this->plugin_url;?>images/nl.png"/> <?php _e('Dutch',$this->plugin_domain);?></td><td><a target="_blank" href="http://wpwebshop.com/">Rene</a></td></tr>
                     <tr><td><img src="<?php echo $this->plugin_url;?>images/pl.png"/> <?php _e('Polish',$this->plugin_domain);?></td><td><a target="_blank" href="http://techformator.pl/">Mariusz Kolacz</a></td></tr>
-                    <tr><td><img src="<?php echo $this->plugin_url;?>images/pt.png"/> <?php _e('Portuguese',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.korvo.com.br/">Diego Uczak</a></td></tr>
+                    <tr><td><img src="<?php echo $this->plugin_url;?>images/br.png"/> <?php _e('Portuguese',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.korvo.com.br/">Diego Uczak</a></td></tr>
                     <tr><td><img src="<?php echo $this->plugin_url;?>images/ro.png"/> <?php _e('Romanian',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.mlb.ro/">Bogdan Martinescu</a></td></tr>
 		            <tr><td><img src="<?php echo $this->plugin_url;?>images/de.png"/> <?php _e('German',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.macozoll.de/">Astrid Spitzenberg</a></td></tr>
                     <tr><td><img src="<?php echo $this->plugin_url;?>images/sa.png"/> <?php _e('Arabic',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.melzarei.be/">Muhammad Elzarei</a></td></tr>
                     <tr><td><img src="<?php echo $this->plugin_url;?>images/ge.png"/> <?php _e('Georgian',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.findmyhosting.com">Kasia Ciszewski</a></td></tr>
+                    <tr><td><img src="<?php echo $this->plugin_url;?>images/lt.png"/> <?php _e('Lithuanian',$this->plugin_domain);?></td><td><a target="_blank" href="http://mantas.malcius.lt/">Mantas Malcius</a></td></tr>
                 </tbody>
             </table>
         </div>
