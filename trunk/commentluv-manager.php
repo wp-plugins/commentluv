@@ -19,12 +19,27 @@
                 <div class="dbx-content">
                 <table class="widefat">
                     <thead>
-                        <tr><th scope="col">CommentLuv</th></tr>
+                        <tr><th scope="col" colspan="2">Important!</th></tr>
                     </thead>
                     <tbody>
-                        <tr><td>
-                                <?php _e('This plugin takes the url from the comment form and tries to parse the feed of the site and display the last entry made. If you have any questions, comments or if you have a good idea that you would like to see in the next version of CommentLuv, please visit http://comluv.com and let me know.',$this->plugin_domain);?></p>
-                            </td></tr>
+                        <tr>
+                            <td width="250">
+                                <h2 style="margin: 0 0 10px 0;">New CommentLuv is coming!</h2>
+                                <img align="left" src="<?php echo $this->plugin_url;?>images/privacy-guarantee.png"/><?php _e('I promise not to sell your details or send you spam. You will ONLY receive emails about plugin updates.',$this->plugin_domain);?>
+                            </td>
+                            <td>
+                            <p><?php _e('The new CommnentLuv will be the best version yet, it will allow you to have complete control over the plugin and will keep readers on your blog. Signup to find out more',$this->plugin_domain);?></p>
+                            <?php 
+                            if($subscribed){
+                                echo '<div class="submit">'.__('You have already subscribed, if you have not received the verification within 12 hours, please click the button to resend or try the form at',$this->plugin_domain).' <a target="_blank" href="http://www.commentluv.com/">www.commentluv.com</a><br><input type="button" id="cl_notify" value="Resend Verification"/></div>';
+                            } else {
+                                echo '<div class="submit" style="width: 143px; background-color: green; padding-left: 5px; padding-right: 5px; border-radius: 15px; -moz-border-radius: 15px;"><input id="cl_notify" type="button" name="cl_notify" value="'.__('Click to register now!',$this->plugin_domain).'" /></div>';
+                            }
+                            ?>
+                            
+                            <div id="notify_message"></div>
+                            </td>    
+                        </tr>
                     </tbody>
                 </table>
                 <br/>
@@ -114,6 +129,16 @@
                                 <tr>
                                     <td><?php _e('Enable js Compression Compatibility?',$this->plugin_domain);?></td>
                                     <td><input <?php echo $compat;?> type="checkbox" name="cl_compat"/></td>
+                                </tr>
+                                <tr>
+                                    <td><?php _e('Add rel="nofollow" to last blog post link?',$this->plugin_domain);?></td>
+                                    <td>
+                                    <input type="radio" name="nofollow" value="all" <?php checked($nofollow,'all')?>><?php _e('All Comments (no dofollow links)',$this->plugin_domain);?>
+                                    <br>
+                                    <input type="radio" name="nofollow" value="none" <?php checked($nofollow,'none')?>><?php _e('No Comments (all links are dofollow)',$this->plugin_domain);?>
+                                    <br>
+                                    <input type="radio" name="nofollow" value="unreg" <?php checked($nofollow,'unreg')?>><?php _e('Unregisterd Users (only registered users are dofollow)',$this->plugin_domain);?>
+                                    </td>
                                 </tr>
                             </tbody></table>
                 </td></tr>

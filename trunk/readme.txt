@@ -4,7 +4,7 @@ Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv, comment luv
 Requires at least: 2.9.2
 Tested up to: 3.1b
-Stable tag: 2.81.6
+Stable tag: 2.81.8
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -52,9 +52,19 @@ You can submit a support ticket at http://comluv.com
 
 4. edit post comments
 
-== ChangeLog ==  
+== ChangeLog == 
+
+= 2.81.8 =
+* settings page notification block 
+
+= 2.81.7 =
+* added : Lithuanian translation
+* added : Set nofollow on all links, no links or just unregistered users links
+* fix : xhtml compliance on checkbox (thanks @winkpress)
+* fix : check commentmeta data is an array
+
 = 2.81.6 =
-* added : Portuguese translation
+* added : Portuguese (Brazil) translation
 * fixed : added ; to functions in js file
 * added : option to enable compression compatibility for js files and move cl_settings js to footer
 * added : Romanian language
@@ -163,10 +173,10 @@ You can submit a support ticket at http://comluv.com
 
 == Upgrade Notice ==
 
-= 2.81.6 =
+= 2.81.7 =
 
-Fix : javascript error when minifying
-
+Added : Lithuanian language
+Added : Choice of nofollow on links for all/none/unregistered users
 
 == Configuration ==
 
