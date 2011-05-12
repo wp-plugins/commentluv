@@ -20,6 +20,8 @@ With a full support site where you can unlock great new features, show off your 
 
 You can visit http://comluv.com to find out more about this plugin.
 
+[youtube http://www.youtube.com/watch?v=Z3dLGqv-XJ8]
+
 == Installation ==
 
 Wordpress : Extract the zip file and just drop the contents in the wp-content/plugins/ directory of your WordPress installation and then activate the Plugin from Plugins page.
