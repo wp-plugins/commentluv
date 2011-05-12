@@ -4,7 +4,7 @@ Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv, comment luv
 Requires at least: 2.9.2
 Tested up to: 3.1b
-Stable tag: 2.81.8
+Stable tag: trunk
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
