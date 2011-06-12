@@ -70,6 +70,8 @@
                 add_filter ( 'found_posts', array(&$this,'send_feed'),10,2); // sends post titles and urls only
                 add_filter ( 'kindergarten_html', array(&$this,'kindergarten_html')); // for cleaning html 
                 $options = $this->get_options();
+                //DebugBreak();
+                //$this->check_version();
                 if($options['enable'] == 'yes'){
                     $this->setup_hooks();
                 }
@@ -1417,7 +1419,7 @@
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/lt.png"/> <?php _e('Lithuanian',$this->plugin_domain);?></td><td><a target="_blank" href="http://mantas.malcius.lt/">Mantas Malcius</a></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/br.png"/> <?php _e('Portuguese',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.korvo.com.br/">Diego Uczak</a></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/my.png"/> <?php _e('Malaysian',$this->plugin_domain);?></td><td><a target="_blank" href="http://ariffshah.com/">Ariff Shah</a></td></tr>
-                                <tr><td><img src="<?php echo $this->plugin_url;?>images/my.png"/> <?php _e('Hindi',$this->plugin_domain);?></td><td><a target="_blank" href="http://outshinesolutions.com/">Outshine Solutions</a></td></tr>
+                                <tr><td><img src="<?php echo $this->plugin_url;?>images/in.png"/> <?php _e('Hindi',$this->plugin_domain);?></td><td><a target="_blank" href="http://outshinesolutions.com/">Outshine Solutions</a></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/ru.png"/> <?php _e('Russian',$this->plugin_domain);?></td><td><!--<a target="_blank" href="http://www.fatcow.com/">Fatcow</a>--></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/cn.png"/> <?php _e('Chinese',$this->plugin_domain);?></td><td><!--<a target="_blank" href="http://zuoshen.com/">Donald</a>--></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/il.png"/> <?php _e('Hebrew',$this->plugin_domain);?></td><td><!--<a target="_blank" href="http://www.maorb.info/">Maor Barazany</a>--></td></tr>
