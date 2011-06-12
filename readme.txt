@@ -1,36 +1,39 @@
 === CommentLuv ===
 Contributors: commentluv, @hishaman (css additions)
 Donate link:http://comluv.com/about/donate
-Tags: commentluv, comments, last blog post, linkluv, comment luv
-Requires at least: 2.9.2
-Tested up to: 3.1b
-Stable tag: trunk
+Tags: commentluv, comments, last blog post, linkluv, comment luv , commentlove, comment love
+Requires at least: 3.0
+Tested up to: 3.2
+Stable tag: 2.90.1
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
 == Description ==
 
-This plugin will visit the site of the comment author while they type their comment and retrieve a selection of their last blog posts, tweets or digg submissions which they can choose to include at the bottom of their comment when they click submit.
+This plugin will visit the site of the comment author while they type their comment and retrieve their last blog posts which they can choose to include at the bottom of their comment when they click submit.
 
-It has been found to increase comments and the community spirit for the thousands of blogs that have installed it. With a simple install you will immediately start to find new and interesting blog posts, tweets and diggs from your own blog and community.
+It has been found to increase comments and the community spirit for the thousands of blogs that have installed it. With a simple install you will immediately start to find new and interesting blog posts from your own blog and community. You will even be able to build your list/network/community even more by offering your readers the opportunity to register to your site to unlock advanced features of the plugin like being able to choose from any of their 10 last posts when they comment or other features like dofollow links and more.
 
-The plugin requires WP or WP MS version of at least 2.92 and will work with administrators and logged on users provided they have their homepage url set in their profile page in the dashboard of the site.
+The plugin requires WP or WP MS version of at least 3.0 and will work with administrators and logged on users provided they have their homepage url set in their profile page in the dashboard of the site.
 
-With a full support site where you can unlock great new features, show off your site, upgrade your urls and feed locations, view your stats for comments made and received and much more.
+You can get a free companion plugin at http://www.commentluv.com
 
-You can visit http://comluv.com to find out more about this plugin.
+[youtube http://www.youtube.com/watch?v=7wod9ZtiHaU]
 
-[youtube http://www.youtube.com/watch?v=Z3dLGqv-XJ8]
-
-Translations: 
+Many thanks to the following who provided translations
 
 Italian [Gianni Diuno](http://gidibao.net/ "Italian translation")
+Polish [Mariusz Kolacz](http://techformator.pl/ "Polish translation")
+Lithuanian [Mantas Malcius](http://mantas.malcius.lt/ "Lithuanian translation")
+Georgian [Kasia Ciszewski](http://www.findmyhosting.com/ "Lithuanian translation")
+Dutch [Rene](http://wpwebshop.com/ "Dutch translation")
+Portuguese (BR) [Diego Uczak](http://www.korvo.com.br/ "Portuguese Translation")
+Malaysian [Ariff](http://ariffshah.com/ "Malaysian Translation")
+Hindi [Outshine Solutions](http://outshinesolutions.com/ "Hindi Translation")
 
 == Installation ==
 
-Wordpress : Extract the zip file and just drop the contents in the wp-content/plugins/ directory of your WordPress installation and then activate the Plugin from Plugins page.
-
-WordpressMu : Same as above (do not place in mu-plugins)
+Wordpress : Extract the zip file and just drop the contents in the wp-content/plugins/ directory of your WordPress installation and then activate the Plugin from Plugins page or visit the plugins page in your dashboard, click 'add new' and search for 'commentluv'
 
 If you're upgrading from an older version, please use the 'reset to default settings' button.
 
@@ -40,13 +43,9 @@ If you're upgrading from an older version, please use the 'reset to default sett
 
 No. The link and associated data is saved to the comment meta table
 
-= Will this plugin work with Disqus/Intense Debate/js-kit? =
-
-Intense Debate comments have a commentluv plugin built in. Just enable from your ID dashboard
-
 = I am having a problem getting it to work =
 
-You can submit a support ticket at http://comluv.com
+Please see the videos in the settings page for explanations of how they work.
 
 == Screenshots ==
 
@@ -59,6 +58,9 @@ You can submit a support ticket at http://comluv.com
 4. edit post comments
 
 == ChangeLog == 
+
+= 2.90.1 =
+* whole new version rewritten from scratch that makes it standalone.
 
 = 2.81.8 =
 * settings page notification block 
@@ -190,21 +192,15 @@ Display Options : Enter the text you want displayed in the comment for the link 
 
 * [name] -> replaced with comment author name
 
-* [type] -> replaced with blog, twitter or digg depending on what type of link the author chose to include.
-
 * [lastpost] -> replaced with the titled link.
-
-* Text displayed in the select box -> shows in the pull down box when a user has more than one post to choose from
 
 * CommentLuv on by default -> check this box to enable CommentLuv by default
 
-* Show heart on links -> Shows the heart icon next to links so users can find out more about the comment author
+* Show info panel -> Shows the heart icon next to links so users can find out more about the comment author
 
 * Use template insert to show badge and checkbox -> check this box if you want to place the badge and pull down box in a particular place on your page by using the template code.
 
-* display badge -> choose from 4 different badges, choose no badge or use your own specified text
-
-* CommentLuv member area -> for future use
+* display badge -> choose from 3 different badges, choose no badge or use your own or specified text
 
 Technical Settings:
 

@@ -1,230 +1,260 @@
-// commentluv.js 2.8
-(function($) {
-	$(document).ready(function(){
-		// get form object that is parent of textarea named "comment"
-		var formObj = $("#cl_post_title").parents("form");
+// commentluv 2.89
+jQuery(document).ready(function(){
+    // get the form object and fields
+    var formObj = jQuery('#cl_post_title').parents('form');
+    var urlObj = cl_settings['urlObj'] = jQuery("input[name='" + cl_settings['url'] + "']",formObj);
+    var comObj = cl_settings['comObj'] = jQuery("textarea[name='" + cl_settings['comment'] + "']",formObj);
+    var autObj = jQuery("input[name='" + cl_settings['name'] + "']",formObj);
+    var emaObj = jQuery("input[name='" + cl_settings['email'] + "']",formObj);
+    // setup localized object with temporary vars
+    cl_settings['url_value'] = urlObj.val();
+    cl_settings['fired'] = 'no';
+    // set event listener for textarea focus
+    comObj.focus(function(){
+        cl_dostuff();
+    });
+    // set the event listener for the click of the checkbox
+    jQuery('#doluv').click(function(){
+        jQuery('#lastposts').hide();
+        if(jQuery(this).is(":checked")){
+            // was unchecked, now is checked
+            jQuery('#mylastpost').fadeTo("fast",1);
+            cl_settings['fired'] = 'no';
+            cl_dostuff();
+        } else {
+            // was checked, user unchecked it so empty hidden fields in form
+            jQuery('input[name="cl_post_title"]').val("");
+            jQuery('input[name="cl_post_url"]').val("");
+            jQuery('#mylastpost').fadeTo("slow",0.3);
+            jQuery('#lastposts').empty();
+        }
+    });
+    // click event for last blog post link
+    jQuery('.cluv a').click(function(){
+        var data = jQuery(this).attr('class').split(' ');
+        // store click count
+        jQuery.ajax({
+            url: cl_settings['api_url'],
+            type: 'POST',
+            data: {'action': 'cl_ajax','cid': data[1],'nonce':data[0],'cl_prem':jQuery(this).hasClass('p'),'url': jQuery(this).attr('href'),'do':'click'} 
+        });
+        jQuery(this).attr('target','_blank');
+        return true;
+    });
+    // hover event on heart
+    if(cl_settings['infopanel'] == "on"){
+        jQuery('.heart_tip_box').mouseenter(heart_big);
+    }
+    // hide/show showmore
+    jQuery(document.body).click(function(){
+        if(cl_settings['lastposts'] == 'showing'){
+            jQuery('#lastposts').slideUp('',function(){cl_settings['lastposts'] = 'not'}); 
+        }
+    });
+    jQuery('#showmorespan img').click(function(){
+        if(cl_settings['lastposts'] == 'not'){
+            jQuery('#lastposts').slideDown('',function(){cl_settings['lastposts'] = 'showing'}); 
+        } 
+    });
+    // clear hidden inputs on load
+    jQuery('#cl_post_title,#cl_post_url,#cl_prem').val('');
+    // set click on anywhere closes info box 
+    jQuery(document).click(heart_small);
+    // add info panel to page
+    jQuery("body").append('<span id="heart_tip_big" style="display: none;position:absolute; z-index: 1001; background-color: ' + cl_settings['infoback'] + '; color: ' + cl_settings['infotext'] + '; width: 62px;"></span>');
 
-		// set url, email, comment and author field objects
-		var urlObj = cl_settings['urlObj'] = $("input[name='" + cl_settings['url'] + "']",formObj);
-		var comObj = cl_settings['comObj'] = $("textarea[name='" + cl_settings['comment'] + "']",formObj);
-		var autObj = cl_settings['autObj'] = $("input[name='" + cl_settings['name'] + "']",formObj);
-		var emaObj = cl_settings['emaObj'] = $("input[name='" + cl_settings['email'] + "']",formObj);
-		// use image or text
-		if(cl_settings['badge_text'] == ''){
-			cl_settings['badge']='<img src="' + cl_settings['badge'] + '" border=0 alt="' + cl_settings['show_text'] +'"/>';
-		} else {
-			cl_settings['badge']=cl_settings['badge_text']
-		}
-		// set the event listener for the comment text area focus
-		$(comObj).focus(function(){
-			$('#lastposts').hide();
-			cl_dostuff();
-		});
-		// set the event listener for the show more image
-		$("#showmorespan").hover(function(){
-			// hide drop down box for click outside
-			$(document.body).click(function(){
-				$('#lastposts').hide();
-			});
-			$("#lastposts").slideDown(1000);
-		});
-		// set the event listener for change of url
-		$(urlObj).change(function(){
-			$(comObj).focus(function(){
-				cl_dostuff();
-			});
-		});
-		// set the event listener for the click action
-		$('.cluv a').click(function(){
-			var url=$(this).attr('href');
-			// set link to open in a new window
-			$(this).attr("target","_blank");
-			var addit= "?type=click&url=" + url + "&callback=?";
-			var clurl=cl_settings['api_url'] + addit;
-			// call api, don't worry about returned data
-			$.getJSON(clurl);
-			return true;
-		});
-		// set the event listener for the click of the checkbox
-		$('#doluv').click(function(){
-			$('#lastposts').hide();
-			if($(this).is(":checked")){
-				// was unchecked, now is checked
-				$('#mylastpost').fadeTo("fast",1);
-				cl_dostuff();
-			} else {
-				// was checked, user unchecked it so empty hidden fields in form
-				$('#cl_post').val("");
-				$('input[name="cl_type"]').val("");
-				$('input[name="request_id"]').val("");
-				$('input[name="choice_id"]').val("");
-				$('#mylastpost').fadeTo("slow",0.3);
-			}
-		});
-		// set hover event for heart tip
-		if(cl_settings['heart_tip'] == "on"){
-			$('.heart_tip_box').hoverIntent({over:heart_big,out: do_nowt,interval : 50,timeout: 50});
-		}
-		// set click on anywhere closes info box 
-		$(document).click(heart_small);
-		function heart_big(){
-			$("body").append('<span id="heart_tip_big" style="position:absolute; z-index: 101; background-color: ' + cl_settings['infoback'] + '; width: 62px;"><img src="' + cl_settings['images'] + 'loader.gif" alt="Loading" width="62" height="13" /></span>');
-			// find where to put left edge of info box (in case at right hand side of screen
-			//opera Netscape 6 Netscape 4x Mozilla
-			if (window.innerWidth || window.innerHeight){
-				docwidth = window.innerWidth;
-				docheight = window.innerHeight;
-			}
-			//IE Mozilla
-			if (document.body.clientWidth || document.body.clientHeight){
-				docwidth = document.body.clientWidth;
-				docheight = document.body.clientHeight;
-			}
-			var hasarea = docwidth - getAbsoluteLeft(this);
-			if(hasarea > 350){
-				var xpos = getAbsoluteLeft(this);
-			} else {
-				var xpos = getAbsoluteLeft(this) - 300;
-			}
-			if(xpos > (docwidth - 350)){
-				xpos = xpos - 320;
-			}
-			var ypos = getAbsoluteTop(this);
-			$('#heart_tip_big').css({'left':xpos + "px", 'top' :ypos + "px" });
-			$('#heart_tip_big').hoverIntent({over:do_nowt,out: heart_small, interval : 50, timeout: 350});
-			var linkspan = $(this).parents(".cluv");
-			var link = $(linkspan).find("a:first").attr("href");
-			// get member id from last class of image
-			var memberid = $('img',this).attr('class').split(' ').slice(-1);
-			if(memberid != ''){
-				memberid = '&memberid='+memberid;
-			}
-			var url = cl_settings['api_url'] + "?type=info&refer=" + cl_settings['refer'] + '&version='+ cl_settings['cl_version'] + memberid + '&callback=?' + "&url=" + link ;
-			do_info(url);
-		}
-		function heart_small(){
-			$("body").find("#heart_tip_big").remove();
-		}
-		function do_nowt(){
-			return;
-		}
+});
 
+/**
+* checks everything is in place for doing stuff
+* returns string 'ok' if, um, ok
+*/
+function cl_docheck(){
+    // checkbox check
+    if(!jQuery('#doluv').is(':checked')){
+        return 'not checked';
+    }
+    var url = cl_settings['urlObj'];
+    var msg = jQuery('#cl_messages');
+    msg.empty();
+    url.removeClass('cl_error');
+    // logged in user?
+    var nourlmessage = cl_settings['no_url_message'];
+    if(cl_settings['logged_in'] == '1'){
+        nourlmessage = cl_settings['no_url_logged_in_message'];
+    } else {
+        // check if fb connect is active
+        if(!cl_settings['urlObj'].is(':visible') && typeof FB != 'undefined'){
+            var invisurl = cl_settings['urlObj'].remove();
+            var invismsg = jQuery('#cl_messages').remove();
+            cl_settings['comObj'].after('<br><span id="invisurl">').after(invismsg);
+            jQuery('#invisurl').append('URL ').after(invisurl).append('</span>');
+        }
+        
+    }
+    // check that there is a value in the url field
+    if(url.val().length > 1){
+        // is value just http:// ?
+        if(url.val() == 'http://'){
+            url.addClass('cl_error');
+            cl_message(nourlmessage);
+            return;
+        }
+        // is the http:// missing?
+        if(url.val().substring(0,7) != 'http://'){
+            url.addClass('cl_error');
+            cl_message(cl_settings['no_http_message']);
+            return;
+        }
+    } else {
+        // there is no value
+        url.addClass('cl_error');
+        cl_message(nourlmessage);
+        return;
+    }
+    // if we are here, all is cool mon
+    return 'ok';
+}
+/**
+* tries to fetch last blog posts for a url
+*/
+function cl_dostuff(){
+    if(cl_docheck() != 'ok'){
+        return;
+    }
+    var url = cl_settings['urlObj'];
+    if(cl_settings['fired'] == 'yes'){
+        // already fired, fire again if current url is different to last fired
+        if(url.val() == cl_settings['url_value']){
+            return;
+        }          
+        jQuery('#lastposts,#mylastpost').empty();
+    }
+    // fire the request to admin
+    jQuery('#cl_messages').append('<img src="' + cl_settings['images'] + 'loader.gif' + '"/>').show();
+    jQuery.ajax({
+        url: cl_settings['api_url'],
+        type: 'post',
+        dataType: 'json',
+        data: {'url':url.val(),'action':'cl_ajax','do':'fetch','_ajax_nonce':cl_settings._fetch},
+        success: function(data){
+            if(data.error == ''){
+                // no error, fill up lastposts div with items returned
+                jQuery('#cl_messages').empty().hide();
+                jQuery.each(data.items,function(j,item){
+                    var title = item.title;
+                    var link = item.link;
+                    var count = '';
+                    jQuery('#lastposts').append('<span id="' + item.link + '" class="choosepost ' + item.type + '">' + title + '</span>');
+                });
+                // setup first link and hidden fields
+                jQuery('#mylastpost').html('<a href="' + data.items[0].link +'"> ' + data.items[0]['title'] + '</a>').fadeIn(1000);
+                jQuery('#cl_post_title').val(data.items[0].title);
+                jQuery('#cl_post_url').val(data.items[0].link);
+                jQuery('#cl_prem').val(data.items[0].p);
+                // setup look and show dropdown
+                jQuery('span.message').css({'backgroundColor':jQuery('body').css('background-color'),'color':jQuery('body').css('color')});
+                jQuery('#showmorespan img').show();
+                if(cl_settings['comObj'].width() > jQuery('#commentluv').width()){
+                    var dropdownwidth = jQuery('#commentluv').width();
+                } else {
+                    var dropdownwidth = jQuery(cl_settings['comObj']).width();
+                }
+                jQuery('#lastposts').css('width',dropdownwidth).slideDown('',function(){ cl_settings['lastposts'] = 'showing'});
+                // bind click action
+                jQuery('.choosepost:not(.message)').click(function(){
+                    jQuery('#cl_post_title').val(jQuery(this).text());
+                    jQuery('#cl_post_url').val(jQuery(this).attr('id'));
+                    jQuery('#mylastpost').html('<a href="' + jQuery(this).attr('id') +'"> ' + jQuery(this).text() + '</a>').fadeIn(1000); 
+                });
+            } else {
+                cl_message(data.error);
+            }
+        }
+    });
+    // save what url used and that we checked already
+    cl_settings['fired'] = 'yes';
+    cl_settings['url_value'] = url.val(); 
+}
+/**
+* adds a message to tell the user something in the cl_message div and then slides it down
+* @param string message - the message to show
+*/
+function cl_message(message){
+    jQuery('#cl_messages').empty().hide().text(message).slideDown();
+}
+function heart_big(e){
+    // get url and data from link
+    linkspan = jQuery(this).parents(".cluv");
+    var link = jQuery(linkspan).find("a:first").attr("href");
+    var linkdata = jQuery('img',this).attr('class').split(' ');
 
-	});
+    // prepare call to admin
+    var url = cl_settings['api_url'];
+    var data = {'action':'cl_ajax','cid':linkdata[2],'cl_prem':linkdata[1],'link': link,'do':'info','_ajax_nonce':cl_settings._info};
+    cl_prem = linkdata[1];
+    // set up position
+    var position = jQuery(this).offset();
+    var windowwidth = jQuery(window).width();
+    windowheight = jQuery(window).height();
+    var xpos = position.left;
+    ypos = position.top;                   
+    if(xpos + 350 > windowwidth){
+        xpos = windowwidth - 370;
+        if(xpos < 0) xpos = 0;
+    }
 
-	function getAbsoluteLeft(objectId) {
-		// Get an object left position from the upper left viewport corner
-		o = objectId;
-		oLeft = o.offsetLeft;            // Get left position from the parent object
-		while(o.offsetParent!=null) {   // Parse the parent hierarchy up to the document element
-			oParent = o.offsetParent;    // Get parent object reference
-			oLeft += oParent.offsetLeft; // Add parent left position
-			o = oParent;
-		}
-		return oLeft;
-	}
-	function getAbsoluteTop(objectId) {
-		// Get an object top position from the upper left viewport corner
-		o = objectId;
-		oTop = o.offsetTop;            // Get top position from the parent object
-		while(o.offsetParent!=null) { // Parse the parent hierarchy up to the document element
-			oParent = o.offsetParent;  // Get parent object reference
-			oTop += oParent.offsetTop; // Add parent top position
-			o = oParent;
-		}
-		return oTop;
-	}
-
-	function do_info(url){
-		$.getJSON(url,function(data){
-			$('#heart_tip_big').css("width","350px");
-			$('#heart_tip_big').addClass("finalbig");
-			var title = data.items[0].title;
-			$('#heart_tip_big img').remove();
-			$('#heart_tip_big').html(title);
-		});
-	}
-	// *** functions
-	// the dostuff function. Fires when comment text area gets focus
-	function cl_dostuff(){
-		// only fire if checkbox is checked
-		if($('#doluv').is(":checked")){
-			var check=$(cl_settings['urlObj']).val().toLowerCase();
-			// and there is a url provided
-			if(!check) { return; }
-			if(check.indexOf('http://') < 0) { return;}
-			$('#mylastpost img').attr("src",cl_settings['images'] + "loader.gif");
-			var url=cl_settings['api_url'] + "?type=request&refer=" + cl_settings['refer'] + "&url="+check+"&version="+ cl_settings['cl_version'] +"&callback=?";
-			// do the ajax call
-			$.getJSON(url,function(data){
-				$('#showmore').show();
-				$('#lastposts').empty();
-				// get if is a member and other meta data
-				var ismember = data.meta[0].ismember;
-				if(ismember < 2){
-					// uncomment below to only show luv to registered comluv users.
-					//$('#mylastpost').html('Only registered comluv users can receive luv');
-					//return;
-				}
-				$('#cl_memberid').val(ismember);
-				cl_settings['request_id'] = data.meta[0].request_id;
-				cl_settings['alert_message'] = data.meta[0].alert_message;
-				// add the returned data to select box (or div)
-				$('#lastposts').append(cl_settings['select_text'] + '<br/>');
-				$.each(data.items, function(j,item){
-					//get image type for this item
-					var imageurl = '<img class="cl_type_icon" src="' + cl_settings['images'] + data.items[j]['type'] + '.gif"' + ' alt="' + data.items[j]['type'] + '" border=0 />';
-					// construct vars for clchoose function
-					var titlestr = data.items[j]['title'];
-					// replace single and double quotes with backslash versions (to prevent the onclick=".. from getting split)
-					titlestr = titlestr.replace(/\'/g,"\\\'");
-					titlestr = titlestr.replace(/\"/g,"\\\'");
-					$('#lastposts').append("<span onClick=\"clchoose('" + data.items[j]['type'] + "','" + data.items[j].url + "','" + titlestr + "'," + j + "," + data.meta[0].request_id + ");\"  class=\"choosepost\">" + imageurl + data.items[j]['title'] + "</span>");
-				});
-				cl_settings['typeimage'] = '<img class="cl_type_icon" src="' + cl_settings['images'] + data.items[0]['type'] + '.gif"' + ' alt="' + data.items[0]['type'] + '" border=0 />';
-				$('#mylastpost').html(cl_settings['typeimage'] + ' <a href="' + data.items[0].url +'" title="' + data.items[0]['type'] + '"> ' + data.items[0]['title'] + '</a>').fadeIn(1000);
-				$('input[name="request_id"]').val(cl_settings['request_id']);
-				$('input[name="choice_id"]').val("0");
-				$('input[name="cl_type"]').val(data.items[0]['type']);
-				//$('#cl_post').val('<a href="' + data.items[0].url + '">' + data.items[0]['title'] + '</a>');
-				$('#cl_post_url').val(data.items[0].url);
-				$('#cl_post_title').val(data.items[0]['title']);
-			});
-			// disable focus event
-			$("textarea[name='" + cl_settings['comment'] + "']").unbind();
-		}
-	}
-
-})(jQuery);
-
-// functions called with onclick (outside scope of above block)
-function clchoose(ptype,purl,pstr,pid,preq){
-(function($) {
-	if(purl == "0"){
-		return;
-	}
-	// set hidden fields in form to hold values for identifying this choice
-	$('input[name="choice_id"]').val(pid);
-	$('input[name="request_id"]').val(preq);
-	$('input[name="cl_type"]').val(ptype);
-	$('#mylastpost a').attr("href",purl).text(pstr);
-	$('input[name="cl_post_title"]').val( pstr );
-	$('input[name="cl_post_url"]').val(purl);
-	$('#mylastpost img').attr({src: cl_settings['images'] + ptype + '.gif',alt: ptype});
-	if($('#luv').is(":checked")){
-		$('input[name="cl_post"]').val('<a href="' + purl + '">' + pstr + '</a>');
-	}
-})(jQuery);
+    // setup panel and show with loading background image
+    jQuery('#heart_tip_big').empty().css({'left':xpos + "px", 'top' :ypos + "px" });
+    jQuery('#heart_tip_big').css("width","350px");
+    jQuery('#heart_tip_big').addClass("finalbig").show().addClass('cl_ajax');
+    // has this been shown before on this page?
+    if(typeof cl_settings[linkdata[2]] != 'undefined'){
+        fill_panel(cl_settings[linkdata[2]]);
+        return;
+    }
+    // execute call to admin
+    jQuery.ajax({
+        url: cl_settings['api_url'],
+        type: 'post',
+        data: data,
+        dataType: 'json',
+        success : function(data){
+            if(typeof(data) == 'object' && jQuery('#heart_tip_big').is(':visible')){
+                // acceptable response, populate panel
+                cl_settings[linkdata[2]] = data.panel;
+                fill_panel(data.panel);
+            } else {
+                jQuery('#heart_tip_big').removeClass('cl_ajax').html(cl_settings['no_info_message']);
+            }
+            jQuery('#heart_tip_big').mouseleave(heart_small);
+        }   
+    });
 }
 
-function cl_infolink_click(clickurl){
-	(function($){
-			// set link to open in a new window
-			$('a[href="' + clickurl + '"]').attr("target","_blank");
-			var addit= "?type=click&url=" + clickurl + "&callback=?";
-			var clurl=cl_settings['api_url'] + addit;
-			// call api, don't worry about returned data
-			$.getJSON(clurl);
-			return true;
-	})(jQuery);
+function fill_panel(html){
+    jQuery('#heart_tip_big').removeClass('cl_ajax').html(html).show();
+    if(cl_prem == 'p'){
+        jQuery('#heart_tip_big p.cl_title').css('backgroundColor',cl_settings['infoback']);
+    }
+    // move panel if it extends below window
+    var ely = ypos - jQuery(document).scrollTop();
+    var poph = jQuery('#heart_tip_big').height() + 20;
+    if(ely + poph > windowheight){
+        var invis = poph - (windowheight - ely);
+        ypos -= invis;
+        if(ypos < 0) ypos = 0;
+        jQuery('#heart_tip_big').css('top',ypos);
+    }
+    return;
+}
+
+function heart_small(){
+    if(!jQuery('body').find('.cl_ajax').is(':visible')){
+        jQuery("body").find("#heart_tip_big").empty().hide();
+    }
+
+}
+function do_nowt(){
+    return;
 }
