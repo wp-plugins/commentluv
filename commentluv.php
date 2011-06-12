@@ -69,7 +69,6 @@
                 add_filter ( 'plugin_action_links', array (&$this, 'plugin_action_link' ), - 10, 2 ); // add a settings page link to the plugin description. use 2 for allowed vars
                 add_filter ( 'found_posts', array(&$this,'send_feed'),10,2); // sends post titles and urls only
                 add_filter ( 'kindergarten_html', array(&$this,'kindergarten_html')); // for cleaning html 
-                //$this->check_version();
                 $options = $this->get_options();
                 if($options['enable'] == 'yes'){
                     $this->setup_hooks();
@@ -324,7 +323,7 @@
                 $response = wp_remote_head($url,array('method'=>'POST','body'=>$body));
                 $latest = $this->php_version(wp_remote_retrieve_header($response,'version'));
                 $message = wp_remote_retrieve_header($response,'message');
-                if(version_compare($this->version,$latest,'<')){
+                if(version_compare($version,$latest,'<')){
                     $options = $this->get_options();
                     $options['upgrade'] = $latest;
                     if($message){
@@ -839,8 +838,8 @@
                     update_option($this->db_option,$this->get_options('yes'));
                     update_option('cl_version',$this->version);
                 }
-                // new addition to technical settings after 2.9 release
-                if(version_compare($installed_version,'2.9.1','<')){
+                // new addition to technical settings after 2.90.1 release
+                if(version_compare($installed_version,'2.90.1','<')){
                     $options['api_url'] = admin_url('admin-ajax.php');
                     update_option('cl_version',$this->version);
                 }
