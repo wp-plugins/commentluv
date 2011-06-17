@@ -2,7 +2,7 @@
     Plugin Name: CommentLuv
     Plugin URI: http://comluv.com/
     Description: Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
-    Version: 2.90.2
+    Version: 2.90.3
     Author: Andy Bailey
     Author URI: http://www.commentluv.com
     Copyright (C) <2011>  <Andy Bailey>
@@ -29,7 +29,7 @@
             var $plugin_url;
             var $plugin_dir;
             var $db_option = 'commentluv_options';
-            var $version = "2.90.2";
+            var $version = "2.90.3";
             var $slug = 'commentluv-options';
             var $localize;
 
@@ -473,8 +473,8 @@
                 if($_POST['cl_prem'] == 'true'){
                     $comment = get_commentdata($cid);
                     $refer = get_permalink($comment['comment_post_ID']);
-                    $response = wp_remote_post($url,array('body'=>array('cl_request'=>'click','refer'=>$refer,'version'=>$this->version)));
-                    //DebugBreak();
+                    // set blocking to false because no response required
+                    $response = wp_remote_post($url,array('blocking'=>false,'body'=>array('cl_request'=>'click','refer'=>$refer,'version'=>$this->version)));
                 }
                 exit;
             }
@@ -673,7 +673,7 @@
             * takes action when ajax request is made with URL from the comment form
             * send back 1 or 10 last posts depending on rules
             */
-            function fetch_feed(){
+            function fetch_feed(){ 
                 // check nonce
                 check_ajax_referer('fetch');
                 define('DOING_AJAX', true);
@@ -767,6 +767,7 @@
                     // had an error trying to read the feed       
                     $response = json_encode(array('error'=>$error));
                 }
+                unset($rss);
                 header( "Content-Type: application/json" );
                 echo $response;
                 exit;                    
@@ -1420,6 +1421,8 @@
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/br.png"/> <?php _e('Portuguese',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.korvo.com.br/">Diego Uczak</a></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/my.png"/> <?php _e('Malaysian',$this->plugin_domain);?></td><td><a target="_blank" href="http://ariffshah.com/">Ariff Shah</a></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/in.png"/> <?php _e('Hindi',$this->plugin_domain);?></td><td><a target="_blank" href="http://outshinesolutions.com/">Outshine Solutions</a></td></tr>
+                                <tr><td><img src="<?php echo $this->plugin_url;?>images/id.png"/> <?php _e('Indonesian',$this->plugin_domain);?></td><td><a target="_blank" href="http://rainerflame.com/">Mokhamad Oky</a></td></tr>
+                                
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/ru.png"/> <?php _e('Russian',$this->plugin_domain);?></td><td><!--<a target="_blank" href="http://www.fatcow.com/">Fatcow</a>--></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/cn.png"/> <?php _e('Chinese',$this->plugin_domain);?></td><td><!--<a target="_blank" href="http://zuoshen.com/">Donald</a>--></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/il.png"/> <?php _e('Hebrew',$this->plugin_domain);?></td><td><!--<a target="_blank" href="http://www.maorb.info/">Maor Barazany</a>--></td></tr>

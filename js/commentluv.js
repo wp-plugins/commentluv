@@ -1,4 +1,4 @@
-// commentluv 2.89
+// commentluv 2.90.3
 jQuery(document).ready(function(){
     // get the form object and fields
     var formObj = jQuery('#cl_post_title').parents('form');
@@ -90,7 +90,7 @@ function cl_docheck(){
             cl_settings['comObj'].after('<br><span id="invisurl">').after(invismsg);
             jQuery('#invisurl').append('URL ').after(invisurl).append('</span>');
         }
-        
+
     }
     // check that there is a value in the url field
     if(url.val().length > 1){
@@ -114,7 +114,7 @@ function cl_docheck(){
     }
     // if we are here, all is cool mon
     return 'ok';
-}
+} 
 /**
 * tries to fetch last blog posts for a url
 */
@@ -170,11 +170,28 @@ function cl_dostuff(){
             } else {
                 cl_message(data.error);
             }
+        },
+        error: function(x,e){
+            jQuery('#cl_messages img').remove();
+            if(x.status==0){
+                cl_message('You are offline!!\n Please Check Your Network.');
+            }else if(x.status==404){
+                cl_message('API URL not found.');
+            }else if(x.status==500){
+                cl_message('Internel Server Error.');
+            }else if(e=='parsererror'){
+                cl_message('Error.\nParsing JSON Request failed.');
+            }else if(e=='timeout'){
+                cl_message('Request Time out.');
+            }else {
+                cl_message('Unknow Error. ' + x.statusText);
+            }
         }
     });
     // save what url used and that we checked already
     cl_settings['fired'] = 'yes';
-    cl_settings['url_value'] = url.val(); 
+    cl_settings['url_value'] = url.val();
+    
 }
 /**
 * adds a message to tell the user something in the cl_message div and then slides it down

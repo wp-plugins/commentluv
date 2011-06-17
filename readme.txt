@@ -4,7 +4,7 @@ Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv, comment luv , commentlove, comment love
 Requires at least: 3.0
 Tested up to: 3.2
-Stable tag: 2.90.2
+Stable tag: 2.90.3
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -30,6 +30,7 @@ Dutch [Rene](http://wpwebshop.com/ "Dutch translation")
 Portuguese (BR) [Diego Uczak](http://www.korvo.com.br/ "Portuguese Translation")
 Malaysian [Ariff](http://ariffshah.com/ "Malaysian Translation")
 Hindi [Outshine Solutions](http://outshinesolutions.com/ "Hindi Translation")
+Indonesian [Mokhamad Oky](http://rainerflame.com/ "Indonesian Translation")
 
 == Installation ==
 
@@ -58,6 +59,11 @@ Please see the videos in the settings page for explanations of how they work.
 4. edit post comments
 
 == ChangeLog == 
+= 2.90.3 = 
+* Added some ajax error messages in case of 404 or 500 server errors
+* Added Indonesian language
+* Fixed Malaysian language
+* Tweaked click notification function to be non blocking
 
 = 2.90.1 =
 * whole new version rewritten from scratch that makes it standalone.
