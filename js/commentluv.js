@@ -1,4 +1,4 @@
-// commentluv 2.90.3
+// commentluv 2.90.5
 jQuery(document).ready(function(){
     // get the form object and fields
     var formObj = jQuery('#cl_post_title').parents('form');
@@ -153,7 +153,7 @@ function cl_dostuff(){
                 jQuery('#cl_post_url').val(data.items[0].link);
                 jQuery('#cl_prem').val(data.items[0].p);
                 // setup look and show dropdown
-                jQuery('span.message').css({'backgroundColor':jQuery('body').css('background-color'),'color':jQuery('body').css('color')});
+                jQuery('span.message').css({'backgroundColor':'#efefef','color':'black'});
                 jQuery('#showmorespan img').show();
                 if(cl_settings['comObj'].width() > jQuery('#commentluv').width()){
                     var dropdownwidth = jQuery('#commentluv').width();
@@ -174,11 +174,16 @@ function cl_dostuff(){
         error: function(x,e){
             jQuery('#cl_messages img').remove();
             if(x.status==0){
-                cl_message('You are offline!!\n Please Check Your Network.');
+                if(cl_settings['api_url'].indexOf('https') == 0){
+                    cl_message('This blog has set the api url to use https , the commentluv technical settings need to be changed for the API url to use http');
+                } else {
+                    cl_message('It appears that you are offline!!\n Please Check Your Network.');
+                }
+                
             }else if(x.status==404){
                 cl_message('API URL not found.');
             }else if(x.status==500){
-                cl_message('Internel Server Error.');
+                cl_message('Internal Server Error.');
             }else if(e=='parsererror'){
                 cl_message('Error.\nParsing JSON Request failed.');
             }else if(e=='timeout'){
