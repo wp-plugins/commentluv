@@ -185,7 +185,7 @@ function cl_dostuff(){
             }else if(x.status==500){
                 cl_message('Internal Server Error.');
             }else if(e=='parsererror'){
-                cl_message('Error.\nParsing JSON Request failed.');
+                cl_message('Error.\nParsing JSON Request failed.' + x.response);
             }else if(e=='timeout'){
                 cl_message('Request Time out.');
             }else {
