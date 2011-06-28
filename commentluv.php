@@ -32,7 +32,7 @@
             var $version = "2.90.5";
             var $slug = 'commentluv-options';
             var $localize;
-            static $is_commentluv_request = false;
+            var $is_commentluv_request = false;
 
             /** commentluv
             * This is the constructor, it runs as soon as the class is created
@@ -785,12 +785,6 @@
                     if(!is_user_logged_in() && $options['unreg_user_text'] && $options['whogets'] != 'everybody' && $p=='u'){
                         if(get_option('users_can_register')){
                             $arr[] = array('type'=>'message','title'=>$options['unreg_user_text'],'link'=>'');
-                            if(!strstr($options['unreg_user_text'],'action=register')){
-                                $register_link = apply_filters('register','<a href="' . site_url('wp-login.php?action=register', 'login') . '">' . __('Register') . '</a>');
-                                $arr[] = array('type'=>'message','title'=>$register_link,'link'=>'');
-                            }
-                            
-                            
                         }
                         if($options['whogets'] == 'registered' && get_option('users_can_regsiter')){
                             $arr[] = array('type'=>'message','title'=>__('If you are registered, you need to log in to get 10 posts to choose from',$this->plugin_domain),'link'=>'');
@@ -879,7 +873,7 @@
                     update_option('cl_version',$this->version);
                 }
                 // new addition to technical settings after 2.90.1 release
-                if(version_compare($installed_version,'2.9.0.1','<')){
+                if(version_compare($installed_version,'2.90.1','<')){
                     $options['api_url'] = admin_url('admin-ajax.php');
                     update_option($this->db_option,$options);
                     update_option('cl_version',$this->version);
@@ -1286,7 +1280,7 @@
                                                     if(get_option('users_can_register')){
                                                         _e('Your register link code',$pd);
                                                         $register_link = apply_filters('register','<a href="' . site_url('wp-login.php?action=register', 'login') . '">' . __('Register') . '</a>');
-                                                        echo ' : <input style="width:95%" type="text" value="'.htmlentities($register_link).'" disabled/>';
+                                                        echo ' : <input style="width:95%" type="text" value="'.htmlentities($register_link).'"/>';
                                                     }
                                                 ?>
                                             </td>
