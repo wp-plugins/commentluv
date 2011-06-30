@@ -2,7 +2,7 @@
     Plugin Name: CommentLuv
     Plugin URI: http://comluv.com/
     Description: Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
-    Version: 2.90.5
+    Version: 2.90.6
     Author: Andy Bailey
     Author URI: http://www.commentluv.com
     Copyright (C) <2011>  <Andy Bailey>
@@ -29,7 +29,7 @@
             var $plugin_url;
             var $plugin_dir;
             var $db_option = 'commentluv_options';
-            var $version = "2.90.5";
+            var $version = "2.90.6";
             var $slug = 'commentluv-options';
             var $localize;
             var $is_commentluv_request = false;
@@ -56,7 +56,7 @@
                 register_deactivation_hook(__FILE__, array(&$this,'deactivation'));
                 // manual set install and activate, wordpress wont fire the activation hook on auto upgrade plugin
                 $cl_version = get_option('cl_version');
-                if($this->version != $cl_version){
+                if($this->version != $cl_version){        
                     $this->install();
                     $this->activation();
                 }                       
@@ -71,7 +71,6 @@
                 add_action ( 'admin_print_scripts-settings_page_commentluv-options', array(&$this,'add_settings_page_script')); // script for settings page ajax function
                 add_action ( 'admin_print_styles-settings_page_commentluv-options', array(&$this,'add_settings_page_style')); // script for settings page ajax function
                 add_action ( 'wp_ajax_notify_signup', array(&$this,'notify_signup')); // ajax handler for settings page subscribe button
-                add_action ( 'plugins_loaded', array(&$this,'detect_useragent'),1); // early detection of commentluv user agent
                 
                 // filters
                 add_filter ( 'cron_schedules', array (&$this, 'cron_schedules') ); // for my own recurrence
@@ -99,7 +98,9 @@
                 // only add if it doesn't exist yet
                 $sched = wp_next_scheduled('clversion');
                 if(false === $sched){
-                    wp_schedule_event(time() - 1,'clfortnightly','clversion');
+                    // set up cron for version check
+                    $rnd = mt_rand(5,604800);
+                    wp_schedule_event(time() - $rnd,'clfortnightly','clversion');
                 }
             }
             /**
@@ -384,17 +385,6 @@
             function deactivation(){
                 wp_clear_scheduled_hook('clversion');
             }
-            /** early as possible check for user agent
-            * called by add_action('plugins_loaded
-            * if commentluv useragent requesting then start the object buffer
-            * 
-            */
-            function detect_useragent(){                   
-                if (preg_match("/Commentluv/i", $_SERVER['HTTP_USER_AGENT'])) {
-                    $this->is_commentluv_request = true;
-                    ob_start();   
-                }
-            }
             /**
             * Called by add_fields or by manual insert
             * used to show the badge and extra bits for holding the ajax drop down box
@@ -506,6 +496,7 @@
             * sends back json encoded string for the content of the panel 
             */
             function do_info(){
+                
                 check_ajax_referer('info');
                 global $wpdb;
                 $options = $this->get_options();
@@ -528,16 +519,21 @@
                 $appeared_on_list = array();
                 $my_other_posts = array();
                 $my_other_posts_list = array();
+                
                 if($rows){
                     foreach($rows as $row){
                         $data = unserialize($row->meta_value);
                         if(!in_array($data['cl_post_url'],$my_other_posts_list) && sizeof($my_other_posts) < 5){
-                            $my_other_posts[] = '<a target="_blank" href="'.$data['cl_post_url'].'">'.substr($data['cl_post_title'],0,60).'</a>';
+                            $my_other_posts[] = '<a target="_blank" href="'.$data['cl_post_url'].'">'.esc_js(substr($data['cl_post_title'],0,60)).'</a>';
                             $my_other_posts_list[] = $data['cl_post_url'];
                         }
                         if(!in_array($row->comment_post_ID,$appeared_on_list) && sizeof($appeared_on) < 5){
                             $appeared_on[] = '<a href="'.get_permalink($row->comment_post_ID).'">'.substr(get_the_title($row->comment_post_ID),0,60).'</a>';
                             $appeared_on_list[] = $row->comment_post_ID;
+                        }
+                        // stop if both lists at 5
+                        if(count($appeared_on) >= 5 && count($my_other_posts) >= 5){
+                            break;
                         }
                     }
                 }
@@ -785,6 +781,10 @@
                     if(!is_user_logged_in() && $options['unreg_user_text'] && $options['whogets'] != 'everybody' && $p=='u'){
                         if(get_option('users_can_register')){
                             $arr[] = array('type'=>'message','title'=>$options['unreg_user_text'],'link'=>'');
+                            if(!strstr($options['unreg_user_text'],'action=register')){
+                                 $register_link = apply_filters('register','<a href="' . site_url('wp-login.php?action=register', 'login') . '">' . __('Register') . '</a>');
+                                 $arr[] = array('type'=>'message','title'=>$register_link,'link'=>'');
+                             }
                         }
                         if($options['whogets'] == 'registered' && get_option('users_can_regsiter')){
                             $arr[] = array('type'=>'message','title'=>__('If you are registered, you need to log in to get 10 posts to choose from',$this->plugin_domain),'link'=>'');
@@ -857,8 +857,8 @@
             * use it to make any changes needed for updated version or to add/check
             * new database tables on first install.
             */
-            function install(){
-                $options = $this->get_options();
+            function install(){        
+                $options = $this->get_options();     
                 if(!$installed_version = get_option('cl_version')){
                     // no installed version yet, set to version that was before big change
                     $installed_version = 2.8;
@@ -873,7 +873,7 @@
                     update_option('cl_version',$this->version);
                 }
                 // new addition to technical settings after 2.90.1 release
-                if(version_compare($installed_version,'2.90.1','<')){
+                if(version_compare($installed_version,'2.9.0.1','<')){
                     $options['api_url'] = admin_url('admin-ajax.php');
                     update_option($this->db_option,$options);
                     update_option('cl_version',$this->version);
@@ -1013,20 +1013,9 @@
             * @param (obj) $object - the query object
             * @return $foundposts - need to return this if the request is not from a commentluv api or plugin
             */
-            function send_feed($foundposts,$object){
-                // check if commentluv request or not
-                if(!$this->is_commentluv_request){
-                    return $foundposts;
-                }
-                // is commentluv request so clean the output buffer
-                // ( in case other plugins kicked in before this filter was called)
-                $o = ob_get_clean();
-                if($o){
-                    ob_get_flush();
-                }
-                
+            function send_feed($foundposts,$object){  
                 if(headers_sent()){
-                    //return $foundposts; // dont need this if using object buffer method
+                    return $foundposts; 
                 }
                 $error = false;
                 if($foundposts < 1){
@@ -1275,12 +1264,14 @@
 
                                                 <?php _e('Message for unregistered user in the drop down box',$pd);?>
                                                 <br>(<?php _e('Message will not be shown if you do not have registrations enabled',$this->plugin_domain);?>)
-                                                <br><textarea style="width: 95%" name="<?php echo $dbo;?>[unreg_user_text]"><?php echo htmlentities($o['unreg_user_text']);?></textarea>
+                                                <br><textarea rows="5" style="width: 95%" name="<?php echo $dbo;?>[unreg_user_text]"><?php echo htmlentities($o['unreg_user_text']);?></textarea>
                                                 <?php 
                                                     if(get_option('users_can_register')){
                                                         _e('Your register link code',$pd);
+                                                        echo '<br>';
+                                                        _e('(this will be automatically added if you have not added it yourself to the textarea above)',$pd);
                                                         $register_link = apply_filters('register','<a href="' . site_url('wp-login.php?action=register', 'login') . '">' . __('Register') . '</a>');
-                                                        echo ' : <input style="width:95%" type="text" value="'.htmlentities($register_link).'"/>';
+                                                        echo ' : <input style="width:95%" type="text" value="'.htmlentities($register_link).'" disabled/>';
                                                     }
                                                 ?>
                                             </td>
@@ -1299,7 +1290,7 @@
                                             <td colspan="3">
                                                 <?php _e('Message for unregistered user in the info panel',$pd);?>
                                                 <br>(<?php _e('Message will not be shown if you do not have registrations enabled',$this->plugin_domain);?>)
-                                                <br><textarea style="width:95%;" name="<?php echo $dbo;?>[unreg_user_text_panel]"><?php echo htmlentities($o['unreg_user_text_panel']);?></textarea>
+                                                <br><textarea rows="5" style="width:95%;" name="<?php echo $dbo;?>[unreg_user_text_panel]"><?php echo htmlentities($o['unreg_user_text_panel']);?></textarea>
                                             </td>
                                             <td></td>
                                             <td></td>
@@ -1469,6 +1460,7 @@
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/in.png"/> <?php _e('Hindi',$this->plugin_domain);?></td><td><a target="_blank" href="http://outshinesolutions.com/">Outshine Solutions</a></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/id.png"/> <?php _e('Indonesian',$this->plugin_domain);?></td><td><a target="_blank" href="http://rainerflame.com/">Mokhamad Oky</a></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/cn.png"/> <?php _e('Chinese (simplified)',$this->plugin_domain);?></td><td><a target="_blank" href="http://obugs.net/">Third Eye</a></td></tr>
+                                <tr><td><img src="<?php echo $this->plugin_url;?>images/es.png"/> <?php _e('Spanish',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.activosenred.com/">Valentin Yonte</a></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/ru.png"/> <?php _e('Russian',$this->plugin_domain);?></td><td><!--<a target="_blank" href="http://www.fatcow.com/">Fatcow</a>--></td></tr>
                                 
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/il.png"/> <?php _e('Hebrew',$this->plugin_domain);?></td><td><!--<a target="_blank" href="http://www.maorb.info/">Maor Barazany</a>--></td></tr>

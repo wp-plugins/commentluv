@@ -4,7 +4,7 @@ Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv, comment luv , commentlove, comment love
 Requires at least: 3.0
 Tested up to: 3.2
-Stable tag: 2.90.5
+Stable tag: 2.90.6
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -32,6 +32,7 @@ Malaysian [Ariff](http://ariffshah.com/ "Malaysian Translation")
 Hindi [Outshine Solutions](http://outshinesolutions.com/ "Hindi Translation")
 Indonesian [Mokhamad Oky](http://rainerflame.com/ "Indonesian Translation")
 Chinese (simplified) [Third Eye](http://obugs.net "Simplified Chinese Translation")
+Spanish [Valentin Yonte](http://www.activosenred.com/ "Spanish Translation")
 
 == Installation ==
 
@@ -60,12 +61,22 @@ Please see the videos in the settings page for explanations of how they work.
 4. edit post comments
 
 == ChangeLog ==
+= 2.90.6 = 
+* bugfix : causing fatal error on upgrade to 2.90.5 sorry!! It was all my fault
+* bugfix : escape titles of other posts when showing info panel.
+* bugfix : compatibility with W3 total cache
+* removed : attempt at detecting useragent and object buffering to counteract W3 total cache 
+* added : detection of headers already sent
+* added : add register link to drop down list if the link is missing and regisration is enabled
+* added : spanish translation
+* change : settings page field for register link set to disabled and descriptive text added
+* change : add random number of seconds up to 1 week to cron time setting on activation to prevent overload on server when plugin update is released
+
+
 = 2.90.5 =
-* bugfix : send feed function needed to wrap titles in <![CDATA[ ]]> to prevent ampersand from causing xml error (thanks @bienvoyager for testing!)
-* added : use ob_start as early as possible if commentluv useragent detected, fix for caching plugins sending headers before commentluv can send xml feed
+* bugfix : send feed function needed to wrap titles in <![CDATA[ ]]> to prevent & from causing xml error (thanks @bienvoyager for testing!)
+* added : use ob_start as early as possible if commentluv useragent detected
 * added : version check with parameters
-* added : Chinese (simplified) language
-* added : error message to js file if user has set wp admin to use https
  
 = 2.90.3 = 
 * Added some ajax error messages in case of 404 or 500 server errors
