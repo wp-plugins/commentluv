@@ -4,7 +4,7 @@ Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv, comment luv , commentlove, comment love
 Requires at least: 3.0
 Tested up to: 3.2
-Stable tag: 2.90.6
+Stable tag: 2.90.7
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -33,6 +33,8 @@ Hindi [Outshine Solutions](http://outshinesolutions.com/ "Hindi Translation")
 Indonesian [Mokhamad Oky](http://rainerflame.com/ "Indonesian Translation")
 Chinese (simplified) [Third Eye](http://obugs.net "Simplified Chinese Translation")
 Spanish [Valentin Yonte](http://www.activosenred.com/ "Spanish Translation")
+German [Jan Ruehling](http://www.cloudliving.de/ "German Translation")
+Persian [Amir Heydari](http://www.3eo.ir/ "Persian Translation")
 
 == Installation ==
 
@@ -61,6 +63,20 @@ Please see the videos in the settings page for explanations of how they work.
 4. edit post comments
 
 == ChangeLog ==
+
+= 2.90.7 =
+* added : more detailed error messages to javascript
+* added : update version number in db on activation if existing version is less
+* added : not authorized error in fetch function if nonce check fails
+* added : allow disabling of commentluv request detection (for those getting xml errors when commenting on other sites)
+* added : if w3 total cache active, clear cache on commentluv activation/upgrade.
+* added : German translation
+* added : warning if saving settings with 10 posts only for registered users but registration not enabled
+* added : include note about registration not enabled to drop down list (only for admin to see)
+* added : auto add commentluv to list of useragents to ignore for w3 pagecache 
+* bugfix : prevent theme from outputting data before send_feed if commentluv useragent detected
+* added : Persian translation
+
 = 2.90.6 = 
 * bugfix : causing fatal error on upgrade to 2.90.5 sorry!! It was all my fault
 * bugfix : escape titles of other posts when showing info panel.

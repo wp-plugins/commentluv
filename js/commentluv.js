@@ -1,4 +1,4 @@
-// commentluv 2.90.6
+// commentluv 2.90.7
 jQuery(document).ready(function(){
     // get the form object and fields
     var formObj = jQuery('#cl_post_title').parents('form');
@@ -177,19 +177,19 @@ function cl_dostuff(){
                 if(cl_settings['api_url'].indexOf('https') == 0){
                     cl_message('This blog has set the api url to use https , the commentluv technical settings need to be changed for the API url to use http');
                 } else {
-                    cl_message('It appears that you are offline!!\n Please Check Your Network.');
+                    cl_message('It appears that you are offline or another error occured contacting the API url, have you set it to use www or missed the www off the api url?? check the technical settings and add or remove www from the api url.');
                 }
                 
             }else if(x.status==404){
                 cl_message('API URL not found.');
             }else if(x.status==500){
-                cl_message('Internal Server Error.');
+                cl_message('Internal Server Error.' + x.response);
             }else if(e=='parsererror'){
                 cl_message('Error.\nParsing JSON Request failed.' + x.response);
             }else if(e=='timeout'){
                 cl_message('Request Time out.');
             }else {
-                cl_message('Unknow Error. ' + x.statusText);
+                cl_message('Unknow Error. ' + x.statusText + ' ' + x.response);
             }
         }
     });

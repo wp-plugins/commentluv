@@ -2,7 +2,7 @@
     Plugin Name: CommentLuv
     Plugin URI: http://comluv.com/
     Description: Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
-    Version: 2.90.6
+    Version: 2.90.7
     Author: Andy Bailey
     Author URI: http://www.commentluv.com
     Copyright (C) <2011>  <Andy Bailey>
@@ -20,7 +20,6 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
     */
-
     if (! class_exists ( 'commentluv' )) {
         // let class begin
         class commentluv {
@@ -29,7 +28,7 @@
             var $plugin_url;
             var $plugin_dir;
             var $db_option = 'commentluv_options';
-            var $version = "2.90.6";
+            var $version = "2.90.7";
             var $slug = 'commentluv-options';
             var $localize;
             var $is_commentluv_request = false;
@@ -71,11 +70,11 @@
                 add_action ( 'admin_print_scripts-settings_page_commentluv-options', array(&$this,'add_settings_page_script')); // script for settings page ajax function
                 add_action ( 'admin_print_styles-settings_page_commentluv-options', array(&$this,'add_settings_page_style')); // script for settings page ajax function
                 add_action ( 'wp_ajax_notify_signup', array(&$this,'notify_signup')); // ajax handler for settings page subscribe button
-                
+                add_action ( 'init', array(&$this,'detect_useragent'));
                 // filters
                 add_filter ( 'cron_schedules', array (&$this, 'cron_schedules') ); // for my own recurrence
                 add_filter ( 'plugin_action_links', array (&$this, 'plugin_action_link' ), - 10, 2 ); // add a settings page link to the plugin description. use 2 for allowed vars
-                add_filter ( 'found_posts', array(&$this,'send_feed'),10,2); // sends post titles and urls only
+                add_filter ( 'found_posts', array(&$this,'send_feed'),-1,2); // sends post titles and urls only
                 add_filter ( 'kindergarten_html', array(&$this,'kindergarten_html')); // for cleaning html 
                 $options = $this->get_options();
                 //DebugBreak();
@@ -102,7 +101,31 @@
                     $rnd = mt_rand(5,604800);
                     wp_schedule_event(time() - $rnd,'clfortnightly','clversion');
                 }
-            }
+                // see if this blog uses w3 total cache and flush the cache after activation and 
+                // set the page cache ignore useragents to have Commentluv in it too
+                global $w3_plugin_totalcache;          
+                if(is_object($w3_plugin_totalcache)){ 
+                    // w3 object exists, flush the page cache                                                 
+                    $w3_plugin_totalcache->flush_all(); 
+                    // get config for page cache rejected useragents list
+                    $config = new W3_Config();
+                    $ua = $config->get_array('pgcache.reject.ua');
+                    if(!in_array('Commentluv',$ua)){
+                        // commentluv useragent not added yet, do it now
+                        $ua[] = 'Commentluv';
+                    }   
+                    // set it in config
+                    $config->set('pgcache.reject.ua',$ua); 
+                    // set w3 object _config object to have _config var with useragent array (cannot use config->save() here because w3 saves it again from it's own stored values)
+                    // this appears to work, I cannot get an answer from Fred so this will have to dooferfnaa 
+                    $w3_plugin_totalcache->_config->_config['pgcache.reject.ua'] = $ua;
+                    // write cache rules
+                    $w3_plugin_pgcache = & W3_Plugin_PgCache::instance();
+                    $w3_plugin_pgcache->write_rules_core();
+
+                }
+
+            }  
             /**
             * Adds fields to comment area
             * called by add_action('comment_form
@@ -266,7 +289,7 @@
             * it is called by add_action admin_init
             * options in the options page will need to be named using $this->db_option[option]
             */
-            function admin_init(){
+            function admin_init(){    
                 // whitelist options
                 register_setting( 'commentluv_options_group', $this->db_option ,array(&$this,'options_sanitize' ) );
                 $options = $this->get_options();
@@ -386,6 +409,25 @@
                 wp_clear_scheduled_hook('clversion');
             }
             /**
+            * detect if request is from a commentluv useragent
+            * called by add_action('init
+            * used to start the output buffer so the send_feed function can clear it before sending the xml feed
+            * this is for rare occasions where some themes cause output to be sent to the browser before send_feed can output its own
+            * ignore if user has set disable_detect in settings
+            */
+            function detect_useragent(){
+                $options = $this->get_options();
+                // dont do anything if detect is disabled
+                if($options['disable_detect'] == 'on'){
+                    return;
+                }
+                // is this commentluv calling?
+                if (preg_match("/Commentluv/i", $_SERVER['HTTP_USER_AGENT'])){
+                    $this->is_commentluv_request = true;
+                    ob_start();
+                }
+            }
+            /**
             * Called by add_fields or by manual insert
             * used to show the badge and extra bits for holding the ajax drop down box
             * 
@@ -451,7 +493,7 @@
             * handles all ajax requests, receives 'do' as POST var and calls relevant function
             * 
             */
-            function do_ajax(){
+            function do_ajax(){                          
                 switch($_POST['do']){
                     case 'fetch' :
                         $this->fetch_feed();
@@ -496,7 +538,7 @@
             * sends back json encoded string for the content of the panel 
             */
             function do_info(){
-                
+
                 check_ajax_referer('info');
                 global $wpdb;
                 $options = $this->get_options();
@@ -519,7 +561,7 @@
                 $appeared_on_list = array();
                 $my_other_posts = array();
                 $my_other_posts_list = array();
-                
+
                 if($rows){
                     foreach($rows as $row){
                         $data = unserialize($row->meta_value);
@@ -693,7 +735,10 @@
             */
             function fetch_feed(){      
                 // check nonce
-                check_ajax_referer('fetch');
+                $checknonce = check_ajax_referer('fetch',false,false);
+                if(!$checknonce){
+                    die(' error! not authorized '.$_REQUEST['_ajax_nonce']);
+                }
                 define('DOING_AJAX', true);
                 include_once(ABSPATH.WPINC.'/class-simplepie.php');
                 $options = $this->get_options();
@@ -720,7 +765,12 @@
                     } else {
                         $error = __('Could not get posts for home blog',$this->plugin_domain);
                     }
-
+                    // check for admin only notices to add
+                    $canreg = get_option('users_can_register');
+                    $whogets = $options['whogets'];
+                    if(!$canreg && $whogets == 'registered'){
+                        $return[] = array('type'=>'message','title'=>__('Warning! You have set to show 10 posts for registered users but you have not enabled user registrations on your site. You should change the operational settings in the CommentLuv settings page to show 10 posts for everyone or enable user registrations',$this->plugin_domain),'link'=>'');
+                    }
                     $response = json_encode(array('error'=>$error,'items'=>$return));
                     header( "Content-Type: application/json" );
                     echo $response;
@@ -728,13 +778,16 @@
                 }
                 // get simple pie ready
                 $rss = new SimplePie();
+                if(!$rss){
+                    die(' error! no simplepie');
+                }
                 $rss->set_useragent('Commentluv /'.$this->version.' (Feed Parser; http://www.commentluv.com; Allow like Gecko) Build/20110502' );
                 $rss->set_feed_url ( $url );
                 $rss->enable_cache ( FALSE );
                 // fetch the feed
                 $rss->init();
                 $rss->handle_content_type();
-                $gen = $rss->get_channel_tags('','generator');
+                $gen = $rss->get_channel_tags('','generator');          
                 $prem_msg = $rss->get_channel_tags('','prem_msg');
                 $g = $num;
                 $p = 'u';   
@@ -782,9 +835,9 @@
                         if(get_option('users_can_register')){
                             $arr[] = array('type'=>'message','title'=>$options['unreg_user_text'],'link'=>'');
                             if(!strstr($options['unreg_user_text'],'action=register')){
-                                 $register_link = apply_filters('register','<a href="' . site_url('wp-login.php?action=register', 'login') . '">' . __('Register') . '</a>');
-                                 $arr[] = array('type'=>'message','title'=>$register_link,'link'=>'');
-                             }
+                                $register_link = apply_filters('register','<a href="' . site_url('wp-login.php?action=register', 'login') . '">' . __('Register') . '</a>');
+                                $arr[] = array('type'=>'message','title'=>$register_link,'link'=>'');
+                            }
                         }
                         if($options['whogets'] == 'registered' && get_option('users_can_regsiter')){
                             $arr[] = array('type'=>'message','title'=>__('If you are registered, you need to log in to get 10 posts to choose from',$this->plugin_domain),'link'=>'');
@@ -817,7 +870,7 @@
                 // default values
                 $default = array ('version'=>$this->version,'enable'=>'yes','enable_for'=>'both', 'default_on' => 'on', 'default_on_admin'=>'on',
                 'badge_choice' => 'drop_down', 'badge_type'=>'default', 'link'=>'off','infopanel'=>'on', 'infoback'=>'white', 'infotext'=>'black',
-                'comment_text'=>'[name] '.__('recently posted',$pd).'..[lastpost]', 'whogets'=>'registered', 'dofollow' => 'registered',
+                'comment_text'=>'[name] '.__('recently posted',$this->plugin_domain).'..[lastpost]', 'whogets'=>'registered', 'dofollow' => 'registered',
                 'unreg_user_text'=>__('If you register as a user on my site, you can get your 10 most recent blog posts to choose from in this box.',$this->plugin_domain).' '.$register_link,
                 'unreg_user_text_panel'=>__('If this user had registered to my site then they could get 10 last posts to choose from when they comment and you would be able to see a list of their recent posts in this panel',$this->plugin_domain),
                 'template_insert'=>'','minifying'=>'','api_url'=>admin_url('admin-ajax.php'),'author_name'=>'author','email_name'=>'email','url_name'=>'url','comment_name'=>'comment');
@@ -876,6 +929,10 @@
                 if(version_compare($installed_version,'2.9.0.1','<')){
                     $options['api_url'] = admin_url('admin-ajax.php');
                     update_option($this->db_option,$options);
+                    update_option('cl_version',$this->version);
+                }
+                // update cl_version in db
+                if($this->version != $installed_version){
                     update_option('cl_version',$this->version);
                 }
             }
@@ -969,6 +1026,11 @@
                         $options[$key] = apply_filters('kindergarten_html',$option);
                     }
                 }
+                // add error notices if any
+                $canreg = get_option('users_can_register');
+                if($options['whogets']=='registered' && !$canreg){
+                    add_settings_error('whogets','whogets',__('Warning! You have set to show 10 posts for registered users but you have not enabled user registrations on your site. You should change the operational settings in the CommentLuv settings page to show 10 posts for everyone or enable user registrations',$this->plugin_domain),'error');
+                }
                 return $options;
             }
             /**
@@ -1013,15 +1075,24 @@
             * @param (obj) $object - the query object
             * @return $foundposts - need to return this if the request is not from a commentluv api or plugin
             */
-            function send_feed($foundposts,$object){  
-                if(headers_sent()){
+            function send_feed($foundposts,$object){               
+                if(headers_sent() == true){
                     return $foundposts; 
+                }
+                $options = $this->get_options();
+                // check if detection disabled
+                if($options['disable_detect'] == 'on'){
+                    return $foundposts;
+                }
+                if($this->is_commentluv_request === true){
+                    // is commentluv useragent (set in init action)
+                    // get rid of any output (prevents some themes on some hosts from outputting code before commentluv can show xml feed)
+                    ob_clean();
                 }
                 $error = false;
                 if($foundposts < 1){
                     $error = true;
                 }           
-                $options = $this->get_options();
                 $enabled = $options['enable'];
                 // General checking
                 if (preg_match("/Commentluv/i", $_SERVER['HTTP_USER_AGENT'])) {
@@ -1058,7 +1129,7 @@
             * called by __construct
             * used to setup hooks and filters for enabled plugin
             */
-            function setup_hooks(){
+            function setup_hooks(){   
                 add_action ( 'comment_form',array(&$this,'add_fields')); // add fields to form
                 add_action ( 'wp_print_styles',array(&$this,'add_style')); // add style
                 add_action ( 'template_redirect',array(&$this,'add_script')); // add commentluv script
@@ -1109,8 +1180,7 @@
                     }
                     update_option($this->db_option,$o);
                     echo '<script>jQuery("#clupgrade").hide()</script>';
-                }
-
+                }                      
             ?>
             <div class="wrap">
                 <h2><?php _e('CommentLuv Settings v',$this->plugin_domain);?><?php echo $this->version;?></h2>
@@ -1358,7 +1428,10 @@
                                                 <input type="checkbox" name="<?php echo $dbo;?>[minifying]" <?php checked($o['minifying'],'on');?> value="on"/><label for="<?php echo $dbo;?>[minifying]"> <?php _e('Enable minifying compatibility?',$pd);?></label>
                                                 <br><?php _e('For caching plugins (places localized code in footer)',$pd);?>
                                             </td> 
-                                            <td></td>
+                                            <td>
+                                                <input type="checkbox" name="<?php echo $dbo;?>[disable_detect]" <?php checked($o['disable_detect'],'on');?> value="on"/><label for="<?php echo $dbo;?>[disable_detect]"> <?php _e('Disable Detection?',$pd);?></label>
+                                                <br><?php _e('For XML errors',$pd);?>
+                                            </td> 
                                         </tr>
                                         <tr>
                                             <td style="background-color: #dfdfdf; text-align: center; font-weight: bolder;" colspan="5"><?php _e('API URL',$pd);?></td>
@@ -1459,15 +1532,17 @@
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/my.png"/> <?php _e('Malaysian',$this->plugin_domain);?></td><td><a target="_blank" href="http://ariffshah.com/">Ariff Shah</a></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/in.png"/> <?php _e('Hindi',$this->plugin_domain);?></td><td><a target="_blank" href="http://outshinesolutions.com/">Outshine Solutions</a></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/id.png"/> <?php _e('Indonesian',$this->plugin_domain);?></td><td><a target="_blank" href="http://rainerflame.com/">Mokhamad Oky</a></td></tr>
-                                <tr><td><img src="<?php echo $this->plugin_url;?>images/cn.png"/> <?php _e('Chinese (simplified)',$this->plugin_domain);?></td><td><a target="_blank" href="http://obugs.net/">Third Eye</a></td></tr>
+                                <tr><td><img src="<?php echo $this->plugin_url;?>images/cn.png"/> <?php _e('Chinese (s)',$this->plugin_domain);?></td><td><a target="_blank" href="http://obugs.net/">Third Eye</a></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/es.png"/> <?php _e('Spanish',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.activosenred.com/">Valentin Yonte</a></td></tr>
+                                <tr><td><img src="<?php echo $this->plugin_url;?>images/de.png"/> <?php _e('German',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.cloudliving.de/">Jan Ruehling</a></td></tr>
+                                <tr><td><img src="<?php echo $this->plugin_url;?>images/ir.png"/> <?php _e('Persian',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.3eo.ir/">Amir heydari</a></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/ru.png"/> <?php _e('Russian',$this->plugin_domain);?></td><td><!--<a target="_blank" href="http://www.fatcow.com/">Fatcow</a>--></td></tr>
-                                
+
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/il.png"/> <?php _e('Hebrew',$this->plugin_domain);?></td><td><!--<a target="_blank" href="http://www.maorb.info/">Maor Barazany</a>--></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/fr.png"/> <?php _e('French',$this->plugin_domain);?></td><td><!--<a target="_blank" href="http://referenceurfreelance.com/">Leo</a>--></td></tr>  
 
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/ro.png"/> <?php _e('Romanian',$this->plugin_domain);?></td><td><!--<a target="_blank" href="http://www.mlb.ro/">Bogdan Martinescu</a>--></td></tr>
-                                <tr><td><img src="<?php echo $this->plugin_url;?>images/de.png"/> <?php _e('German',$this->plugin_domain);?></td><td><!--<a target="_blank" href="http://www.macozoll.de/">Astrid Spitzenberg</a>--></td></tr>
+
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/sa.png"/> <?php _e('Arabic',$this->plugin_domain);?></td><td><!--<a target="_blank" href="http://www.melzarei.be/">Muhammad Elzarei</a>--></td></tr>
 
                                 <tr><td><strong><?php _e('Want your link here?',$this->plugin_domain);?></strong></td><td><a target="_blank" href="http://support.commentluv.com/ticket/knowledgebase.php?article=1"><?php _e('How To Submit A Translation',$this->plugin_domain);?></a></td></tr>
