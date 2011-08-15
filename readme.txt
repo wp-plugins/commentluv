@@ -3,8 +3,8 @@ Contributors: commentluv, @hishaman (css additions)
 Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv, comment luv , commentlove, comment love
 Requires at least: 3.0
-Tested up to: 3.2
-Stable tag: 2.90.7
+Tested up to: 3.2.1
+Stable tag: 2.90.8
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -35,6 +35,11 @@ Chinese (simplified) [Third Eye](http://obugs.net "Simplified Chinese Translatio
 Spanish [Valentin Yonte](http://www.activosenred.com/ "Spanish Translation")
 German [Jan Ruehling](http://www.cloudliving.de/ "German Translation")
 Persian [Amir Heydari](http://www.3eo.ir/ "Persian Translation")
+Tamil [Tharun](http://technostreak.com/ "Tamil Translation")
+Ukranian [Alyona Lompar](http://www.designcontest.com/ "Ukranian Translation")
+Latvian [Edgars Bergs] (http://www.yourwebagency.co.uk/ "Latvian Translation")   
+Romanian [Manuel Cheta] (http://obisnuit.eu/ "Romanian Translation")   
+Norwegian [Hanna] (http://www.drommeland.com/ "Norwegian Translation")   
 
 == Installation ==
 
@@ -63,6 +68,20 @@ Please see the videos in the settings page for explanations of how they work.
 4. edit post comments
 
 == ChangeLog ==
+= 2.90.8 =
+* added : Tamil language
+* added : Ukranian language
+* added : check for home page in detect commentluv request and send back 10 last posts instead of relying on object which my be populated with the contents of a homepage slider
+* added : function to count number of approved comments with luvlink made in the past 14 days
+* added : Latvian language
+* fixed : small issue with Polish language showing weird characters in settings page.
+* updated : Polish translation (thanks Mariusz!)
+* fixed : minor issue with settings page localized js for badge choice in IE
+* added : Romanian language
+* fixed : couple of undefined index warnings showing when on debug mode
+* fixed : error responseText for parseerror should now show the response body
+* added : check for wp_rss function existence before including rss.php to prevent a fatal error if another plugin is including rss.php in every page (eg. energizer plugin)
+* added : Norwegian language
 
 = 2.90.7 =
 * added : more detailed error messages to javascript

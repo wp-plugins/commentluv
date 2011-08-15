@@ -2,7 +2,7 @@
     Plugin Name: CommentLuv
     Plugin URI: http://comluv.com/
     Description: Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
-    Version: 2.90.7
+    Version: 2.90.8
     Author: Andy Bailey
     Author URI: http://www.commentluv.com
     Copyright (C) <2011>  <Andy Bailey>
@@ -28,7 +28,7 @@
             var $plugin_url;
             var $plugin_dir;
             var $db_option = 'commentluv_options';
-            var $version = "2.90.7";
+            var $version = "2.90.8";
             var $slug = 'commentluv-options';
             var $localize;
             var $is_commentluv_request = false;
@@ -273,7 +273,7 @@
             */
             function add_settings_page_script (){
                 wp_enqueue_script ('notify_signup', $this->plugin_url . 'js/notify_signup.js', array('jquery'),$this->version );
-                wp_localize_script ( 'notify_signup', 'notify_signup_settings', array('wait_message'=>__('Please wait',$this->plugin_domain),'notify_success1' => __('Please check your inbox, an email will be sent to',$this->plugin_domain), 'notify_success2'=>__('in the next few minutes with a confirmation link',$this->plugin_domain), 'notify_fail'=>__('An error happened with the request. Try signing up at the site',$this->plugin_domain),'image_url'=>$this->plugin_url.'images/','default'=>'CL91_default.png', 'white'=>'CL91_White.gif','black'=>'CL91_Black.gif','none'=>'nothing.gif'));
+                wp_localize_script ( 'notify_signup', 'notify_signup_settings', array('wait_message'=>__('Please wait',$this->plugin_domain),'notify_success1' => __('Please check your inbox, an email will be sent to',$this->plugin_domain), 'notify_success2'=>__('in the next few minutes with a confirmation link',$this->plugin_domain), 'notify_fail'=>__('An error happened with the request. Try signing up at the site',$this->plugin_domain),'image_url'=>$this->plugin_url.'images/','default_image'=>'CL91_default.png', 'white'=>'CL91_White.gif','black'=>'CL91_Black.gif','none'=>'nothing.gif'));
                 wp_enqueue_script('thickbox',null,array('jquery'));
                 echo "<link rel='stylesheet' href='/".WPINC."/js/thickbox/thickbox.css?ver=20080613' type='text/css' media='all' />\n";
             }
@@ -293,14 +293,14 @@
                 // whitelist options
                 register_setting( 'commentluv_options_group', $this->db_option ,array(&$this,'options_sanitize' ) );
                 $options = $this->get_options();
-                if($options['upgrade']){
+                if(isset($options['upgrade'])){
                     add_action('admin_notices',array(&$this,'show_upgrade_notice'));
                 }
                 // has the comment meta table?
                 global $wpdb;
                 $query = $wpdb->prepare("SHOW tables LIKE '{$wpdb->commentmeta}'");
                 $dbtable = $wpdb->get_var($query);
-                $o['dbtable'] = $dbtable;
+                //$o['dbtable'] = $dbtable;
                 if(!$dbtable){
                     add_action('admin_notices',create_function('','echo "<div class=\"error\">'.__('Your Wordpress install is missing the <strong>wp_commentmeta</strong> table!',$pd).'<br>'.__(' CommentLuv cannot work without this table please see this wordpress forum post to learn how to add one ->',$pd).'<a target=\"_blank\" href=\"http://wordpress.org/support/topic/wp_commentmeta-table-a39xxxx2_blogwp_commentmeta-doesnt-exist?replies=7#post-1378281\">'.__('Missing wp_commentmeta table',$pd).'</a></div>";'));
                 }
@@ -357,7 +357,10 @@
                 $url = 'http://version.commentluv.com/';
                 $name = strip_tags(get_bloginfo('name'));
                 $description = strip_tags(get_bloginfo('description'));
-                $body = array('version'=>$version,'enabled'=>$options['enable'],'name'=>$name,'description'=>$description,'avatarmd5'=>md5(strtolower(get_bloginfo('admin_email'))));
+                $numluv = $this->get_numluv();
+                $dofollow = $options['dofollow'];
+                $whogets = $options['whogets'];
+                $body = array('version'=>$version,'enabled'=>$options['enable'],'name'=>$name,'description'=>$description,'avatarmd5'=>md5(strtolower(get_bloginfo('admin_email'))),'numluv'=>$numluv,'dofollow'=>$dofollow,'whogets'=>$whogets);
                 $response = wp_remote_head($url,array('method'=>'POST','body'=>$body));
                 $latest = $this->php_version(wp_remote_retrieve_header($response,'version'));
                 $message = wp_remote_retrieve_header($response,'message');
@@ -418,7 +421,10 @@
             function detect_useragent(){
                 $options = $this->get_options();
                 // dont do anything if detect is disabled
-                if($options['disable_detect'] == 'on'){
+                if(isset($_POST['version_check'])){
+                    $this->check_version();
+                }
+                if(isset($options['disable_detect']) && $options['disable_detect'] == 'on'){
                     return;
                 }
                 // is this commentluv calling?
@@ -449,7 +455,7 @@
                 // dropdown choice
                 if($options['badge_choice'] == 'drop_down'){
                     if($options['badge_type'] != 'none'){
-                        $badges = array('default'=>'CL91_default.png','white'=>'CL91_White.gif','black'=>'CL91_Black.gif');
+                        $badges = array('default'=>'CL91_default.png','default_image'=>'CL91_default.png','white'=>'CL91_White.gif','black'=>'CL91_Black.gif');
                         $imgurl = $this->plugin_url.'images/'.$badges[$options['badge_type']];
                     }
                 }
@@ -855,7 +861,18 @@
                 header( "Content-Type: application/json" );
                 echo $response;
                 exit;                    
-            }	
+            }
+            /**
+            * find number of approved comments in the past 14 days to have a commentluv link	
+            * called in check_version
+            * since 2.90.8
+            * @return int
+            */
+            function get_numluv(){
+                global $wpdb;
+                $query = $wpdb->prepare('SELECT count(*) FROM '.$wpdb->commentmeta.' m JOIN '.$wpdb->comments.' c ON m.comment_id = c.comment_ID WHERE m.meta_key = %s AND c.comment_approved = %s AND c.comment_date > NOW() - INTERVAL 14 DAY','cl_data','1');
+                return intval($wpdb->get_var($query));
+            }
             /** get_options
             * This function sets default options and handles a reset to default options
             * @param string $reset = 'no' - whether to return default settings
@@ -868,6 +885,7 @@
                     $register_link = apply_filters('register','<a href="' . site_url('wp-login.php?action=register', 'login') . '">' . __('Register') . '</a>');
                 }
                 // default values
+                $this->handle_load_domain (); 
                 $default = array ('version'=>$this->version,'enable'=>'yes','enable_for'=>'both', 'default_on' => 'on', 'default_on_admin'=>'on',
                 'badge_choice' => 'drop_down', 'badge_type'=>'default', 'link'=>'off','infopanel'=>'on', 'infoback'=>'white', 'infotext'=>'black',
                 'comment_text'=>'[name] '.__('recently posted',$this->plugin_domain).'..[lastpost]', 'whogets'=>'registered', 'dofollow' => 'registered',
@@ -876,12 +894,16 @@
                 'template_insert'=>'','minifying'=>'','api_url'=>admin_url('admin-ajax.php'),'author_name'=>'author','email_name'=>'email','url_name'=>'url','comment_name'=>'comment');
                 $options = get_option ( $this->db_option, $default);
                 // return the options
-                if($reset == 'yes'){
+                if($reset == 'yes'){  
                     return $default;
                 }
                 if(!$options['api_url']){
                     $options['api_url'] = admin_url('admin-ajax.php');
                 }
+                if(!$options['enable']){
+                    $options['enable'] = 'yes';
+                }
+                
                 return $options;
             }
             /** handle_load_domain
@@ -928,6 +950,7 @@
                 // new addition to technical settings after 2.90.1 release
                 if(version_compare($installed_version,'2.9.0.1','<')){
                     $options['api_url'] = admin_url('admin-ajax.php');
+                    $options['enable'] = 'yes';
                     update_option($this->db_option,$options);
                     update_option('cl_version',$this->version);
                 }
@@ -1090,12 +1113,20 @@
                     ob_clean();
                 }
                 $error = false;
-                if($foundposts < 1){
+                if($foundposts < 1 && ! $object->is_home){
                     $error = true;
                 }           
                 $enabled = $options['enable'];
+
                 // General checking
                 if (preg_match("/Commentluv/i", $_SERVER['HTTP_USER_AGENT'])) {
+                    if($object->is_home){
+                        // we're on the home page so just get the last 10 posts (prevents a slider or other featured posts widget from making the object full of the featured posts)'
+                        wp_reset_query();
+                        $query = new WP_Query();   
+                        remove_filter('found_posts',array(&$this,'send_feed'),-1,2);
+                        $object->posts = $query->query('showposts=10');     
+                    }
                     $feed = '<?xml version="1.0" encoding="'.get_bloginfo('charset').'" ?>
                     <rss version="2.0">
                     <channel>
@@ -1270,7 +1301,7 @@
                                             <td>
                                                 <input type="radio" class="radio" name="<?php echo $dbo;?>[badge_choice]" value="drop_down" <?php checked($o['badge_choice'],'drop_down');?>/> 
                                                 <select id="badge_type" name="<?php echo $dbo;?>[badge_type]">
-                                                    <option value="default" <?php selected($o['badge_type'],'default');?>><?php _e('Default',$pd);?></option>
+                                                    <option value="default_image" <?php selected($o['badge_type'],'default_image');?>><?php _e('Default',$pd);?></option>
                                                     <option value="white" <?php selected($o['badge_type'],'white');?>><?php _e('White',$pd);?></option>
                                                     <option value="black" <?php selected($o['badge_type'],'black');?>><?php _e('Black',$pd);?></option>
                                                     <option value="none" <?php selected($o['badge_type'],'none');?>><?php _e('None',$pd);?></option>
@@ -1323,7 +1354,7 @@
                                         <tr>
                                             <td colspan="2">
                                                 <label for="<?php echo $dbo;?>[comment_text]"><?php _e('Text to be displayed in the comment',$pd);?></label>
-                                                <br><input type="text" style="width: 95%" name="<?php echo $dbo;?>[comment_text]" value="<?php echo htmlentities($o['comment_text']);?>"/>
+                                                <br><input type="text" style="width: 95%" name="<?php echo $dbo;?>[comment_text]" value="<?php echo $o['comment_text'];?>"/>
                                             </td>
                                             <td style="border: 1px dashed #dfdfdf;"><?php _e('[name] = The users name',$this->plugin_domain);?><br><?php _e('[lastpost] = The last blog post link',$this->plugin_domain);?></td>
                                             <td>&nbsp;</td>
@@ -1334,14 +1365,14 @@
 
                                                 <?php _e('Message for unregistered user in the drop down box',$pd);?>
                                                 <br>(<?php _e('Message will not be shown if you do not have registrations enabled',$this->plugin_domain);?>)
-                                                <br><textarea rows="5" style="width: 95%" name="<?php echo $dbo;?>[unreg_user_text]"><?php echo htmlentities($o['unreg_user_text']);?></textarea>
+                                                <br><textarea rows="5" style="width: 95%" name="<?php echo $dbo;?>[unreg_user_text]"><?php echo $o['unreg_user_text'];?></textarea>
                                                 <?php 
                                                     if(get_option('users_can_register')){
                                                         _e('Your register link code',$pd);
                                                         echo '<br>';
                                                         _e('(this will be automatically added if you have not added it yourself to the textarea above)',$pd);
                                                         $register_link = apply_filters('register','<a href="' . site_url('wp-login.php?action=register', 'login') . '">' . __('Register') . '</a>');
-                                                        echo ' : <input style="width:95%" type="text" value="'.htmlentities($register_link).'" disabled/>';
+                                                        echo ' : <input style="width:95%" type="text" value="'.$register_link.'" disabled/>';
                                                     }
                                                 ?>
                                             </td>
@@ -1360,7 +1391,7 @@
                                             <td colspan="3">
                                                 <?php _e('Message for unregistered user in the info panel',$pd);?>
                                                 <br>(<?php _e('Message will not be shown if you do not have registrations enabled',$this->plugin_domain);?>)
-                                                <br><textarea rows="5" style="width:95%;" name="<?php echo $dbo;?>[unreg_user_text_panel]"><?php echo htmlentities($o['unreg_user_text_panel']);?></textarea>
+                                                <br><textarea rows="5" style="width:95%;" name="<?php echo $dbo;?>[unreg_user_text_panel]"><?php echo $o['unreg_user_text_panel'];?></textarea>
                                             </td>
                                             <td></td>
                                             <td></td>
@@ -1518,8 +1549,10 @@
                                 <tr><td colspan="2"><iframe src="http://www.facebook.com/plugins/like.php?app_id=156518444414150&amp;href=www.facebook.com%2Fcommentluv&amp;send=false&amp;layout=standard&amp;width=230&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font&amp;height=50" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:220px; height:50px;" allowTransparency="true"></iframe></td></tr>
                                 <tr class="alt"><td colspan="2"><?php _e('News',$this->plugin_domain);?>:</td></tr>
                                 <tr><td colspan="2">
-                                        <?php 
-                                            include_once(ABSPATH . WPINC . '/rss.php');
+                                        <?php
+                                            if(!function_exists('wp_rss')){
+                                                include_once(ABSPATH . WPINC . '/rss.php');
+                                            }                                              
                                             wp_rss('http://comluv.com/category/newsletter/feed',3);?>
                                     </td></tr>
                                 <tr class="alt"><td colspan="2"><?php _e('Thanks to the following for translations',$this->plugin_domain);?>:</td></tr>
@@ -1536,15 +1569,16 @@
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/es.png"/> <?php _e('Spanish',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.activosenred.com/">Valentin Yonte</a></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/de.png"/> <?php _e('German',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.cloudliving.de/">Jan Ruehling</a></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/ir.png"/> <?php _e('Persian',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.3eo.ir/">Amir heydari</a></td></tr>
+                                <tr><td><img src="<?php echo $this->plugin_url;?>images/ta.png"/> <?php _e('Tamil',$this->plugin_domain);?></td><td><a target="_blank" href="http://technostreak.com/">Tharun</a></td></tr>
+                                <tr><td><img src="<?php echo $this->plugin_url;?>images/ua.png"/> <?php _e('Ukranian',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.designcontest.com/">Alyona Lompar</a></td></tr>
+                                <tr><td><img src="<?php echo $this->plugin_url;?>images/lv.png"/> <?php _e('Latvian',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.yourwebagency.co.uk/">Edgars Bergs</a></td></tr>
+                                <tr><td><img src="<?php echo $this->plugin_url;?>images/ro.png"/> <?php _e('Romanian',$this->plugin_domain);?></td><td><a target="_blank" href="http://obisnuit.eu/">Manuel Cheta</a></td></tr>
+                                <tr><td><img src="<?php echo $this->plugin_url;?>images/no.png"/> <?php _e('Norwegian',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.drommeland.com/">Hanna</a></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/ru.png"/> <?php _e('Russian',$this->plugin_domain);?></td><td><!--<a target="_blank" href="http://www.fatcow.com/">Fatcow</a>--></td></tr>
-
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/il.png"/> <?php _e('Hebrew',$this->plugin_domain);?></td><td><!--<a target="_blank" href="http://www.maorb.info/">Maor Barazany</a>--></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/fr.png"/> <?php _e('French',$this->plugin_domain);?></td><td><!--<a target="_blank" href="http://referenceurfreelance.com/">Leo</a>--></td></tr>  
-
-                                <tr><td><img src="<?php echo $this->plugin_url;?>images/ro.png"/> <?php _e('Romanian',$this->plugin_domain);?></td><td><!--<a target="_blank" href="http://www.mlb.ro/">Bogdan Martinescu</a>--></td></tr>
-
+                                
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/sa.png"/> <?php _e('Arabic',$this->plugin_domain);?></td><td><!--<a target="_blank" href="http://www.melzarei.be/">Muhammad Elzarei</a>--></td></tr>
-
                                 <tr><td><strong><?php _e('Want your link here?',$this->plugin_domain);?></strong></td><td><a target="_blank" href="http://support.commentluv.com/ticket/knowledgebase.php?article=1"><?php _e('How To Submit A Translation',$this->plugin_domain);?></a></td></tr>
                                 <tr class="alt"><td colspan="2"><?php _e('Special thanks go to the following',$this->plugin_domain);?>:</td></tr>
                                 <tr><td><strong><?php _e('CSS Help',$this->plugin_domain);?>:</strong></td><td><a href="http://www.famousbloggers.net" target="_blank">Hesham Zebida</a></td></tr>

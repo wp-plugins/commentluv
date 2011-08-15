@@ -7,7 +7,7 @@ span#showmorespan { width: 30px; height: 15px; cursor: pointer;}
 div#lastposts { padding: 3px; border: 1px dashed #dfdfdf; background-color: white;}
 input.cl_error { border: 1px solid red !important;}
 /** drop down **/
-span.choosepost {background-color: #fff;line-height: 1.4em; display: block;border-bottom: 1px dashed #bbb;cursor: pointer; margin-bottom: 5px;}
+span.choosepost {background-color: #fff; color: black; line-height: 1.4em; display: block;border-bottom: 1px dashed #bbb;cursor: pointer; margin-bottom: 5px;}
 span.choosepost:hover { font-weight: bolder; text-shadow: #dfdfdf 2px 2px 1px ; filter: Shadow(Color=gray, 
     Direction=135, 
 Strength=2);}
