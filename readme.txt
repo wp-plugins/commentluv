@@ -4,7 +4,7 @@ Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv, comment luv , commentlove, comment love
 Requires at least: 3.0
 Tested up to: 3.2.1
-Stable tag: 2.90.8.1
+Stable tag: 2.90.8.2
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -68,6 +68,10 @@ Please see the videos in the settings page for explanations of how they work.
 4. edit post comments
 
 == ChangeLog ==
+= 2.90.8.2 =
+* added : french translation
+* fixed : sorry! I messed up the code when I tried to remove notices from happening in debug mode which made some blogs have an error.
+
 = 2.90.8.1 =
 * updated italian language (thanks Gianni)
 * fixed : fixed all notices when running in DEBUG mode
@@ -246,10 +250,10 @@ Please see the videos in the settings page for explanations of how they work.
 
 == Upgrade Notice ==
 
-= 2.81.7 =
-
-Added : Lithuanian language
-Added : Choice of nofollow on links for all/none/unregistered users
+= 2.90.8.2 =
+                                                                   
+I made a boo boo with the settings on the last update so some blogs are not showing the badge.
+so sorry!                                                                   
 
 == Configuration ==
 

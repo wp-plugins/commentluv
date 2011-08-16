@@ -2,7 +2,7 @@
     Plugin Name: CommentLuv
     Plugin URI: http://comluv.com/
     Description: Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
-    Version: 2.90.8.1
+    Version: 2.90.8.2
     Author: Andy Bailey
     Author URI: http://www.commentluv.com
     Copyright (C) <2011>  <Andy Bailey>
@@ -28,7 +28,7 @@
             var $plugin_url;
             var $plugin_dir;
             var $db_option = 'commentluv_options';
-            var $version = "2.90.8.1";
+            var $version = "2.90.8.2";
             var $slug = 'commentluv-options';
             var $localize;
             var $is_commentluv_request = false;
@@ -1594,9 +1594,10 @@
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/lv.png"/> <?php _e('Latvian',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.yourwebagency.co.uk/">Edgars Bergs</a></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/ro.png"/> <?php _e('Romanian',$this->plugin_domain);?></td><td><a target="_blank" href="http://obisnuit.eu/">Manuel Cheta</a></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/no.png"/> <?php _e('Norwegian',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.drommeland.com/">Hanna</a></td></tr>
+                                <tr><td><img src="<?php echo $this->plugin_url;?>images/fr.png"/> <?php _e('French',$this->plugin_domain);?></td><td><a target="_blank" href="http://etreheureux.fr/">Jean-Luc Matthys</a></td></tr>  
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/ru.png"/> <?php _e('Russian',$this->plugin_domain);?></td><td><!--<a target="_blank" href="http://www.fatcow.com/">Fatcow</a>--></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/il.png"/> <?php _e('Hebrew',$this->plugin_domain);?></td><td><!--<a target="_blank" href="http://www.maorb.info/">Maor Barazany</a>--></td></tr>
-                                <tr><td><img src="<?php echo $this->plugin_url;?>images/fr.png"/> <?php _e('French',$this->plugin_domain);?></td><td><!--<a target="_blank" href="http://referenceurfreelance.com/">Leo</a>--></td></tr>  
+                                
 
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/sa.png"/> <?php _e('Arabic',$this->plugin_domain);?></td><td><!--<a target="_blank" href="http://www.melzarei.be/">Muhammad Elzarei</a>--></td></tr>
                                 <tr><td><strong><?php _e('Want your link here?',$this->plugin_domain);?></strong></td><td><a target="_blank" href="http://support.commentluv.com/ticket/knowledgebase.php?article=1"><?php _e('How To Submit A Translation',$this->plugin_domain);?></a></td></tr>
