@@ -178,9 +178,8 @@
                 echo '<input type="hidden" name="cl_post_title" id="cl_post_title"/>';
                 echo '<input type="hidden" name="cl_post_url" id="cl_post_url"/>';
                 echo '<input type="hidden" name="cl_prem" id="cl_prem"/>';
-
                 // show badge (unless user set to manual insert)
-                if($clbadgeshown == false && !isset($options['template_insert']) ){
+                if(($clbadgeshown == false && !isset($options['template_insert'])) || (isset($options['template_insert']) && $options['template_insert'] == '')  ){
                     $this->display_badge();
                 }
             }
