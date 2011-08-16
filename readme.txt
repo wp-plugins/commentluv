@@ -37,8 +37,8 @@ German [Jan Ruehling](http://www.cloudliving.de/ "German Translation")
 Persian [Amir Heydari](http://www.3eo.ir/ "Persian Translation")
 Tamil [Tharun](http://technostreak.com/ "Tamil Translation")
 Ukranian [Alyona Lompar](http://www.designcontest.com/ "Ukranian Translation")
-Latvian [Edgars Bergs](http://www.yourwebagency.co.uk/ "Latvian Translation")   
-Romanian [Manuel Cheta](http://obisnuit.eu/ "Romanian Translation")   
+Latvian [Edgars Bergs](http://www.yourwebagency.co.uk/ "Latvian Translation")
+Romanian [Manuel Cheta](http://obisnuit.eu/ "Romanian Translation")
 Norwegian [Hanna](http://www.drommeland.com/ "Norwegian Translation")   
 
 == Installation ==
@@ -246,9 +246,10 @@ Please see the videos in the settings page for explanations of how they work.
 
 == Upgrade Notice ==
 
-= 2.90.8.1 =
+= 2.81.7 =
 
-minor bug fix and fix notices during debug mode
+Added : Lithuanian language
+Added : Choice of nofollow on links for all/none/unregistered users
 
 == Configuration ==
 
