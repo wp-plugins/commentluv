@@ -69,6 +69,9 @@ Please see the videos in the settings page for explanations of how they work.
 4. edit post comments
 
 == ChangeLog ==
+= 2.90.8.3 =
+* fixed : fixed the error with cl_settings not defined (it was not localizing the script)
+
 = 2.90.8.2 =
 * added : french translation
 * fixed : sorry! I messed up the code when I tried to remove notices from happening in debug mode which made some blogs have an error.
