@@ -4,7 +4,7 @@ Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv, comment luv , commentlove, comment love
 Requires at least: 3.0
 Tested up to: 3.2.1
-Stable tag: 2.90.8
+Stable tag: 2.90.8.1
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -37,9 +37,9 @@ German [Jan Ruehling](http://www.cloudliving.de/ "German Translation")
 Persian [Amir Heydari](http://www.3eo.ir/ "Persian Translation")
 Tamil [Tharun](http://technostreak.com/ "Tamil Translation")
 Ukranian [Alyona Lompar](http://www.designcontest.com/ "Ukranian Translation")
-Latvian [Edgars Bergs] (http://www.yourwebagency.co.uk/ "Latvian Translation")   
-Romanian [Manuel Cheta] (http://obisnuit.eu/ "Romanian Translation")   
-Norwegian [Hanna] (http://www.drommeland.com/ "Norwegian Translation")   
+Latvian [Edgars Bergs](http://www.yourwebagency.co.uk/ "Latvian Translation")   
+Romanian [Manuel Cheta](http://obisnuit.eu/ "Romanian Translation")   
+Norwegian [Hanna](http://www.drommeland.com/ "Norwegian Translation")   
 
 == Installation ==
 
@@ -68,6 +68,11 @@ Please see the videos in the settings page for explanations of how they work.
 4. edit post comments
 
 == ChangeLog ==
+= 2.90.8.1 =
+* updated italian language (thanks Gianni)
+* fixed : fixed all notices when running in DEBUG mode
+* fixed : default image display in settings page was not showing after resetting settings
+
 = 2.90.8 =
 * added : Tamil language
 * added : Ukranian language
@@ -241,10 +246,9 @@ Please see the videos in the settings page for explanations of how they work.
 
 == Upgrade Notice ==
 
-= 2.81.7 =
+= 2.90.8.1 =
 
-Added : Lithuanian language
-Added : Choice of nofollow on links for all/none/unregistered users
+minor bug fix and fix notices during debug mode
 
 == Configuration ==
 

@@ -2,7 +2,7 @@
     Plugin Name: CommentLuv
     Plugin URI: http://comluv.com/
     Description: Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
-    Version: 2.90.8
+    Version: 2.90.8.1
     Author: Andy Bailey
     Author URI: http://www.commentluv.com
     Copyright (C) <2011>  <Andy Bailey>
@@ -28,7 +28,7 @@
             var $plugin_url;
             var $plugin_dir;
             var $db_option = 'commentluv_options';
-            var $version = "2.90.8";
+            var $version = "2.90.8.1";
             var $slug = 'commentluv-options';
             var $localize;
             var $is_commentluv_request = false;
@@ -42,7 +42,7 @@
                 // pages where this plugin needs translation
                 $local_pages = array ('plugins.php', 'options-general.php' );
                 // check if translation needed on current page
-                if (in_array ( $pagenow, $local_pages ) || in_array ( $_GET ['page'], $local_pages )) {
+                if (in_array ( $pagenow, $local_pages ) || (isset($_GET['page']) && in_array ( $_GET ['page'], $local_pages ))) {
                     $this->handle_load_domain ();
                 }
                 $exit_msg = __ ( 'CommentLuv requires Wordpress 3.0 or newer.', $this->plugin_domain ) . '<a href="http://codex.wordpress.org/Upgrading_Wordpress">' . __ ( 'Please Update!', $this->plugin_domain ) . '</a>';
@@ -79,7 +79,7 @@
                 $options = $this->get_options();
                 //DebugBreak();
                 //$this->check_version();
-                if($options['enable'] == 'yes'){
+                if(isset($options['enable']) && $options['enable'] == 'yes'){
                     $this->setup_hooks();
                 }
             }
@@ -130,7 +130,7 @@
             * Adds fields to comment area
             * called by add_action('comment_form
             */
-            function add_fields(){
+            function add_fields(){ 
                 global $clbadgeshown;
                 $options = $this->get_options();
                 if(!$this->is_enabled()){
@@ -180,13 +180,13 @@
                 echo '<input type="hidden" name="cl_prem" id="cl_prem"/>';
 
                 // show badge (unless user set to manual insert)
-                if($clbadgeshown == false && $options['template_insert'] != 'on'){
+                if($clbadgeshown == false && !isset($options['template_insert']) ){
                     $this->display_badge();
                 }
             }
             function add_footer(){
                 extract($this->get_options());
-                if($minifying != 'on' || !$this->is_enabled()){
+                if((isset($minifying) && $minifying != 'on') || !$this->is_enabled()){
                     return;
                 }
                 // from the excellent book wp-ajax (http://www.wpajax.com/)
@@ -239,7 +239,9 @@
                 if(!$this->is_enabled()){
                     return;
                 }
-
+                if(!isset($template_insert)){
+                    $template_insert = false;
+                }
                 wp_enqueue_script('commentluv_script');
                 $this->localize = array ('name' => $author_name, 'url' => $url_name, 'comment' => $comment_name, 'email' => $email_name,
                 'infopanel' => $infopanel, 'default_on' => $default_on, 'default_on_admin' => $default_on_admin,
@@ -251,7 +253,7 @@
                 'no_http_message'=>__('Please use http:// in front of your url',$this->plugin_domain),
                 'no_url_logged_in_message'=>__('You need to visit your profile in the dashboard and update your details with your site URL',$this->plugin_domain),
                 'no_info_message'=>__('No info was available or an error occured',$this->plugin_domain));
-                if($minifying != 'on'){
+                if(!isset($minifying)){
                     wp_localize_script('commentluv_script','cl_settings',$this->localize);
                 }
 
@@ -381,8 +383,9 @@
             * @param string $commentdata - status of comment
             */
             function comment_posted($id,$approved){
-                if($_POST['cl_post_url'] && $_POST['cl_post_title']){
-                    $title = apply_filters('kses',$_POST['cl_post_title']);
+                if(isset($_POST['cl_post_url']) && isset($_POST['cl_post_title'])){
+                    //$title = apply_filters('kses',$_POST['cl_post_title']);
+                    $title = strip_tags($_POST['cl_post_title']);
                     //$link = apply_filters('kses',$_POST['cl_post_url']);
                     $link = esc_url($_POST['cl_post_url']);
                     //$prem = apply_filters('kses',$_POST['cl_prem']);
@@ -448,7 +451,7 @@
                 $before = '';
                 $after = '';
                 // link
-                if($options['link']){
+                if(isset($options['link'])){
                     $before = '<a href="http://www.commentluv.com" target="_blank" title="'.__('CommentLuv is enabled',$this->plugin_domain).'">';
                     $after = '</a>';
                 }       
@@ -461,7 +464,7 @@
                 }
                 // custom image
                 if($options['badge_choice'] == 'custom'){
-                    if($options['custom_image_url'] != ''){
+                    if(isset($options['custom_image_url']) && $options['custom_image_url'] != ''){
                         if(!strstr($options['custom_image_url'],'http://')){
                             $imgurl = 'http://'.$options['custom_image_url'];
                         } else {
@@ -903,7 +906,7 @@
                 if(!$options['enable']){
                     $options['enable'] = 'yes';
                 }
-                
+
                 return $options;
             }
             /** handle_load_domain
@@ -1104,7 +1107,7 @@
                 }
                 $options = $this->get_options();
                 // check if detection disabled
-                if($options['disable_detect'] == 'on'){
+                if(isset($options['disable_detect']) && $options['disable_detect'] == 'on'){
                     return $foundposts;
                 }
                 if($this->is_commentluv_request === true){
@@ -1201,7 +1204,7 @@
                 $o = $this->get_options();
                 $dbo = $this->db_option;
                 $pd = $this->plugin_domain;
-                $badges = array('default'=>'CL91_default.png','white'=>'CL91_White.gif','black'=>'CL91_Black.gif','none'=> 'nothing.gif');
+                $badges = array('default_image'=>'CL91_default.png','default'=>'CL91_default.png','white'=>'CL91_White.gif','black'=>'CL91_Black.gif','none'=> 'nothing.gif');
                 //DebugBreak();
                 // remove notice if requested
                 if(isset($_GET['dismiss'])){
@@ -1235,7 +1238,7 @@
                                             <td>
                                                 <p><?php _e('There is a premium version of CommentLuv coming that will have much more control of how the plugin works as well as exclusive features like keyword name, inline registration and much much more!. Signup to find out as soon as it is ready',$pd);?></p>
                                                 <?php 
-                                                    if($o['subscribed']){
+                                                    if(isset($o['subscribed'])){
                                                         echo '<div class="submit">'.__('You have already subscribed, if you have not received the verification within 12 hours, please click the button to resend or try the form at',$pd).' <a target="_blank" href="http://www.commentluv.com/">www.commentluv.com</a><br><input style="margin:0 auto; display: block;" type="button" id="cl_notify" value="'.__('Resend Verification',$pd).'"/></div>';
                                                     } else {
                                                         echo '<div class="submit" style=" background-color: green; padding-left: 5px; padding-right: 5px; border-radius: 15px; -moz-border-radius: 15px; text-align: center;"><input style="margin: 0 auto; display:block" id="cl_notify" type="button" name="cl_notify" value="'.__('Click to register now!',$pd).'" /></div>';
@@ -1271,11 +1274,11 @@
                                         </tr>
                                         <tr class="ifenable">
                                             <td style="text-align: center;" colspan="2">
-                                                <input type="checkbox" name="<?php echo $dbo;?>[default_on]" <?php checked($o['default_on'],'on');?> value="on"/> <label for="<?php echo $dbo;?>[default_on]"><?php _e('On by default?',$pd);?></label>
+                                                <input type="checkbox" name="<?php echo $dbo;?>[default_on]" <?php if(isset($o['default_on_admin'])) checked($o['default_on'],'on');?> value="on"/> <label for="<?php echo $dbo;?>[default_on]"><?php _e('On by default?',$pd);?></label>
                                             </td>
                                             <td></td>
                                             <td style="text-align: center;" colspan="2">
-                                                <input type="checkbox" name="<?php echo $dbo;?>[default_on_admin]" <?php checked($o['default_on_admin'],'on');?> value="on"/><label for="<?php echo $dbo;?>[default_on_admin]"> <?php _e('On for admin?',$pd);?></label>
+                                                <input type="checkbox" name="<?php echo $dbo;?>[default_on_admin]" <?php if(isset($o['default_on_admin'])) checked($o['default_on_admin'],'on');?> value="on"/><label for="<?php echo $dbo;?>[default_on_admin]"> <?php _e('On for admin?',$pd);?></label>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -1306,13 +1309,14 @@
                                                     <option value="black" <?php selected($o['badge_type'],'black');?>><?php _e('Black',$pd);?></option>
                                                     <option value="none" <?php selected($o['badge_type'],'none');?>><?php _e('None',$pd);?></option>
                                                 </select>
+
                                                 <p style="margin: 8px 0px 0px 8px;"><img id="display_badge" style="border: 1px solid #000; padding: 3px;" src="<?php echo $this->plugin_url;?>images/<?php echo $badges[$o['badge_type']];?>"/></p>
                                             </td>
                                             <td>
                                                 <input type="radio" class="radio" name="<?php echo $dbo;?>[badge_choice]" value="custom" <?php checked($o['badge_choice'],'custom');?>/> 
-                                                <input type="text" name="<?php echo $dbo;?>[custom_image_url]" value="<?php echo $o['custom_image_url'];?>"/>
+                                                <input type="text" name="<?php echo $dbo;?>[custom_image_url]" value="<?php if(isset($o['custom_image_url'])) echo $o['custom_image_url'];?>"/>
                                                 <?php 
-                                                    if($o['custom_image_url'] != ''){
+                                                    if(isset($o['custom_image_url']) && $o['custom_image_url'] != ''){
                                                         // show image
                                                         echo '<p style="margin: 8px 0px 0px 8px;"><img id="custom_badge" style="border: 1px solid #000; padding: 3px;" src="'.$o['custom_image_url'].'"/></p>';
                                                 }   ?>
@@ -1320,8 +1324,8 @@
                                             <td>
 
                                                 <input type="radio" class="radio" name="<?php echo $dbo;?>[badge_choice]" value="text" <?php checked($o['badge_choice'],'text');?>/> 
-                                                <input type="text" name="<?php echo $dbo;?>[badge_text]" value="<?php echo $o['badge_text'];?>"/>
-                                                <p style="margin: 8px 0px 0px 8px;"><input type="checkbox" name="<?php echo $dbo;?>[link]" value="on" <?php checked($o['link'],'on');?>/> <label for="<?php echo $dbo;?>[link]"><?php _e('Link to Commentluv?',$pd);?></label>
+                                                <input type="text" name="<?php echo $dbo;?>[badge_text]" value="<?php if(isset($o['badge_text'])) echo $o['badge_text'];?>"/>
+                                                <p style="margin: 8px 0px 0px 8px;"><input type="checkbox" name="<?php echo $dbo;?>[link]" value="on" <?php if(isset($o['link'])) checked($o['link'],'on');?>/> <label for="<?php echo $dbo;?>[link]"><?php _e('Link to Commentluv?',$pd);?></label>
                                             </td>
                                             <td></td>
                                             <td style="text-align: center; border: 2px dotted; width:125px"><a onclick="return false;" href="<?php echo $this->plugin_url . 'videos/'; ?>appearancesettings.php?KeepThis=true&amp;TB_iframe=true&amp;height=355&width=545" class="thickbox"><img src="<?php echo $this->plugin_url;?>images/playbuttonsmall.png"/></a></td>
@@ -1372,7 +1376,7 @@
                                                         echo '<br>';
                                                         _e('(this will be automatically added if you have not added it yourself to the textarea above)',$pd);
                                                         $register_link = apply_filters('register','<a href="' . site_url('wp-login.php?action=register', 'login') . '">' . __('Register') . '</a>');
-                                                        echo ' : <input style="width:95%" type="text" value="'.$register_link.'" disabled/>';
+                                                        echo ' : <input style="width:95%" type="text" value="'.htmlspecialchars($register_link).'" disabled/>';
                                                     }
                                                 ?>
                                             </td>
@@ -1452,15 +1456,15 @@
                                         </tr>
                                         <tr>
                                             <td colspan="2">
-                                                <input type="checkbox" name="<?php echo $dbo;?>[template_insert]" <?php checked($o['template_insert'],'on');?> value="on"/><label for="<?php echo $dbo;?>[template_insert]"> <?php _e('Use manual insert of badge code?',$pd);?></label>
+                                                <input type="checkbox" name="<?php echo $dbo;?>[template_insert]" <?php if(isset($o['template_insert'])) checked($o['template_insert'],'on');?> value="on"/><label for="<?php echo $dbo;?>[template_insert]"> <?php _e('Use manual insert of badge code?',$pd);?></label>
                                                 <br>( <strong>&lt;?php cl_display_badge(); ?&gt;</strong> )
                                             </td>
                                             <td colspan="2">
-                                                <input type="checkbox" name="<?php echo $dbo;?>[minifying]" <?php checked($o['minifying'],'on');?> value="on"/><label for="<?php echo $dbo;?>[minifying]"> <?php _e('Enable minifying compatibility?',$pd);?></label>
+                                                <input type="checkbox" name="<?php echo $dbo;?>[minifying]" <?php if(isset($o['minifying'])) checked($o['minifying'],'on');?> value="on"/><label for="<?php echo $dbo;?>[minifying]"> <?php _e('Enable minifying compatibility?',$pd);?></label>
                                                 <br><?php _e('For caching plugins (places localized code in footer)',$pd);?>
                                             </td> 
                                             <td>
-                                                <input type="checkbox" name="<?php echo $dbo;?>[disable_detect]" <?php checked($o['disable_detect'],'on');?> value="on"/><label for="<?php echo $dbo;?>[disable_detect]"> <?php _e('Disable Detection?',$pd);?></label>
+                                                <input type="checkbox" name="<?php echo $dbo;?>[disable_detect]" <?php if(isset($o['disable_detect'])) checked($o['disable_detect'],'on');?> value="on"/><label for="<?php echo $dbo;?>[disable_detect]"> <?php _e('Disable Detection?',$pd);?></label>
                                                 <br><?php _e('For XML errors',$pd);?>
                                             </td> 
                                         </tr>
@@ -1550,10 +1554,28 @@
                                 <tr class="alt"><td colspan="2"><?php _e('News',$this->plugin_domain);?>:</td></tr>
                                 <tr><td colspan="2">
                                         <?php
-                                            if(!function_exists('wp_rss')){
-                                                include_once(ABSPATH . WPINC . '/rss.php');
-                                            }                                              
-                                            wp_rss('http://comluv.com/category/newsletter/feed',3);?>
+                                            include_once(ABSPATH . WPINC . '/feed.php');
+                                            if(function_exists('fetch_feed')){
+                                                //debugBreak();
+                                                $uri = 'http://comluv.com/category/newsletter/feed/';
+                                                $feed = fetch_feed($uri);
+                                                if(!is_wp_error($feed)){
+                                                    $rss_items = $feed->get_items(0,3);
+                                                    if($rss_items){
+                                                        foreach($rss_items as $item){
+                                                        ?>
+                                                        <li>
+                                                            <a href='<?php echo esc_url( $item->get_permalink() ); ?>'
+                                                                title='<?php echo 'Posted '.$item->get_date('j F Y | g:i a'); ?>'>
+                                                            <?php echo esc_html( $item->get_title() ); ?></a>
+                                                        </li>
+                                                        <?php
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                        ?>
                                     </td></tr>
                                 <tr class="alt"><td colspan="2"><?php _e('Thanks to the following for translations',$this->plugin_domain);?>:</td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/it.png"/> <?php _e('Italian',$this->plugin_domain);?></td><td><a target="_blank" href="http://gidibao.net/">Gianni Diuno</a></td></tr>
@@ -1577,7 +1599,7 @@
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/ru.png"/> <?php _e('Russian',$this->plugin_domain);?></td><td><!--<a target="_blank" href="http://www.fatcow.com/">Fatcow</a>--></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/il.png"/> <?php _e('Hebrew',$this->plugin_domain);?></td><td><!--<a target="_blank" href="http://www.maorb.info/">Maor Barazany</a>--></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/fr.png"/> <?php _e('French',$this->plugin_domain);?></td><td><!--<a target="_blank" href="http://referenceurfreelance.com/">Leo</a>--></td></tr>  
-                                
+
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/sa.png"/> <?php _e('Arabic',$this->plugin_domain);?></td><td><!--<a target="_blank" href="http://www.melzarei.be/">Muhammad Elzarei</a>--></td></tr>
                                 <tr><td><strong><?php _e('Want your link here?',$this->plugin_domain);?></strong></td><td><a target="_blank" href="http://support.commentluv.com/ticket/knowledgebase.php?article=1"><?php _e('How To Submit A Translation',$this->plugin_domain);?></a></td></tr>
                                 <tr class="alt"><td colspan="2"><?php _e('Special thanks go to the following',$this->plugin_domain);?>:</td></tr>

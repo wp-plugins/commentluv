@@ -183,13 +183,13 @@ function cl_dostuff(){
             }else if(x.status==404){
                 cl_message('API URL not found.');
             }else if(x.status==500){
-                cl_message('Internal Server Error.' + x.response);
+                cl_message('Internal Server Error.' + x.responseText);
             }else if(e=='parsererror'){
                 cl_message('Error.\nParsing JSON Request failed.' + x.responseText);
             }else if(e=='timeout'){
                 cl_message('Request Time out.');
             }else {
-                cl_message('Unknow Error. ' + x.statusText + ' ' + x.response);
+                cl_message('Unknow Error. ' + x.statusText + ' ' + x.responseText);
             }
         }
     });
