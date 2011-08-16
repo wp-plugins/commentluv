@@ -77,9 +77,8 @@
                 add_filter ( 'found_posts', array(&$this,'send_feed'),-1,2); // sends post titles and urls only
                 add_filter ( 'kindergarten_html', array(&$this,'kindergarten_html')); // for cleaning html 
                 $options = $this->get_options();
-                //DebugBreak();
                 //$this->check_version();
-                if(isset($options['enable']) && $options['enable'] == 'yes'){
+                if(!isset($options['enable']) || ( isset($options['enable']) && $options['enable'] != 'no')){
                     $this->setup_hooks();
                 }
             }
