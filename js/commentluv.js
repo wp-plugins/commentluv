@@ -1,4 +1,4 @@
-// commentluv 2.90.8.3
+// commentluv 2.90.9
 jQuery(document).ready(function(){
     // get the form object and fields
     var formObj = jQuery('#cl_post_title').parents('form');
@@ -95,13 +95,13 @@ function cl_docheck(){
     // check that there is a value in the url field
     if(url.val().length > 1){
         // is value just http:// ?
-        if(url.val() == 'http://'){
+        if(url.val().toLowerCase() == 'http://'){
             url.addClass('cl_error');
             cl_message(nourlmessage);
             return;
         }
         // is the http:// missing?
-        if(url.val().substring(0,7) != 'http://'){
+        if(url.val().toLowerCase().substring(0,7) != 'http://'){
             url.addClass('cl_error');
             cl_message(cl_settings['no_http_message']);
             return;
