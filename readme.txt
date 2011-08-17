@@ -4,7 +4,7 @@ Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv, comment luv , commentlove, comment love
 Requires at least: 3.0
 Tested up to: 3.2.1
-Stable tag: 2.90.8.3
+Stable tag: 2.90.9
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -41,6 +41,7 @@ Latvian [Edgars Bergs](http://www.yourwebagency.co.uk/ "Latvian Translation")
 Romanian [Manuel Cheta](http://obisnuit.eu/ "Romanian Translation")
 Norwegian [Hanna](http://www.drommeland.com/ "Norwegian Translation")
 French [Jean-Luc Matthys](http://etreheureux.fr/ "French Translation")
+Danish [Jimmy Sigenstroem](http://w3blog.dk/) "Danish Translation")
 
 == Installation ==
 
@@ -69,6 +70,13 @@ Please see the videos in the settings page for explanations of how they work.
 4. edit post comments
 
 == ChangeLog ==
+= 2.90.9 =
+* added : Danish language
+* fixed : minor problems with some checkbox vars
+* fixed : issue where an empty link might get added to a comment
+* fixed : small bug in settings page that prevented checkbox from being checked for default on if default admin on was unchecked
+* fixed : use `home_url()` instead of deprecated `get_bloginfo('home')` in `send_feed()` function
+
 = 2.90.8.3 =
 * fixed : fixed the error with cl_settings not defined (it was not localizing the script)
 
@@ -254,10 +262,9 @@ Please see the videos in the settings page for explanations of how they work.
 
 == Upgrade Notice ==
 
-= 2.90.8.2 =
+= 2.90.9 =
                                                                    
-I made a boo boo with the settings on the last update so some blogs are not showing the badge.
-so sorry!                                                                   
+Fix for comments showing the commentluv message but no url and other minor fixes. please update!                                                                  
 
 == Configuration ==
 
