@@ -183,8 +183,9 @@
                 }
             }
             function add_footer(){
+                $minifying = 'off';
                 extract($this->get_options());
-                if((isset($minifying) && $minifying != 'on') || !$this->is_enabled()){
+                if($minifying != 'on' || !$this->is_enabled()){
                     return;
                 }
                 // from the excellent book wp-ajax (http://www.wpajax.com/)
@@ -232,13 +233,12 @@
             * used to add the commentluv script and localized settings (if not using minifying compatibility)
             */
             function add_script(){
+                $minifying = 'off';
+                $template_insert = false;
                 $options = $this->get_options();
                 extract($options);
                 if(!$this->is_enabled()){
                     return;
-                }
-                if(!isset($template_insert)){
-                    $template_insert = false;
                 }
                 wp_enqueue_script('commentluv_script');
                 $this->localize = array ('name' => $author_name, 'url' => $url_name, 'comment' => $comment_name, 'email' => $email_name,
@@ -382,7 +382,7 @@
             * @param string $commentdata - status of comment
             */
             function comment_posted($id,$approved){
-                if(isset($_POST['cl_post_url']) && isset($_POST['cl_post_title'])){
+                if(isset($_POST['cl_post_url']) && $_POST['cl_post_url'] != '' && isset($_POST['cl_post_title']) && $_POST['cl_post_title'] != ''){
                     //$title = apply_filters('kses',$_POST['cl_post_title']);
                     $title = strip_tags($_POST['cl_post_title']);
                     //$link = apply_filters('kses',$_POST['cl_post_url']);
@@ -1133,7 +1133,7 @@
                     <rss version="2.0">
                     <channel>
                     <title><![CDATA['. get_bloginfo('title') .']]></title>
-                    <link>'. get_bloginfo('home') .'</link>
+                    <link>'. home_url() .'</link>
                     <description><![CDATA['. get_bloginfo('description') .']]></description>
                     <language>'.get_bloginfo('language').'</language>
                     <generator>commentluv?v='.$this->version.'</generator>
@@ -1273,7 +1273,7 @@
                                         </tr>
                                         <tr class="ifenable">
                                             <td style="text-align: center;" colspan="2">
-                                                <input type="checkbox" name="<?php echo $dbo;?>[default_on]" <?php if(isset($o['default_on_admin'])) checked($o['default_on'],'on');?> value="on"/> <label for="<?php echo $dbo;?>[default_on]"><?php _e('On by default?',$pd);?></label>
+                                                <input type="checkbox" name="<?php echo $dbo;?>[default_on]" <?php if(isset($o['default_on'])) checked($o['default_on'],'on');?> value="on"/> <label for="<?php echo $dbo;?>[default_on]"><?php _e('On by default?',$pd);?></label>
                                             </td>
                                             <td></td>
                                             <td style="text-align: center;" colspan="2">
@@ -1596,6 +1596,7 @@
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/ro.png"/> <?php _e('Romanian',$this->plugin_domain);?></td><td><a target="_blank" href="http://obisnuit.eu/">Manuel Cheta</a></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/no.png"/> <?php _e('Norwegian',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.drommeland.com/">Hanna</a></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/fr.png"/> <?php _e('French',$this->plugin_domain);?></td><td><a target="_blank" href="http://etreheureux.fr/">Jean-Luc Matthys</a></td></tr>  
+                                <tr><td><img src="<?php echo $this->plugin_url;?>images/dk.png"/> <?php _e('Danish',$this->plugin_domain);?></td><td><a target="_blank" href="http://w3blog.dk/">Jimmy Sigenstroem</a></td></tr>  
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/ru.png"/> <?php _e('Russian',$this->plugin_domain);?></td><td><!--<a target="_blank" href="http://www.fatcow.com/">Fatcow</a>--></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/il.png"/> <?php _e('Hebrew',$this->plugin_domain);?></td><td><!--<a target="_blank" href="http://www.maorb.info/">Maor Barazany</a>--></td></tr>
                                 
