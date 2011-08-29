@@ -4,7 +4,7 @@ Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv, comment luv , commentlove, comment love
 Requires at least: 3.0
 Tested up to: 3.2.1
-Stable tag: 2.90.9
+Stable tag: 2.90.9.1
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -70,12 +70,16 @@ Please see the videos in the settings page for explanations of how they work.
 4. edit post comments
 
 == ChangeLog ==
+= 2.90.9.1
+* removed : w3 total cache stuff causes fatal errors on activation. removing all w3 stuff completely
+
 = 2.90.9 =
 * added : Danish language
 * fixed : minor problems with some checkbox vars
 * fixed : issue where an empty link might get added to a comment
 * fixed : small bug in settings page that prevented checkbox from being checked for default on if default admin on was unchecked
 * fixed : use `home_url()` instead of deprecated `get_bloginfo('home')` in `send_feed()` function
+* fixed : url value check compatible with iPad which adds a capital letter for the first letter of a form field
 
 = 2.90.8.3 =
 * fixed : fixed the error with cl_settings not defined (it was not localizing the script)
@@ -262,9 +266,9 @@ Please see the videos in the settings page for explanations of how they work.
 
 == Upgrade Notice ==
 
-= 2.90.9 =
+= 2.90.9.1 =
                                                                    
-Fix for comments showing the commentluv message but no url and other minor fixes. please update!                                                                  
+If you have w3 total cache then please update your commentluv!                                                                 
 
 == Configuration ==
 

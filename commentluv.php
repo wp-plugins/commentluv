@@ -2,7 +2,7 @@
     Plugin Name: CommentLuv
     Plugin URI: http://comluv.com/
     Description: Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
-    Version: 2.90.9
+    Version: 2.90.9.1
     Author: Andy Bailey
     Author URI: http://www.commentluv.com
     Copyright (C) <2011>  <Andy Bailey>
@@ -28,7 +28,7 @@
             var $plugin_url;
             var $plugin_dir;
             var $db_option = 'commentluv_options';
-            var $version = "2.90.9";
+            var $version = "2.90.9.1";
             var $slug = 'commentluv-options';
             var $localize;
             var $is_commentluv_request = false;
@@ -100,30 +100,7 @@
                     $rnd = mt_rand(5,604800);
                     wp_schedule_event(time() - $rnd,'clfortnightly','clversion');
                 }
-                // see if this blog uses w3 total cache and flush the cache after activation and 
-                // set the page cache ignore useragents to have Commentluv in it too
-                global $w3_plugin_totalcache;          
-                if(is_object($w3_plugin_totalcache)){ 
-                    // w3 object exists, flush the page cache                                                 
-                    $w3_plugin_totalcache->flush_all(); 
-                    // get config for page cache rejected useragents list
-                    $config = new W3_Config();
-                    $ua = $config->get_array('pgcache.reject.ua');
-                    if(!in_array('Commentluv',$ua)){
-                        // commentluv useragent not added yet, do it now
-                        $ua[] = 'Commentluv';
-                    }   
-                    // set it in config
-                    $config->set('pgcache.reject.ua',$ua); 
-                    // set w3 object _config object to have _config var with useragent array (cannot use config->save() here because w3 saves it again from it's own stored values)
-                    // this appears to work, I cannot get an answer from Fred so this will have to dooferfnaa 
-                    $w3_plugin_totalcache->_config->_config['pgcache.reject.ua'] = $ua;
-                    // write cache rules
-                    $w3_plugin_pgcache = & W3_Plugin_PgCache::instance();
-                    $w3_plugin_pgcache->write_rules_core();
-
-                }
-
+                // removed w3 total cache stuff due to Freds updates causing fatal errors
             }  
             /**
             * Adds fields to comment area
@@ -1565,11 +1542,13 @@
                                                     if($rss_items){
                                                         foreach($rss_items as $item){
                                                         ?>
-                                                        <li>
-                                                            <a href='<?php echo esc_url( $item->get_permalink() ); ?>'
-                                                                title='<?php echo 'Posted '.$item->get_date('j F Y | g:i a'); ?>'>
-                                                            <?php echo esc_html( $item->get_title() ); ?></a>
-                                                        </li>
+                                                        <ul>
+                                                            <li>
+                                                                <a href='<?php echo esc_url( $item->get_permalink() ); ?>'
+                                                                    title='<?php echo 'Posted '.$item->get_date('j F Y | g:i a'); ?>'>
+                                                                <?php echo esc_html( $item->get_title() ); ?></a>
+                                                            </li>
+                                                        </ul>
                                                         <?php
                                                         }
                                                     }
