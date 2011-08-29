@@ -41,7 +41,7 @@ Latvian [Edgars Bergs](http://www.yourwebagency.co.uk/ "Latvian Translation")
 Romanian [Manuel Cheta](http://obisnuit.eu/ "Romanian Translation")
 Norwegian [Hanna](http://www.drommeland.com/ "Norwegian Translation")
 French [Jean-Luc Matthys](http://etreheureux.fr/ "French Translation")
-Danish [Jimmy Sigenstroem](http://w3blog.dk/) "Danish Translation")
+Danish [Jimmy Sigenstroem](http://w3blog.dk/ "Danish Translation")
 
 == Installation ==
 
