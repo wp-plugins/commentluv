@@ -243,7 +243,7 @@ Please see the videos in the settings page for explanations of how they work.
 * Added permalink as refer variable in ajax calls for better stat collecting since WP started to use paginated comments
 * Added Chinese translation by Denis http://zuoshen.com/
 * Added Hebrew translation by Maor http://www.maorb.info/
-* Added Russian translation by FatCow http://www.fatcow.com/
+* Added Russian translation by FatCow 
 * Updated readme.txt to use new features like changelog
 * Check for http:// in url field before firing (to prevent errors for forms that use js hints in form fields)
 
