@@ -2,7 +2,7 @@
     Plugin Name: CommentLuv
     Plugin URI: http://comluv.com/
     Description: Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
-    Version: 2.90.9.1
+    Version: 2.90.9.2
     Author: Andy Bailey
     Author URI: http://www.commentluv.com
     Copyright (C) <2011>  <Andy Bailey>
@@ -28,7 +28,7 @@
             var $plugin_url;
             var $plugin_dir;
             var $db_option = 'commentluv_options';
-            var $version = "2.90.9.1";
+            var $version = "2.90.9.2";
             var $slug = 'commentluv-options';
             var $localize;
             var $is_commentluv_request = false;
@@ -452,6 +452,9 @@
                 if($options['badge_choice'] == 'drop_down' && $options['badge_type'] == 'none'){
                     $badgecode = '';
                 } else {
+                    if(!$imgurl){
+                        $imgurl = $this->plugin_url.'images/'.$badges['CL91_default.png'];
+                    }
                     $badgecode = $before.'<img alt="CommentLuv badge" src="'.$imgurl.'"/>'.$after;
                 }
                 // or using text
@@ -687,18 +690,26 @@
                             $replace = array ($comment->comment_author, $luvlink );
                             $prepend_text = $options ['comment_text'];
                             $inserted = str_replace ( $search, $replace, $prepend_text );
-                            // construct string to be added to comment
-                            $commentcontent .= "\n<span class=\"cluv\">$inserted";
-                            // prepare heart icon if infopanel is on
-                            $hearticon = '';
-                            if($data['cl_prem'] == 'p' || $isreg) {
-                                // use PLUS heart for members
-                                $hearticon = 'plus';
+                            // check if author has a url. do not add the link if user has set to hide links for comments with no url
+                            $authurl = $comment->comment_author_url;
+                            $showlink = true;
+                            if($authurl == '' && isset($options['hide_link_no_url']) && $options['hide_link_no_url'] == 'on'){
+                                $showlink = false;
                             }
-                            if ($options ['infopanel'] == 'on') {
-                                $commentcontent .= '<span class="heart_tip_box"><img class="heart_tip '.$data['cl_prem'].' '.$comment->comment_ID.'" alt="My Profile" style="border:0" width="16" height="14" src="' . $this->plugin_url . 'images/littleheart'.$hearticon.'.gif"/></span>';
-                            } 
-                            $commentcontent.= '</span>';
+                            if($showlink){
+                                // construct string to be added to comment
+                                $commentcontent .= "\n<span class=\"cluv\">$inserted";
+                                // prepare heart icon if infopanel is on
+                                $hearticon = '';
+                                if($data['cl_prem'] == 'p' || $isreg) {
+                                    // use PLUS heart for members
+                                    $hearticon = 'plus';
+                                }
+                                if ($options ['infopanel'] == 'on') {
+                                    $commentcontent .= '<span class="heart_tip_box"><img class="heart_tip '.$data['cl_prem'].' '.$comment->comment_ID.'" alt="My Profile" style="border:0" width="16" height="14" src="' . $this->plugin_url . 'images/littleheart'.$hearticon.'.gif"/></span>';
+                                } 
+                                $commentcontent.= '</span>';
+                            }
                         }
                     }
                     // store new content in this comments comment_content cell
@@ -1210,16 +1221,16 @@
                                     <tbody>
                                         <tr>
                                             <td width="250">
-                                                <h2 style="margin: 0 0 10px 0;"><?php _e('CommentLuv 3.0 Premium is coming soon!',$pd);?></h2>
+                                                <h2 style="margin: 0 0 10px 0;"><?php _e('CommentLuv 3.0 Premium is here!',$pd);?></h2>
                                                 <img align="left" src="<?php echo $this->plugin_url;?>images/privacy-guarantee.png"/><?php _e('I promise not to sell your details or send you spam. You will ONLY receive emails about plugin updates.',$pd);?>
                                             </td>
                                             <td>
-                                                <p><?php _e('There is a premium version of CommentLuv coming that will have much more control of how the plugin works as well as exclusive features like keyword name, inline registration and much much more!. Signup to find out as soon as it is ready',$pd);?></p>
+                                                <p><?php _e('Do you like CommentLuv? How about an even better version with much more control over dofollow and some awesome social enticements that will make your posts go viral by offering your readers more choice of posts if they +1, Like or tweet your post! Get CommentLuv Premium Today!',$pd);?></p>
                                                 <?php 
                                                     if(isset($o['subscribed'])){
                                                         echo '<div class="submit">'.__('You have already subscribed, if you have not received the verification within 12 hours, please click the button to resend or try the form at',$pd).' <a target="_blank" href="http://www.commentluv.com/">www.commentluv.com</a><br><input style="margin:0 auto; display: block;" type="button" id="cl_notify" value="'.__('Resend Verification',$pd).'"/></div>';
                                                     } else {
-                                                        echo '<div class="submit" style=" background-color: green; padding-left: 5px; padding-right: 5px; border-radius: 15px; -moz-border-radius: 15px; text-align: center;"><input style="margin: 0 auto; display:block" id="cl_notify" type="button" name="cl_notify" value="'.__('Click to register now!',$pd).'" /></div>';
+                                                        echo '<div class="submit" style=" background-color: green; padding-left: 5px; padding-right: 5px; border-radius: 15px; -moz-border-radius: 15px; text-align: center;"><input style="margin: 0 auto; display:block" id="cl_notify" type="button" name="cl_notify" value="'.__('Click for a special offer!',$pd).'" /></div>';
                                                     }
                                                 ?>
                                                 <div id="notify_message"></div>
@@ -1478,6 +1489,14 @@
                                             <td></td>
                                         </tr>
                                         <tr>
+                                            <td style="background-color: #dfdfdf; text-align: center; font-weight: bolder;" colspan="5"><?php _e('Extras',$pd);?></td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="checkbox" value="on" name="<?php echo $dbo;?>[hide_link_no_url]" <?php if(isset($o['hide_link_no_url'])) checked($o['hide_link_no_url'],'on');?>/>
+                                                <label for="<?php echo $dbo;?>[hide_link_no_url]"><?php _e('Do not show link if comment has no URL',$this->plugin_domain);?></label>
+                                                <br /><strong>(<?php _e('Prevents spammer abuse',$this->plugin_domain);?>)</strong></td>
+                                        </tr>
+                                        <tr>
                                             <td style="background-color: #dfdfdf; text-align: center; font-weight: bolder;" colspan="5"><?php _e('Diagnostics Info',$pd);?></td>
                                         </tr>
                                         <tr>
@@ -1578,7 +1597,8 @@
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/no.png"/> <?php _e('Norwegian',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.drommeland.com/">Hanna</a></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/fr.png"/> <?php _e('French',$this->plugin_domain);?></td><td><a target="_blank" href="http://etreheureux.fr/">Jean-Luc Matthys</a></td></tr>  
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/dk.png"/> <?php _e('Danish',$this->plugin_domain);?></td><td><a target="_blank" href="http://w3blog.dk/">Jimmy Sigenstroem</a></td></tr>  
-                                <tr><td><img src="<?php echo $this->plugin_url;?>images/ru.png"/> <?php _e('Russian',$this->plugin_domain);?></td><td><!--<a target="_blank" href="http://www.fatcow.com/">Fatcow</a>--></td></tr>
+                                <tr><td><img src="<?php echo $this->plugin_url;?>images/ru.png"/> <?php _e('Russian',$this->plugin_domain);?></td><td><a target="_blank" href="http://lavo4nik.ru/">Max</a></td></tr>
+                                <tr><td><img src="<?php echo $this->plugin_url;?>images/bd.png"/> <?php _e('Bengali',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.explorefeed.com/">Amrik Verdi</a></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/il.png"/> <?php _e('Hebrew',$this->plugin_domain);?></td><td><!--<a target="_blank" href="http://www.maorb.info/">Maor Barazany</a>--></td></tr>
 
 

@@ -3,8 +3,8 @@ Contributors: commentluv, @hishaman (css additions)
 Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv, comment luv , commentlove, comment love
 Requires at least: 3.0
-Tested up to: 3.2.1
-Stable tag: 2.90.9.1
+Tested up to: 3.3
+Stable tag: 2.90.9.2
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -42,6 +42,8 @@ Romanian [Manuel Cheta](http://obisnuit.eu/ "Romanian Translation")
 Norwegian [Hanna](http://www.drommeland.com/ "Norwegian Translation")
 French [Jean-Luc Matthys](http://etreheureux.fr/ "French Translation")
 Danish [Jimmy Sigenstroem](http://w3blog.dk/ "Danish Translation")
+Russian [Max](http://lavo4nik.ru/ "Russian Translation")
+Bengali [Amrik Verdi](http://www.explorefeed.com/ "Bengali Translation")
 
 == Installation ==
 
@@ -70,7 +72,14 @@ Please see the videos in the settings page for explanations of how they work.
 4. edit post comments
 
 == ChangeLog ==
-= 2.90.9.1
+= 2.90.9.2 =
+* fix : sometimes badge was showing empty src
+* added : Bengali language
+* settings page header
+* modify settings page intro
+* added : prevent links for comments that have had the URL removed
+
+= 2.90.9.1 =
 * removed : w3 total cache stuff causes fatal errors on activation. removing all w3 stuff completely
 
 = 2.90.9 =

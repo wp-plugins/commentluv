@@ -1,4 +1,4 @@
-// commentluv 2.90.9
+// commentluv 2.90.9.1
 jQuery(document).ready(function(){
     // get the form object and fields
     var formObj = jQuery('#cl_post_title').parents('form');
