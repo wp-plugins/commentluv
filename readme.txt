@@ -4,7 +4,7 @@ Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv, comment luv , commentlove, comment love
 Requires at least: 3.0
 Tested up to: 3.3
-Stable tag: 2.90.9.2
+Stable tag: 2.90.9.3
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -43,7 +43,7 @@ Norwegian [Hanna](http://www.drommeland.com/ "Norwegian Translation")
 French [Jean-Luc Matthys](http://etreheureux.fr/ "French Translation")
 Danish [Jimmy Sigenstroem](http://w3blog.dk/ "Danish Translation")
 Russian [Max](http://lavo4nik.ru/ "Russian Translation")
-Bengali [Amrik Verdi](http://www.explorefeed.com/ "Bengali Translation")
+Bengali [Amrik Virdi](http://www.explorefeed.com/ "Bengali Translation")
 
 == Installation ==
 
@@ -72,6 +72,12 @@ Please see the videos in the settings page for explanations of how they work.
 4. edit post comments
 
 == ChangeLog ==
+= 2.90.9.3 =
+* fix : another empty src badge bug
+* fix : link not showing in admin page if a setting was enabled
+* added : empty index files in directories to prevent indexing of plugins folders
+* updated : images updated by Byteful Traveller (byteful.com)
+
 = 2.90.9.2 =
 * fix : sometimes badge was showing empty src
 * added : Bengali language
@@ -275,9 +281,9 @@ Please see the videos in the settings page for explanations of how they work.
 
 == Upgrade Notice ==
 
-= 2.90.9.1 =
+= 2.90.9.3 =
                                                                    
-If you have w3 total cache then please update your commentluv!                                                                 
+Bug fix release. Please update
 
 == Configuration ==
 
