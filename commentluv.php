@@ -2,7 +2,7 @@
     Plugin Name: CommentLuv
     Plugin URI: http://comluv.com/
     Description: Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
-    Version: 2.90.9.3
+    Version: 2.90.9.6
     Author: Andy Bailey
     Author URI: http://www.commentluv.com
     Copyright (C) <2011>  <Andy Bailey>
@@ -28,7 +28,7 @@
             var $plugin_url;
             var $plugin_dir;
             var $db_option = 'commentluv_options';
-            var $version = "2.90.9.3";
+            var $version = "2.90.9.6";
             var $slug = 'commentluv-options';
             var $localize;
             var $is_commentluv_request = false;
@@ -45,10 +45,11 @@
                 if (in_array ( $pagenow, $local_pages ) || (isset($_GET['page']) && in_array ( $_GET ['page'], $local_pages ))) {
                     $this->handle_load_domain ();
                 }
-                $exit_msg = __ ( 'CommentLuv requires Wordpress 3.0 or newer.', $this->plugin_domain ) . '<a href="http://codex.wordpress.org/Upgrading_Wordpress">' . __ ( 'Please Update!', $this->plugin_domain ) . '</a>';
+                $exit_msg = __( 'CommentLuv requires Wordpress 3.0 or newer.', $this->plugin_domain ) . '<a href="http://codex.wordpress.org/Upgrading_Wordpress">' . __ ( 'Please Update!', $this->plugin_domain ) . '</a>';
                 // can you dig it?
                 if (version_compare ( $wp_version, "3.0", "<" )) {
-                    echo ( $exit_msg ); // no diggedy
+                    deactivate_plugins(basename(__FILE__)); //deactivate me
+                    wp_die ( $exit_msg ); // no diggedy
                 }
                 // activation/deactivation
                 register_activation_hook(__FILE__, array(&$this,'activation'));
@@ -169,15 +170,17 @@
                 $data = "var cl_settings = {"; 
                 $arr = array();
                 $vars = $this->localize;
-                foreach ($vars as $key => $value) {
-                    $arr[count($arr)] = $key . " : '" . esc_js($value) . "'"; 
-                } 
-                $data .= implode(",",$arr); $data .= "};"; 
-                echo "<script type='text/javascript'>\n"; 
-                echo "/* <![CDATA[ */\n"; 
-                echo $data; 
-                echo "\n/* ]]> */\n"; 
-                echo "</script>\n";
+                if(is_array($vars)){
+                    foreach ($vars as $key => $value) {
+                        $arr[count($arr)] = $key . " : '" . esc_js($value) . "'"; 
+                    } 
+                    $data .= implode(",",$arr); $data .= "};"; 
+                    echo "<script type='text/javascript'>\n"; 
+                    echo "/* <![CDATA[ */\n"; 
+                    echo $data; 
+                    echo "\n/* ]]> */\n"; 
+                    echo "</script>\n";
+                }
             }
             /**
             * called by add_filter('comment_row_actions
@@ -410,6 +413,10 @@
                 // is this commentluv calling?
                 if (preg_match("/Commentluv/i", $_SERVER['HTTP_USER_AGENT'])){
                     $this->is_commentluv_request = true;
+                    if($options['disable_detect'] != 'on'){
+                        remove_all_actions('wp_head');
+                        remove_all_actions('wp_footer');
+                    } 
                     ob_start();
                 }
             }
@@ -627,7 +634,7 @@
                 $bio= get_comment_author_url($cid);
                 $name = get_comment_author($cid);
                 $gravatar = '<img src="http://www.gravatar.com/avatar/' . md5 ( strtolower($email) ) . '.jpg" alt="' . $name . '" align="left" />';
-                if(get_option('users_can_register')){
+                if(get_option('users_can_register') && $options['whogets'] == 'registered'){
                     $msg = __('has not registered on this site',$this->plugin_domain);
                     $bio = $options['unreg_user_text_panel'];
                 } 
@@ -694,12 +701,10 @@
                             $inserted = str_replace ( $search, $replace, $prepend_text );
                             // check if author has a url. do not add the link if user has set to hide links for comments with no url
                             $authurl = $comment->comment_author_url;
-                            $showlink = true;
-                            if(!$isadminpage){  
-                                if($authurl == '' && isset($options['hide_link_no_url']) && $options['hide_link_no_url'] == 'on'){
-                                    $showlink = false;
-                                }
-                            }
+                            $showlink = true;   
+                            if($authurl == '' && isset($options['hide_link_no_url']) && $options['hide_link_no_url'] == 'on'){
+                                $showlink = false;
+                            }               
                             if($showlink){
                                 // construct string to be added to comment
                                 $commentcontent .= "\n<span class=\"cluv\">$inserted";
@@ -1603,7 +1608,7 @@
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/dk.png"/> <?php _e('Danish',$this->plugin_domain);?></td><td><a target="_blank" href="http://w3blog.dk/">Jimmy Sigenstroem</a></td></tr>  
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/ru.png"/> <?php _e('Russian',$this->plugin_domain);?></td><td><a target="_blank" href="http://lavo4nik.ru/">Max</a></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/bd.png"/> <?php _e('Bengali',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.explorefeed.com/">Amrik Virdi</a></td></tr>
-                                <tr><td><img src="<?php echo $this->plugin_url;?>images/il.png"/> <?php _e('Hebrew',$this->plugin_domain);?></td><td><!--<a target="_blank" href="http://www.maorb.info/">Maor Barazany</a>--></td></tr>
+                                <tr><td><img src="<?php echo $this->plugin_url;?>images/il.png"/> <?php _e('Hebrew',$this->plugin_domain);?></td><td><a target="_blank" href="http://makemoneyim.com/">Tobi</a></td></tr>
 
 
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/sa.png"/> <?php _e('Arabic',$this->plugin_domain);?></td><td><!--<a target="_blank" href="http://www.melzarei.be/">Muhammad Elzarei</a>--></td></tr>

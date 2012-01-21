@@ -4,7 +4,7 @@ Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv, comment luv , commentlove, comment love
 Requires at least: 3.0
 Tested up to: 3.3
-Stable tag: 2.90.9.3
+Stable tag: 2.90.9.6
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -44,6 +44,7 @@ French [Jean-Luc Matthys](http://etreheureux.fr/ "French Translation")
 Danish [Jimmy Sigenstroem](http://w3blog.dk/ "Danish Translation")
 Russian [Max](http://lavo4nik.ru/ "Russian Translation")
 Bengali [Amrik Virdi](http://www.explorefeed.com/ "Bengali Translation")
+Hebrew [Tobi](http://makemoneyim.com/ "Hebrew Translation")
 
 == Installation ==
 
@@ -72,6 +73,20 @@ Please see the videos in the settings page for explanations of how they work.
 4. edit post comments
 
 == ChangeLog ==
+
+= 2.90.9.6 =
+* added : code to prevent wp_head and wp_footer actions on a commentluv request from other sites
+* fixed : minor translation string bug in __construct
+
+= 2.90.9.5 =
+* fixed : upgrading to 3.3 meant it would show the link even if admin set to not show link if no author URL in comment
+* fixed : footer error about invalid argument if minifying set to on
+* fixed : do not show unregistered in info panel if not set to 'registered' for who to show 10 posts
+
+= 2.90.9.4 =
+* added : Hebrew translation
+* fixed : do not echo WP 3.0 requirement, use wp_die instead
+
 = 2.90.9.3 =
 * fix : another empty src badge bug
 * fix : link not showing in admin page if a setting was enabled
@@ -281,9 +296,9 @@ Please see the videos in the settings page for explanations of how they work.
 
 == Upgrade Notice ==
 
-= 2.90.9.3 =
+= 2.90.9.6 =
                                                                    
-Bug fix release. Please update
+Improved detection of commentluv requests
 
 == Configuration ==
 
