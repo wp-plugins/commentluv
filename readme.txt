@@ -3,18 +3,22 @@ Contributors: commentluv, @hishaman (css additions)
 Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv, comment luv , commentlove, comment love
 Requires at least: 3.0
-Tested up to: 3.3
-Stable tag: 2.90.9.6
+Tested up to: 3.3.1
+Stable tag: 2.90.9.7
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
 == Description ==
+
+[Upgrade to CommentLuv Pro](http://www.commentluv.com "Upgrade to CommentLuv Pro")
 
 This plugin will visit the site of the comment author while they type their comment and retrieve their last blog posts which they can choose to include at the bottom of their comment when they click submit.
 
 It has been found to increase comments and the community spirit for the thousands of blogs that have installed it. With a simple install you will immediately start to find new and interesting blog posts from your own blog and community. You will even be able to build your list/network/community even more by offering your readers the opportunity to register to your site to unlock advanced features of the plugin like being able to choose from any of their 10 last posts when they comment or other features like dofollow links and more.
 
 The plugin requires WP or WP MS version of at least 3.0 and will work with administrators and logged on users provided they have their homepage url set in their profile page in the dashboard of the site.
+
+[About](http://www.commentluv.com/get-more-comments-and-traffic-with-commentluv-premium/ "About") | [Features](http://www.commentluv.com "Features") | [Pricing](http://www.commentluv.com "Pricing")
 
 You can get a free companion plugin at http://www.commentluv.com
 
@@ -73,6 +77,10 @@ Please see the videos in the settings page for explanations of how they work.
 4. edit post comments
 
 == ChangeLog ==
+
+= 2.90.9.7 =
+* updated : Italian translation by Gianni
+* added : make wp_query->is_feed = true if commentluv request detected
 
 = 2.90.9.6 =
 * added : code to prevent wp_head and wp_footer actions on a commentluv request from other sites
@@ -296,9 +304,9 @@ Please see the videos in the settings page for explanations of how they work.
 
 == Upgrade Notice ==
 
-= 2.90.9.6 =
+= 2.90.9.7 =
                                                                    
-Improved detection of commentluv requests
+Improved detection of commentluv requests and Italian language update
 
 == Configuration ==
 

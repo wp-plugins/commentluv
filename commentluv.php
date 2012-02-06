@@ -2,7 +2,7 @@
     Plugin Name: CommentLuv
     Plugin URI: http://comluv.com/
     Description: Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
-    Version: 2.90.9.6
+    Version: 2.90.9.7
     Author: Andy Bailey
     Author URI: http://www.commentluv.com
     Copyright (C) <2011>  <Andy Bailey>
@@ -28,7 +28,7 @@
             var $plugin_url;
             var $plugin_dir;
             var $db_option = 'commentluv_options';
-            var $version = "2.90.9.6";
+            var $version = "2.90.9.7";
             var $slug = 'commentluv-options';
             var $localize;
             var $is_commentluv_request = false;
@@ -270,20 +270,12 @@
             * it is called by add_action admin_init
             * options in the options page will need to be named using $this->db_option[option]
             */
-            function admin_init(){    
+            function admin_init(){ 
                 // whitelist options
                 register_setting( 'commentluv_options_group', $this->db_option ,array(&$this,'options_sanitize' ) );
                 $options = $this->get_options();
                 if(isset($options['upgrade'])){
                     add_action('admin_notices',array(&$this,'show_upgrade_notice'));
-                }
-                // has the comment meta table?
-                global $wpdb;
-                $query = $wpdb->prepare("SHOW tables LIKE '{$wpdb->commentmeta}'");
-                $dbtable = $wpdb->get_var($query);
-                //$o['dbtable'] = $dbtable;
-                if(!$dbtable){
-                    add_action('admin_notices',create_function('','echo "<div class=\"error\">'.__('Your Wordpress install is missing the <strong>wp_commentmeta</strong> table!',$pd).'<br>'.__(' CommentLuv cannot work without this table please see this wordpress forum post to learn how to add one ->',$pd).'<a target=\"_blank\" href=\"http://wordpress.org/support/topic/wp_commentmeta-table-a39xxxx2_blogwp_commentmeta-doesnt-exist?replies=7#post-1378281\">'.__('Missing wp_commentmeta table',$pd).'</a></div>";'));
                 }
             }
 
@@ -416,6 +408,9 @@
                     if($options['disable_detect'] != 'on'){
                         remove_all_actions('wp_head');
                         remove_all_actions('wp_footer');
+                        // prevent wordpress.com stats from adding stats script
+                        global $wp_query;
+                        $wp_query->is_feed = true;
                     } 
                     ob_start();
                 }
@@ -946,18 +941,24 @@
                 if(version_compare($installed_version,'2.9','<')){
                     // make any changes to this new versions options if needed and update
                     update_option($this->db_option,$this->get_options('yes'));
-                    update_option('cl_version',$this->version);
                 }
                 // new addition to technical settings after 2.90.1 release
                 if(version_compare($installed_version,'2.9.0.1','<')){
                     $options['api_url'] = admin_url('admin-ajax.php');
                     $options['enable'] = 'yes';
-                    update_option($this->db_option,$options);
-                    update_option('cl_version',$this->version);
+                    update_option($this->db_option,$options);   
                 }
                 // update cl_version in db
-                if($this->version != $installed_version){
+                if($this->php_version($this->version) != $installed_version){
                     update_option('cl_version',$this->version);
+                }
+                // has the comment meta table?
+                global $wpdb;
+                $query = $wpdb->prepare("SHOW tables LIKE '{$wpdb->commentmeta}'");
+                $dbtable = $wpdb->get_var($query);
+                //$o['dbtable'] = $dbtable;
+                if(!$dbtable){
+                    add_action('admin_notices',create_function('','echo "<div class=\"error\">'.__('Your Wordpress install is missing the <strong>wp_commentmeta</strong> table!',$pd).'<br>'.__(' CommentLuv cannot work without this table please see this wordpress forum post to learn how to add one ->',$pd).'<a target=\"_blank\" href=\"http://wordpress.org/support/topic/wp_commentmeta-table-a39xxxx2_blogwp_commentmeta-doesnt-exist?replies=7#post-1378281\">'.__('Missing wp_commentmeta table',$pd).'</a></div>";'));
                 }
             }
             /**
