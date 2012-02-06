@@ -12,13 +12,15 @@ Reward your readers by automatically placing a link to their last blog post at t
 
 [Upgrade to CommentLuv Pro](http://www.commentluv.com "Upgrade to CommentLuv Pro")
 
+CommentLuv Pro has even more amazing features that can bring even more traffic and comments to your blog by giving you the ability to fight spam, add keywords, integrate twitterlink, add a top commentators widget, social enticements and by having it installed on your site, you get advanced backlink features on EVERY CommentLuv blog when you comment (there are 10's of thousands of CommentLuv blogs)
+
+[About](http://www.commentluv.com/get-more-comments-and-traffic-with-commentluv-premium/ "About") | [Features](http://www.commentluv.com "Features") | [Pricing](http://www.commentluv.com "Pricing")
+
 This plugin will visit the site of the comment author while they type their comment and retrieve their last blog posts which they can choose to include at the bottom of their comment when they click submit.
 
 It has been found to increase comments and the community spirit for the thousands of blogs that have installed it. With a simple install you will immediately start to find new and interesting blog posts from your own blog and community. You will even be able to build your list/network/community even more by offering your readers the opportunity to register to your site to unlock advanced features of the plugin like being able to choose from any of their 10 last posts when they comment or other features like dofollow links and more.
 
 The plugin requires WP or WP MS version of at least 3.0 and will work with administrators and logged on users provided they have their homepage url set in their profile page in the dashboard of the site.
-
-[About](http://www.commentluv.com/get-more-comments-and-traffic-with-commentluv-premium/ "About") | [Features](http://www.commentluv.com "Features") | [Pricing](http://www.commentluv.com "Pricing")
 
 You can get a free companion plugin at http://www.commentluv.com
 
