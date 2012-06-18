@@ -2,7 +2,7 @@
     Plugin Name: CommentLuv
     Plugin URI: http://comluv.com/
     Description: Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
-    Version: 2.90.9.7
+    Version: 2.90.9.9
     Author: Andy Bailey
     Author URI: http://www.commentluv.com
     Copyright (C) <2011>  <Andy Bailey>
@@ -28,7 +28,7 @@
             var $plugin_url;
             var $plugin_dir;
             var $db_option = 'commentluv_options';
-            var $version = "2.90.9.7";
+            var $version = "2.90.9.9";
             var $slug = 'commentluv-options';
             var $localize;
             var $is_commentluv_request = false;
@@ -63,7 +63,7 @@
                 // plugin dir and url
                 $this->plugin_url = trailingslashit ( WP_PLUGIN_URL . '/' . dirname ( plugin_basename ( __FILE__ ) ) );
                 $this->plugin_dir = dirname(__FILE__);
-                // hooks 
+
                 add_action ( 'clversion', array (&$this,'check_version') ); // check commentluv version
                 add_action ( 'init', array (&$this,'init') ); // to register styles and scripts
                 add_action ( 'admin_init', array (&$this, 'admin_init' ) ); // to register settings group
@@ -75,7 +75,7 @@
                 // filters
                 add_filter ( 'cron_schedules', array (&$this, 'cron_schedules') ); // for my own recurrence
                 add_filter ( 'plugin_action_links', array (&$this, 'plugin_action_link' ), - 10, 2 ); // add a settings page link to the plugin description. use 2 for allowed vars
-                add_filter ( 'found_posts', array(&$this,'send_feed'),-1,2); // sends post titles and urls only
+                // add_filter ( 'found_posts', array(&$this,'send_feed'),-1,2); // sends post titles and urls only - deprecated in 2.90.9.9
                 add_filter ( 'kindergarten_html', array(&$this,'kindergarten_html')); // for cleaning html 
                 $options = $this->get_options();
                 //$this->check_version();
@@ -354,13 +354,25 @@
             * @param int $id - id of the comment
             * @param string $commentdata - status of comment
             */
-            function comment_posted($id,$approved){
+            function comment_posted($id,$commentdata){
                 if(isset($_POST['cl_post_url']) && $_POST['cl_post_url'] != '' && isset($_POST['cl_post_title']) && $_POST['cl_post_title'] != ''){
-                    //$title = apply_filters('kses',$_POST['cl_post_title']);
-                    $title = strip_tags($_POST['cl_post_title']);
-                    //$link = apply_filters('kses',$_POST['cl_post_url']);
+                    $title = strip_tags($_POST['cl_post_title']);                                                                                  
                     $link = esc_url($_POST['cl_post_url']);
-                    //$prem = apply_filters('kses',$_POST['cl_prem']);
+                    $options = $this->get_options();
+                    //debugbreak();                                                                                        
+                    // check for spam or delete comment if no author url
+                    // spam or delete comment if no author url depending on user settings 
+                    //(for logged out users only because logged in users have no commentdata->comment_author_url)
+                    if(!is_user_logged_in()){
+                        if($options['hide_link_no_url'] == 'spam' && $commentdata->comment_author_url ==''){
+                            $commentdata->comment_approved = 'spam';
+                            $update = wp_update_comment((array)$commentdata);
+                        }
+                        if($options['hide_link_no_url'] == 'delete' && $commentdata->comment_author_url == ''){
+                            wp_delete_comment($id);
+                            return;
+                        }
+                    }
                     $prem = 'p' == $_POST['cl_prem'] ? 'p' : 'u';
                     $data = array('cl_post_title'=>$title,'cl_post_url'=>$link,'cl_prem'=>$prem);
                     add_comment_meta($id,'cl_data',$data,'true');
@@ -389,9 +401,10 @@
             /**
             * detect if request is from a commentluv useragent
             * called by add_action('init
-            * used to start the output buffer so the send_feed function can clear it before sending the xml feed
-            * this is for rare occasions where some themes cause output to be sent to the browser before send_feed can output its own
+            * 
             * ignore if user has set disable_detect in settings
+            * 
+            * since 2.90.9.9 - add action for template redirect, we do the sending of the special feed there now
             */
             function detect_useragent(){
                 $options = $this->get_options();
@@ -411,8 +424,9 @@
                         // prevent wordpress.com stats from adding stats script
                         global $wp_query;
                         $wp_query->is_feed = true;
-                    } 
-                    ob_start();
+                        // use own file to output feed
+                        add_action('template_redirect',array(&$this,'send_feed_file'),1);
+                    }           
                 }
             }
             /**
@@ -784,10 +798,28 @@
                     die(' error! no simplepie');
                 }
                 $rss->set_useragent('Commentluv /'.$this->version.' (Feed Parser; http://www.commentluv.com; Allow like Gecko) Build/20110502' );
-                $rss->set_feed_url ( $url );
+                $rss->set_feed_url ( add_query_arg(array('commentluv'=>'true'),$url) );
                 $rss->enable_cache ( FALSE );
                 // fetch the feed
                 $rss->init();
+                $su = $rss->subscribe_url();
+                $ferror = $rss->error();
+                // try a fall back and add /?feed=rss2 to the end of url if the found subscribe url hasn't already got it
+                // also try known blogspot feed location if this is a blogspot url
+                if(strstr($ferror,'could not be found') && !strstr($su,'feed')){
+                    unset($rss);
+                    $rss = new SimplePie();
+                    $rss->set_useragent('Commentluv /'.$this->version.' (Feed Parser; http://www.commentluv.com; Allow like Gecko) Build/20110502' );
+                    $rss->enable_cache ( FALSE );
+                    // construct alternate feed url
+                    if(strstr($url,'blogspot')){
+                        $url = trailingslashit($url).'feeds/posts/default/';
+                    } else {
+                        $url = add_query_arg(array('feed'=>'rss2'),$url);
+                    } 
+                    $rss->set_feed_url($url);
+                    $rss->init();
+                }
                 $rss->handle_content_type();
                 $gen = $rss->get_channel_tags('','generator');          
                 $prem_msg = $rss->get_channel_tags('','prem_msg');
@@ -887,7 +919,8 @@
                 'comment_text'=>'[name] '.__('recently posted',$this->plugin_domain).'..[lastpost]', 'whogets'=>'registered', 'dofollow' => 'registered',
                 'unreg_user_text'=>__('If you register as a user on my site, you can get your 10 most recent blog posts to choose from in this box.',$this->plugin_domain).' '.$register_link,
                 'unreg_user_text_panel'=>__('If this user had registered to my site then they could get 10 last posts to choose from when they comment and you would be able to see a list of their recent posts in this panel',$this->plugin_domain),
-                'template_insert'=>'','minifying'=>'','api_url'=>admin_url('admin-ajax.php'),'author_name'=>'author','email_name'=>'email','url_name'=>'url','comment_name'=>'comment');
+                'template_insert'=>'','minifying'=>'','api_url'=>admin_url('admin-ajax.php'),'author_name'=>'author','email_name'=>'email','url_name'=>'url','comment_name'=>'comment',
+                'hide_link_no_url'=>'nothing');
                 $options = get_option ( $this->db_option, $default);
                 // return the options
                 if($reset == 'yes'){  
@@ -1099,6 +1132,9 @@
             * @param (int) $foundposts - the number of posts that were found
             * @param (obj) $object - the query object
             * @return $foundposts - need to return this if the request is not from a commentluv api or plugin
+            * 
+            * deprecated in 2.90.9.9 due to new 3.4 wp query code messing up with static homepages.
+            * have to use just 10 recent posts, does not detect author or category urls now. (no one uses them!)
             */
             function send_feed($foundposts,$object){               
                 if(headers_sent() == true){
@@ -1127,7 +1163,7 @@
                         wp_reset_query();
                         $query = new WP_Query();   
                         remove_filter('found_posts',array(&$this,'send_feed'),-1,2);
-                        $object->posts = $query->query('showposts=10');     
+                        $object->posts = $query->query('showposts=10&post_type=post');     
                     }
                     $feed = '<?xml version="1.0" encoding="'.get_bloginfo('charset').'" ?>
                     <rss version="2.0">
@@ -1157,6 +1193,47 @@
                     exit;
                 }
                 return $foundposts;
+            }
+            /** send back a feed when another commentluv is asking
+            * called by add_action(template_redirect) in detect_useragent
+            * 
+            */
+
+            function send_feed_file(){
+                //debugbreak();
+                $posts = get_posts(array('numberposts'=>10,'post_type'=>'post'));
+                $enabled = $this->is_enabled();
+                $error = 'false';
+                if(sizeof($posts) < 1){
+                    $error = 'true';
+                }
+                $feed = '<?xml version="1.0" encoding="UTF-8" ?>
+                <rss version="2.0">
+                <channel>
+                <title><![CDATA['. get_bloginfo('title') .']]></title>
+                <link>'. get_bloginfo('home') .'</link>
+                <description><![CDATA['. get_bloginfo('description') .']]></description>
+                <language>'.get_bloginfo('language').'</language>
+                <generator>commentluv?v='.$this->version.'</generator>
+                <commentluv>'.$enabled.'</commentluv>
+                <success>'.$error.'</success>';
+                if(is_array($posts)){ 
+                    foreach($posts as $post){
+                        $feed .= '<item><title><![CDATA['.get_the_title($post->ID).']]></title>
+                        <link>'.get_permalink($post->ID).'</link>
+                        <type>blog</type>
+                        </item>';
+                    }    
+                } else {
+                    $feed .= '<item><title>'.__('No Posts Were Found!',$pd).'</title>
+                    <link>'.get_permalink($post->ID).'</link>
+                    </item>';
+                }
+                $feed .= '</channel></rss>';
+                header("Content-Type: application/xml; charset=UTF-8"); 
+                echo $feed;    
+                exit;                        
+
             }
             /**
             * called by __construct
@@ -1231,7 +1308,7 @@
                                     <tbody>
                                         <tr>
                                             <td width="250">
-                                                <h2 style="margin: 0 0 10px 0;"><?php _e('CommentLuv 3.0 Premium is here!',$pd);?></h2>
+                                                <h2 style="margin: 0 0 10px 0;"><?php _e('CommentLuv 3.0 Premium is here!',$pd);?> <a style="font-size:0.8em" title="Premium has some excellent features! try it out today. Full 30 day gaurantee" target="_blank" href="http://ql2.me/upgradetopremium">Upgrade to Premium</a></h2>
                                                 <img align="left" src="<?php echo $this->plugin_url;?>images/privacy-guarantee.png"/><?php _e('I promise not to sell your details or send you spam. You will ONLY receive emails about plugin updates.',$pd);?>
                                             </td>
                                             <td>
@@ -1502,9 +1579,17 @@
                                             <td style="background-color: #dfdfdf; text-align: center; font-weight: bolder;" colspan="5"><?php _e('Extras',$pd);?></td>
                                         </tr>
                                         <tr>
-                                            <td><input type="checkbox" value="on" name="<?php echo $dbo;?>[hide_link_no_url]" <?php if(isset($o['hide_link_no_url'])) checked($o['hide_link_no_url'],'on');?>/>
-                                                <label for="<?php echo $dbo;?>[hide_link_no_url]"><?php _e('Do not show link if comment has no URL',$this->plugin_domain);?></label>
-                                                <br /><strong>(<?php _e('Prevents spammer abuse',$this->plugin_domain);?>)</strong></td>
+                                            <td>
+                                                <select name="<?php echo $dbo;?>[hide_link_no_url]">
+                                                    <option value="nothing" <?php selected($o['hide_link_no_url'],'nothing',true);?>><?php _e('Nothing',$this->plugin_domain);?></option>
+                                                    <option value="on" <?php selected($o['hide_link_no_url'],'on',true);?>><?php _e('Hide Link',$this->plugin_domain);?></option>
+                                                    <option value="spam" <?php selected($o['hide_link_no_url'],'spam',true);?>><?php _e('Spam Comment',$this->plugin_domain);?></option>
+                                                    <option value="delete" <?php selected($o['hide_link_no_url'],'delete',true);?>><?php _e('Delete Comment',$this->plugin_domain);?></option>
+                                                </select>
+                                                <br/><label for="<?php echo $dbo;?>[hide_link_no_url]"><?php _e('Action to take if comment has no Author URL',$this->plugin_domain);?></label>
+                                                <br /><strong>(<?php _e('Prevents spammer abuse',$this->plugin_domain);?>)</strong>
+
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td style="background-color: #dfdfdf; text-align: center; font-weight: bolder;" colspan="5"><?php _e('Diagnostics Info',$pd);?></td>
@@ -1608,8 +1693,11 @@
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/fr.png"/> <?php _e('French',$this->plugin_domain);?></td><td><a target="_blank" href="http://etreheureux.fr/">Jean-Luc Matthys</a></td></tr>  
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/dk.png"/> <?php _e('Danish',$this->plugin_domain);?></td><td><a target="_blank" href="http://w3blog.dk/">Jimmy Sigenstroem</a></td></tr>  
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/ru.png"/> <?php _e('Russian',$this->plugin_domain);?></td><td><a target="_blank" href="http://lavo4nik.ru/">Max</a></td></tr>
-                                <tr><td><img src="<?php echo $this->plugin_url;?>images/bd.png"/> <?php _e('Bengali',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.explorefeed.com/">Amrik Virdi</a></td></tr>
+                                <tr><td><img src="<?php echo $this->plugin_url;?>images/bd.png"/> <?php _e('Bengali',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.monetizeblogging.com/">Amrik Virdi</a></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/il.png"/> <?php _e('Hebrew',$this->plugin_domain);?></td><td><a target="_blank" href="http://makemoneyim.com/">Tobi</a></td></tr>
+                                <tr><td><img src="<?php echo $this->plugin_url;?>images/vn.png"/> <?php _e('Vietnamese',$this->plugin_domain);?></td><td><a target="_blank" href="http://thegioimanguon.com/">Xman</a></td></tr>
+                                <tr><td><img src="<?php echo $this->plugin_url;?>images/hu.png"/> <?php _e('Hungarian',$this->plugin_domain);?></td><td><a target="_blank" href="http://no1tutorials.net/">Bruno</a></td></tr>
+                                <tr><td><img src="<?php echo $this->plugin_url;?>images/sk.png"/> <?php _e('Slovak',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.brozman.sk/blog">Viliam Brozman</a></td></tr>
 
 
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/sa.png"/> <?php _e('Arabic',$this->plugin_domain);?></td><td><!--<a target="_blank" href="http://www.melzarei.be/">Muhammad Elzarei</a>--></td></tr>

@@ -3,8 +3,8 @@ Contributors: commentluv, @hishaman (css additions)
 Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv, comment luv , commentlove, comment love
 Requires at least: 3.0
-Tested up to: 3.3.1
-Stable tag: 2.90.9.7
+Tested up to: 3.4
+Stable tag: 2.90.9.9
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -25,6 +25,8 @@ The plugin requires WP or WP MS version of at least 3.0 and will work with admin
 You can get a free companion plugin at http://www.commentluv.com
 
 [youtube http://www.youtube.com/watch?v=7wod9ZtiHaU]
+
+Now with updated function to allow you to delete or spam comments where the user has removed their url after getting a last blog post link (helps prevents spammer abuse)
 
 Many thanks to the following who provided translations
 
@@ -49,8 +51,11 @@ Norwegian [Hanna](http://www.drommeland.com/ "Norwegian Translation")
 French [Jean-Luc Matthys](http://etreheureux.fr/ "French Translation")
 Danish [Jimmy Sigenstroem](http://w3blog.dk/ "Danish Translation")
 Russian [Max](http://lavo4nik.ru/ "Russian Translation")
-Bengali [Amrik Virdi](http://www.explorefeed.com/ "Bengali Translation")
+Bengali [Amrik Virdi](http://www.monetizeblogging.com/ "Bengali Translation")
 Hebrew [Tobi](http://makemoneyim.com/ "Hebrew Translation")
+Vietnamese [Xman](http://thegioimanguon.com "Vietnamese Translation")
+Hungarian [Bruno](http://no1tutorials.net/ "Hungarian Translation")
+Slovak [Viliam Brozman](http://www.brozman.sk/blog/ "Slovak Translation")
 
 == Installation ==
 
@@ -79,6 +84,19 @@ Please see the videos in the settings page for explanations of how they work.
 4. edit post comments
 
 == ChangeLog ==
+
+= 2.90.9.9 =
+* fixed : trying updated detection routines to be compatible with new WP 3.4 query code
+
+= 2.90.9.8 =
+* added : Hungarian Translation
+* added : Vietnamese Translation
+* added : Slovak Translation
+* fixed : send_feed only to send post_type of post
+* updated : fall back to /?feed=rss2 in url for fetch feed if no feed found
+* updated : add query arg to site url when fetching feed so w3 total cache knows not to cache the response
+* updated : user can now choose to delete or spam a comment that has a link but no author url (prevent spammer abuse)
+* updated : Slovak flag fixed
 
 = 2.90.9.7 =
 * updated : Italian translation by Gianni
@@ -306,9 +324,9 @@ Please see the videos in the settings page for explanations of how they work.
 
 == Upgrade Notice ==
 
-= 2.90.9.7 =
+= 2.90.9.8 =
                                                                    
-Improved detection of commentluv requests and Italian language update
+More language packs added for Hungarian, Slovakian and Vietnamese and improved fetching routine
 
 == Configuration ==
 
