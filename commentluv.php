@@ -63,7 +63,7 @@
                 // plugin dir and url
                 $this->plugin_url = trailingslashit ( WP_PLUGIN_URL . '/' . dirname ( plugin_basename ( __FILE__ ) ) );
                 $this->plugin_dir = dirname(__FILE__);
-                
+
                 add_action ( 'clversion', array (&$this,'check_version') ); // check commentluv version
                 add_action ( 'init', array (&$this,'init') ); // to register styles and scripts
                 add_action ( 'admin_init', array (&$this, 'admin_init' ) ); // to register settings group
@@ -1198,32 +1198,42 @@
             * called by add_action(template_redirect) in detect_useragent
             * 
             */
-            
+
             function send_feed_file(){
-                $posts = get_posts(array('numberposts'=>10));
-                if(is_array($posts)){
-                    $feed = '<?xml version="1.0" encoding="UTF-8" ?>
-                    <rss version="2.0">
-                    <channel>
-                    <title><![CDATA['. get_bloginfo('title') .']]></title>
-                    <link>'. get_bloginfo('home') .'</link>
-                    <description><![CDATA['. get_bloginfo('description') .']]></description>
-                    <language>'.get_bloginfo('language').'</language>
-                    <generator>commentluv?v='.$this->version.'</generator>
-                    <commentluv>'.$enabled.'</commentluv>
-                    <success>'.$error.'</success>';
+                //debugbreak();
+                $posts = get_posts(array('numberposts'=>10,'post_type'=>'post'));
+                $enabled = $this->is_enabled();
+                $error = 'false';
+                if(sizeof($posts) < 1){
+                    $error = 'true';
+                }
+                $feed = '<?xml version="1.0" encoding="UTF-8" ?>
+                <rss version="2.0">
+                <channel>
+                <title><![CDATA['. get_bloginfo('title') .']]></title>
+                <link>'. get_bloginfo('home') .'</link>
+                <description><![CDATA['. get_bloginfo('description') .']]></description>
+                <language>'.get_bloginfo('language').'</language>
+                <generator>commentluv?v='.$this->version.'</generator>
+                <commentluv>'.$enabled.'</commentluv>
+                <success>'.$error.'</success>';
+                if(is_array($posts)){ 
                     foreach($posts as $post){
                         $feed .= '<item><title><![CDATA['.get_the_title($post->ID).']]></title>
-                            <link>'.get_permalink($post->ID).'</link>
-                            <type>blog</type>
-                            </item>';
-                    }
-                    $feed .= '</channel></rss>';
-                    header("Content-Type: application/xml; charset=UTF-8"); 
-                    echo $feed;    
-                    exit;
+                        <link>'.get_permalink($post->ID).'</link>
+                        <type>blog</type>
+                        </item>';
+                    }    
+                } else {
+                    $feed .= '<item><title>'.__('No Posts Were Found!',$pd).'</title>
+                    <link>'.get_permalink($post->ID).'</link>
+                    </item>';
                 }
-                
+                $feed .= '</channel></rss>';
+                header("Content-Type: application/xml; charset=UTF-8"); 
+                echo $feed;    
+                exit;                        
+
             }
             /**
             * called by __construct
