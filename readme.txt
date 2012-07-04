@@ -4,7 +4,7 @@ Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv, comment luv , commentlove, comment love
 Requires at least: 3.0
 Tested up to: 3.4
-Stable tag: 2.90.9.9
+Stable tag: 2.90.9.9.3
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -84,6 +84,19 @@ Please see the videos in the settings page for explanations of how they work.
 4. edit post comments
 
 == ChangeLog ==
+
+= 2.90.9.9.3 =
+* changed : try no whitespace in send_feed_file
+* changed : send application/atom+xml header before feed file to maybe prevent invalid mime type errors
+* changed : request feed set to feed = atom in fetch_feed
+* updated : can now request author/category and tag posts by using appropriate url in comment form of a commentluv enabled site
+
+= 2.90.9.9.2 =
+* added : try to increase memory available to commentluv
+* changed : set encoding to match that of the blog in send_feed_file
+
+= 2.90.9.9.1 =
+* fixed : trying new encoding of send_feed_file to match blog encoding
 
 = 2.90.9.9 =
 * fixed : trying updated detection routines to be compatible with new WP 3.4 query code
@@ -324,9 +337,10 @@ Please see the videos in the settings page for explanations of how they work.
 
 == Upgrade Notice ==
 
-= 2.90.9.8 =
+= 2.90.9.9.3 =
                                                                    
-More language packs added for Hungarian, Slovakian and Vietnamese and improved fetching routine
+Ability to process category and author URLs
+Better formatted XML and headers
 
 == Configuration ==
 

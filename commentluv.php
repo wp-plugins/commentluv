@@ -2,7 +2,7 @@
     Plugin Name: CommentLuv
     Plugin URI: http://comluv.com/
     Description: Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
-    Version: 2.90.9.9
+    Version: 2.90.9.9.3
     Author: Andy Bailey
     Author URI: http://www.commentluv.com
     Copyright (C) <2011>  <Andy Bailey>
@@ -28,7 +28,7 @@
             var $plugin_url;
             var $plugin_dir;
             var $db_option = 'commentluv_options';
-            var $version = "2.90.9.9";
+            var $version = "2.90.9.9.3";
             var $slug = 'commentluv-options';
             var $localize;
             var $is_commentluv_request = false;
@@ -424,7 +424,7 @@
                         // prevent wordpress.com stats from adding stats script
                         global $wp_query;
                         $wp_query->is_feed = true;
-                        // use own file to output feed
+                        // use own function to output feed
                         add_action('template_redirect',array(&$this,'send_feed_file'),1);
                     }           
                 }
@@ -815,7 +815,7 @@
                     if(strstr($url,'blogspot')){
                         $url = trailingslashit($url).'feeds/posts/default/';
                     } else {
-                        $url = add_query_arg(array('feed'=>'rss2'),$url);
+                        $url = add_query_arg(array('feed'=>'atom'),$url);
                     } 
                     $rss->set_feed_url($url);
                     $rss->init();
@@ -853,6 +853,7 @@
 
                     $feed_items = $rss->get_items();
                     foreach($feed_items as $item){
+                        //debugbreak();
                         $type = 'blog';
                         $itemtags = $item->get_item_tags('','type');
                         if($itemtags){
@@ -1198,39 +1199,51 @@
             * called by add_action(template_redirect) in detect_useragent
             * 
             */
-
             function send_feed_file(){
                 //debugbreak();
-                $posts = get_posts(array('numberposts'=>10,'post_type'=>'post'));
+                $postquery = array('numberposts'=>10,'post_type'=>'post');     
+                if(is_category()){
+                    $cat = get_query_var('cat');
+                    $postquery['category']=$cat;
+                }
+                if(is_author()){
+                    $author = get_query_var('author');
+                    $postquery['author'] = $author;
+                }
+                if(is_tag()){
+                    $tag = get_query_var('tag');
+                    $postquery['tag'] = $tag;
+                }             
+                $posts = get_posts($postquery);
                 $enabled = $this->is_enabled();
                 $error = 'false';
                 if(sizeof($posts) < 1){
                     $error = 'true';
                 }
-                $feed = '<?xml version="1.0" encoding="UTF-8" ?>
-                <rss version="2.0">
-                <channel>
-                <title><![CDATA['. get_bloginfo('title') .']]></title>
-                <link>'. get_bloginfo('home') .'</link>
-                <description><![CDATA['. get_bloginfo('description') .']]></description>
-                <language>'.get_bloginfo('language').'</language>
-                <generator>commentluv?v='.$this->version.'</generator>
-                <commentluv>'.$enabled.'</commentluv>
-                <success>'.$error.'</success>';
+                $feed = '<?xml version="1.0" encoding="'.get_bloginfo('charset').'" ?>'.
+                '<rss version="2.0">'.
+                '<channel>'.
+                '<title><![CDATA['. get_bloginfo('title') .']]></title>'.
+                '<link>'. get_bloginfo('home') .'</link>'.
+                '<description><![CDATA['. get_bloginfo('description') .']]></description>'.
+                '<language>'.get_bloginfo('language').'</language>'.
+                '<generator>commentluv?v='.$this->version.'</generator>'.
+                '<commentluv>'.$enabled.'</commentluv>'.
+                '<success>'.$error.'</success>';
                 if(is_array($posts)){ 
                     foreach($posts as $post){
-                        $feed .= '<item><title><![CDATA['.get_the_title($post->ID).']]></title>
-                        <link>'.get_permalink($post->ID).'</link>
-                        <type>blog</type>
-                        </item>';
+                        $feed .= '<item><title><![CDATA['.get_the_title($post->ID).']]></title>'.
+                        '<link>'.get_permalink($post->ID).'</link>'.
+                        '<type>blog</type>'.
+                        '</item>';
                     }    
                 } else {
-                    $feed .= '<item><title>'.__('No Posts Were Found!',$pd).'</title>
-                    <link>'.get_permalink($post->ID).'</link>
-                    </item>';
+                    $feed .= '<item><title>'.__('No Posts Were Found!',$pd).'</title>'.
+                    '<link>'.get_permalink($post->ID).'</link>'.
+                    '</item>';
                 }
                 $feed .= '</channel></rss>';
-                header("Content-Type: application/xml; charset=UTF-8"); 
+                header("Content-Type: application/atom+xml; charset=".get_bloginfo('charset')); 
                 echo $feed;    
                 exit;                        
 
@@ -1322,6 +1335,11 @@
                                                 ?>
                                                 <div id="notify_message"></div>
                                             </td>    
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">
+                                                <?php _e('<b>Are you getting targeted by spammers?</b> CommentLuv links are valuable which is why it promotes comments but some nasty spammers try to take advantage of this by leaving spam just to get the link. Don\'t worry, there is answer!... you can get CommentLuv Premium which has advanced anti-spam features which has been proven to almost eliminate spam on users blogs. You can upgrade by clicking the link above. <p><b>Not ready to buy premium yet?</b> that\'s ok too! Why not try GASP which is a lite version of the anti spam plugin that CommentLuv Premium uses. You can get it for FREE by searching for GASP in your "add new" section of your plugins page in your dashboard.',$pd);?>
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -1720,7 +1738,11 @@
 
         } // end class
     } // end if class not exists
-
+    // Let's give commentluv plenty of room to work with
+    $mem = abs(intval(@ini_get('memory_limit')));
+    if( $mem and $mem < 128 ){
+        @ini_set('memory_limit', '128M');
+    }
     $clbadgeshown = false;
     // start commentluv class engines
     if (class_exists ( 'commentluv' )) :
