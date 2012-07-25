@@ -62,6 +62,10 @@ jQuery(document).ready(function(){
     jQuery(document).click(heart_small);
     // add info panel to page
     jQuery("body").append('<span id="heart_tip_big" style="display: none;position:absolute; z-index: 1001; background-color: ' + cl_settings['infoback'] + '; color: ' + cl_settings['infotext'] + '; width: 62px;"></span>');
+    // hover over to see raw file wrapper open
+    jQuery('.rawfilewrap').live('hover',function(){
+        jQuery('.rawfile').toggle();
+    });
 
 });
 
@@ -168,7 +172,10 @@ function cl_dostuff(){
                     jQuery('#mylastpost').html('<a href="' + jQuery(this).attr('id') +'"> ' + jQuery(this).text() + '</a>').fadeIn(1000); 
                 });
             } else {
-                cl_message(data.error);
+                if(typeof(data.rawfile) == 'undefined'){
+                    data.rawfile = 'no raw data sent back';
+                }
+                cl_message(data.error,data.rawfile);
             }
         },
         error: function(x,e){
@@ -202,8 +209,11 @@ function cl_dostuff(){
 * adds a message to tell the user something in the cl_message div and then slides it down
 * @param string message - the message to show
 */
-function cl_message(message){
+function cl_message(message,rawfile){
     jQuery('#cl_messages').empty().hide().text(message).slideDown();
+    if(typeof(rawfile) != 'undefined'){
+        jQuery('#cl_messages').append('<div class="rawfilewrap"><p>Hover your mouse here to see the data that CommentLuv got back from your site..<br />If you see a warning or other error message then that might help you locate the problem (maybe another plugin is spitting out an error?)</p><div class="rawfile"><pre>'+rawfile+'</pre></div></div>');
+    }
 }
 function heart_big(e){
     // get url and data from link

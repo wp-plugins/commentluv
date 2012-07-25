@@ -2,7 +2,7 @@
     Plugin Name: CommentLuv
     Plugin URI: http://comluv.com/
     Description: Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
-    Version: 2.90.9.9.3
+    Version: 2.91
     Author: Andy Bailey
     Author URI: http://www.commentluv.com
     Copyright (C) <2011>  <Andy Bailey>
@@ -28,7 +28,7 @@
             var $plugin_url;
             var $plugin_dir;
             var $db_option = 'commentluv_options';
-            var $version = "2.90.9.9.3";
+            var $version = "2.91";
             var $slug = 'commentluv-options';
             var $localize;
             var $is_commentluv_request = false;
@@ -63,15 +63,20 @@
                 // plugin dir and url
                 $this->plugin_url = trailingslashit ( WP_PLUGIN_URL . '/' . dirname ( plugin_basename ( __FILE__ ) ) );
                 $this->plugin_dir = dirname(__FILE__);
-
-                add_action ( 'clversion', array (&$this,'check_version') ); // check commentluv version
-                add_action ( 'init', array (&$this,'init') ); // to register styles and scripts
-                add_action ( 'admin_init', array (&$this, 'admin_init' ) ); // to register settings group
-                add_action ( 'admin_menu', array (&$this, 'admin_menu' ) ); // to setup menu link for settings page
-                add_action ( 'admin_print_scripts-settings_page_commentluv-options', array(&$this,'add_settings_page_script')); // script for settings page ajax function
-                add_action ( 'admin_print_styles-settings_page_commentluv-options', array(&$this,'add_settings_page_style')); // script for settings page ajax function
-                add_action ( 'wp_ajax_notify_signup', array(&$this,'notify_signup')); // ajax handler for settings page subscribe button
-                add_action ( 'init', array(&$this,'detect_useragent'));
+                if(defined('DOING_AJAX') && DOING_AJAX){
+                    add_action ( 'wp_ajax_removeluv', array (&$this, 'ajax_remove_luv') ); // handle the call to the admin-ajax for removing luv
+                    add_action ( 'wp_ajax_nopriv_cl_ajax',array(&$this,'do_ajax'));
+                    add_action ( 'wp_ajax_cl_ajax',array(&$this,'do_ajax'));
+                } else {
+                    add_action ( 'clversion', array (&$this,'check_version') ); // check commentluv version
+                    add_action ( 'init', array (&$this,'init') ); // to register styles and scripts
+                    add_action ( 'admin_init', array (&$this, 'admin_init' ) ); // to register settings group
+                    add_action ( 'admin_menu', array (&$this, 'admin_menu' ) ); // to setup menu link for settings page
+                    add_action ( 'admin_print_scripts-settings_page_commentluv-options', array(&$this,'add_settings_page_script')); // script for settings page ajax function
+                    add_action ( 'admin_print_styles-settings_page_commentluv-options', array(&$this,'add_settings_page_style')); // script for settings page ajax function
+                    add_action ( 'wp_ajax_notify_signup', array(&$this,'notify_signup')); // ajax handler for settings page subscribe button
+                    add_action ( 'init', array(&$this,'detect_useragent'));
+                }
                 // filters
                 add_filter ( 'cron_schedules', array (&$this, 'cron_schedules') ); // for my own recurrence
                 add_filter ( 'plugin_action_links', array (&$this, 'plugin_action_link' ), - 10, 2 ); // add a settings page link to the plugin description. use 2 for allowed vars
@@ -82,6 +87,8 @@
                 if(!isset($options['enable']) || ( isset($options['enable']) && $options['enable'] != 'no')){
                     $this->setup_hooks();
                 }
+
+
             }
             /**
             * PHP4 constructor
@@ -222,15 +229,15 @@
                 }
                 wp_enqueue_script('commentluv_script');
                 $this->localize = array ('name' => $author_name, 'url' => $url_name, 'comment' => $comment_name, 'email' => $email_name,
-                'infopanel' => $infopanel, 'default_on' => $default_on, 'default_on_admin' => $default_on_admin,
-                'cl_version' => $this->version, 'images' => $this->plugin_url . 'images/', 'api_url' => $api_url,
-                '_fetch' => wp_create_nonce('fetch'), '_info' => wp_create_nonce('info'), 
-                'infoback' => $infoback, 'infotext'=>$infotext,'template_insert'=>$template_insert, 'logged_in'=>is_user_logged_in(),
-                'refer' => get_permalink(),
-                'no_url_message'=>__('Please enter a URL and then click the CommentLuv checkbox if you want to add your last blog post',$this->plugin_domain),
-                'no_http_message'=>__('Please use http:// in front of your url',$this->plugin_domain),
-                'no_url_logged_in_message'=>__('You need to visit your profile in the dashboard and update your details with your site URL',$this->plugin_domain),
-                'no_info_message'=>__('No info was available or an error occured',$this->plugin_domain));
+                    'infopanel' => $infopanel, 'default_on' => $default_on, 'default_on_admin' => $default_on_admin,
+                    'cl_version' => $this->version, 'images' => $this->plugin_url . 'images/', 'api_url' => $api_url,
+                    '_fetch' => wp_create_nonce('fetch'), '_info' => wp_create_nonce('info'), 
+                    'infoback' => $infoback, 'infotext'=>$infotext,'template_insert'=>$template_insert, 'logged_in'=>is_user_logged_in(),
+                    'refer' => get_permalink(),
+                    'no_url_message'=>__('Please enter a URL and then click the CommentLuv checkbox if you want to add your last blog post',$this->plugin_domain),
+                    'no_http_message'=>__('Please use http:// in front of your url',$this->plugin_domain),
+                    'no_url_logged_in_message'=>__('You need to visit your profile in the dashboard and update your details with your site URL',$this->plugin_domain),
+                    'no_info_message'=>__('No info was available or an error occured',$this->plugin_domain));
                 if($minifying != 'on'){
                     wp_localize_script('commentluv_script','cl_settings',$this->localize);
                 }
@@ -274,7 +281,8 @@
                 // whitelist options
                 register_setting( 'commentluv_options_group', $this->db_option ,array(&$this,'options_sanitize' ) );
                 $options = $this->get_options();
-                if(isset($options['upgrade'])){
+                //if(isset($options['upgrade'])){
+                if(isset($options['upgrade']) && version_compare($options['upgrade'],$this->php_version($this->version),'>')){
                     add_action('admin_notices',array(&$this,'show_upgrade_notice'));
                 }
             }
@@ -372,6 +380,25 @@
                             wp_delete_comment($id);
                             return;
                         }
+                        // check for matching comment
+                        if(!isset($options['hide_link_no_url_match'])){
+                            $options['hide_link_no_url_match'] = 'nothing';
+                        }
+                        $authorurlarr = parse_url($commentdata->comment_author_url);
+                        $linkurlarr = parse_url($link);
+                        if($options['hide_link_no_url_match'] != 'nothing'){
+                            if($authorurlarr['host'] != $linkurlarr['host']){
+                                // link has different domain
+                                if($options['hide_link_no_url_match'] == 'spam'){
+                                    $commentdata->comment_approved = 'spam';
+                                    $update = wp_update_comment((array)$commentdata);
+                                }
+                                if($options['hide_link_no_url_match'] == 'delete'){
+                                    wp_delete_comment($id);
+                                    return;
+                                }
+                            }
+                        }
                     }
                     $prem = 'p' == $_POST['cl_prem'] ? 'p' : 'u';
                     $data = array('cl_post_title'=>$title,'cl_post_url'=>$link,'cl_prem'=>$prem);
@@ -386,8 +413,8 @@
             */
             function cron_schedules($schedules){
                 $schedules['clfortnightly'] = array(
-                'interval' => 1209600,
-                'display' => __('Twice Monthly')
+                    'interval' => 1209600,
+                    'display' => __('Twice Monthly')
                 );
                 return $schedules;
             }
@@ -418,7 +445,8 @@
                 // is this commentluv calling?
                 if (preg_match("/Commentluv/i", $_SERVER['HTTP_USER_AGENT'])){
                     $this->is_commentluv_request = true;
-                    if($options['disable_detect'] != 'on'){
+                    ob_start();
+                    if(!isset($options['disable_detect'])){
                         remove_all_actions('wp_head');
                         remove_all_actions('wp_footer');
                         // prevent wordpress.com stats from adding stats script
@@ -713,6 +741,20 @@
                             $showlink = true;   
                             if($authurl == '' && isset($options['hide_link_no_url']) && $options['hide_link_no_url'] == 'on'){
                                 $showlink = false;
+                            }
+                            // check link domain matches author url domain
+                            if(!isset($options['hide_link_no_url_match'])){
+                                $options['hide_link_no_url_match'] = 'nothing';
+                            }
+                            $authorurlarr = parse_url($authurl);
+                            $linkurlarr = parse_url($data['cl_post_url']);
+                            if($options['hide_link_no_url_match'] != 'nothing'){
+                                if($authorurlarr['host'] != $linkurlarr['host']){
+                                    // link has different domain
+                                    if($options['hide_link_no_url_match'] == 'on'){
+                                        $showlink = false;
+                                    }
+                                }
                             }               
                             if($showlink){
                                 // construct string to be added to comment
@@ -755,11 +797,20 @@
                 if(!$checknonce){
                     die(' error! not authorized '.$_REQUEST['_ajax_nonce']);
                 }
-                define('DOING_AJAX', true);
+                if(!defined('DOING_AJAX')){
+                    define('DOING_AJAX',true);
+                }
+                // try to prevent deprecated notices
+                ini_set('display_errors',0);
+                error_reporting(E_ALL ^ E_NOTICE ^ E_DEPRECATED);
                 include_once(ABSPATH.WPINC.'/class-simplepie.php');
                 $options = $this->get_options();
                 $num = 1;
                 $url = strip_tags($_POST['url']);
+                // add trailing slash (can help with some blogs)
+                if(!strpos($url,'?')){
+                    $url = trailingslashit($url);
+                }
                 // fetch 10 last posts?
                 if((is_user_logged_in() && $options['whogets'] == 'registered') || (!is_user_logged_in() && $options['whogets'] == 'everybody')){
                     $num = 10;
@@ -806,7 +857,7 @@
                 $ferror = $rss->error();
                 // try a fall back and add /?feed=rss2 to the end of url if the found subscribe url hasn't already got it
                 // also try known blogspot feed location if this is a blogspot url
-                if(strstr($ferror,'could not be found') && !strstr($su,'feed')){
+                if($ferror || strstr($ferror,'could not be found') && !strstr($su,'feed')){
                     unset($rss);
                     $rss = new SimplePie();
                     $rss->set_useragent('Commentluv /'.$this->version.' (Feed Parser; http://www.commentluv.com; Allow like Gecko) Build/20110502' );
@@ -819,6 +870,11 @@
                     } 
                     $rss->set_feed_url($url);
                     $rss->init();
+                    if(stripos($ferror,'invalid')){
+                        //get raw file to show any errors
+                        $rawfile = new $rss->file_class($rss->feed_url, $rss->timeout, 5, null, $rss->useragent, $rss->force_fsockopen);
+                        $rawfile = $rawfile->body;
+                    }
                 }
                 $rss->handle_content_type();
                 $gen = $rss->get_channel_tags('','generator');          
@@ -883,8 +939,8 @@
                     }
                     $response = json_encode(array('error'=>'','items'=>$arr,'meta'=>$meta));
                 } else {
-                    // had an error trying to read the feed       
-                    $response = json_encode(array('error'=>$error,'meta'=>$meta));
+                    // had an error trying to read the feed 
+                    $response = json_encode(array('error'=>$error,'meta'=>$meta,'rawfile'=>htmlspecialchars($rawfile)));
                 }
                 unset($rss);
                 header( "Content-Type: application/json" );
@@ -916,12 +972,12 @@
                 // default values
                 $this->handle_load_domain (); 
                 $default = array ('version'=>$this->version,'enable'=>'yes','enable_for'=>'both', 'default_on' => 'on', 'default_on_admin'=>'on',
-                'badge_choice' => 'drop_down', 'badge_type'=>'default', 'link'=>'off','infopanel'=>'on', 'infoback'=>'white', 'infotext'=>'black',
-                'comment_text'=>'[name] '.__('recently posted',$this->plugin_domain).'..[lastpost]', 'whogets'=>'registered', 'dofollow' => 'registered',
-                'unreg_user_text'=>__('If you register as a user on my site, you can get your 10 most recent blog posts to choose from in this box.',$this->plugin_domain).' '.$register_link,
-                'unreg_user_text_panel'=>__('If this user had registered to my site then they could get 10 last posts to choose from when they comment and you would be able to see a list of their recent posts in this panel',$this->plugin_domain),
-                'template_insert'=>'','minifying'=>'','api_url'=>admin_url('admin-ajax.php'),'author_name'=>'author','email_name'=>'email','url_name'=>'url','comment_name'=>'comment',
-                'hide_link_no_url'=>'nothing');
+                    'badge_choice' => 'drop_down', 'badge_type'=>'default', 'link'=>'off','infopanel'=>'on', 'infoback'=>'white', 'infotext'=>'black',
+                    'comment_text'=>'[name] '.__('recently posted',$this->plugin_domain).'..[lastpost]', 'whogets'=>'registered', 'dofollow' => 'registered',
+                    'unreg_user_text'=>__('If you register as a user on my site, you can get your 10 most recent blog posts to choose from in this box.',$this->plugin_domain).' '.$register_link,
+                    'unreg_user_text_panel'=>__('If this user had registered to my site then they could get 10 last posts to choose from when they comment and you would be able to see a list of their recent posts in this panel',$this->plugin_domain),
+                    'template_insert'=>'','minifying'=>'','api_url'=>admin_url('admin-ajax.php'),'author_name'=>'author','email_name'=>'email','url_name'=>'url','comment_name'=>'comment',
+                    'hide_link_no_url'=>'nothing','hide_link_no_url_match'=>'nothing');
                 $options = get_option ( $this->db_option, $default);
                 // return the options
                 if($reset == 'yes'){  
@@ -1019,14 +1075,14 @@
             */
             function kindergarten_html($input){
                 $allowedtags = array(
-                'h1' => array(),
-                'br' => array(),
-                'a' => array('href' => array(),'title' => array(),'rel' => array(),'target'=>array(), 'class'=>array()),
-                'small' =>array(),
-                'p' =>array( 'class'=>array()),
-                'strong' => array(),
-                'img' => array('src' => array(),'alt' => array(),'width' => array(),'height' => array(),'align'=> array()),
-                'span' => array('class'=>array())
+                    'h1' => array(),
+                    'br' => array(),
+                    'a' => array('href' => array(),'title' => array(),'rel' => array(),'target'=>array(), 'class'=>array()),
+                    'small' =>array(),
+                    'p' =>array( 'class'=>array()),
+                    'strong' => array(),
+                    'img' => array('src' => array(),'alt' => array(),'width' => array(),'height' => array(),'align'=> array()),
+                    'span' => array('class'=>array())
                 );
                 return wp_kses($input,$allowedtags);
             }
@@ -1075,7 +1131,7 @@
                     return $old_options;
                 }
                 // check for reset
-                if($options['reset'] == 'yes'){
+                if(isset($options['reset'])){
                     return $this->get_options('yes');
                 }
                 // if on multisite and this isnt super admin saving, 
@@ -1243,7 +1299,8 @@
                     '</item>';
                 }
                 $feed .= '</channel></rss>';
-                header("Content-Type: application/atom+xml; charset=".get_bloginfo('charset')); 
+                ob_end_clean();
+                header("Content-Type: application/atom+xml; charset=".get_bloginfo('charset'));
                 echo $feed;    
                 exit;                        
 
@@ -1258,9 +1315,7 @@
                 add_action ( 'template_redirect',array(&$this,'add_script')); // add commentluv script
                 add_action ( 'admin_print_scripts-edit-comments.php', array (&$this, 'add_removeluv_script') ); // add the removeluv script to admin page
                 add_action ( 'wp_footer',array(&$this,'add_footer')); // add localize to footer
-                add_action ( 'wp_ajax_removeluv', array (&$this, 'ajax_remove_luv') ); // handle the call to the admin-ajax for removing luv
-                add_action ( 'wp_ajax_nopriv_cl_ajax',array(&$this,'do_ajax'));
-                add_action ( 'wp_ajax_cl_ajax',array(&$this,'do_ajax'));
+
                 add_action ( 'wp_insert_comment', array (&$this, 'comment_posted'),1,2); // add member id and other data to comment meta priority 1, 2 vars
 
                 add_filter ( 'comments_array', array (&$this, 'do_shortcode' ), 1 ); // add last blog post data to comment content
@@ -1273,14 +1328,17 @@
             */ 
             function show_upgrade_notice(){
                 $options = $this->get_options();
-                echo '<div id="clupgrade" class="error">';
+                $update_url = wp_nonce_url('update.php?action=upgrade-plugin&amp;plugin=commentluv%2Fcommentluv.php', 'upgrade-plugin_commentluv/commentluv.php');
+                echo '<div id="clupgrade" class="update-nag">';
                 if($options['upgrade_message']){
                     echo $options['upgrade_message'];
+                    $details_link = '<br /><a href="'.admin_url().'plugin-install.php?tab=plugin-information&amp;plugin=commentluv&amp;TB_iframe=true&amp;width=640&amp;height=350" class="thickbox" title="commentluv"> View new version details</a>';
+                    printf( __('%s or <a href="%s">update now</a>.', $this->plugin_domain),  $details_link, $update_url ) ;
                 } else {
                     echo __('There is a new version of Commentluv available, please upgrade by visiting this site',$this->plugin_domain);
                     echo '<br><a href="http://www.commentluv.com" target="_blank">www.commentluv.com</a>';
                 }
-                echo '<span style="float:right"><a href="'.admin_url('options-general.php?page='.$this->slug.'&dismiss=true').'">'.__('Dismiss notice',$this->plugin_domain).'</a></span>';
+                //echo '<span style="float:right"><a href="'.admin_url('options-general.php?page='.$this->slug.'&dismiss=true').'">'.__('Dismiss notice',$this->plugin_domain).'</a></span>';
                 echo '</div>';
             }
 
@@ -1606,6 +1664,18 @@
                                                 </select>
                                                 <br/><label for="<?php echo $dbo;?>[hide_link_no_url]"><?php _e('Action to take if comment has no Author URL',$this->plugin_domain);?></label>
                                                 <br /><strong>(<?php _e('Prevents spammer abuse',$this->plugin_domain);?>)</strong>
+
+                                            </td>
+                                            <td></td>
+                                            <td>
+                                                <select name="<?php echo $dbo;?>[hide_link_no_url_match]">
+                                                    <option value="nothing" <?php selected($o['hide_link_no_url_match'],'nothing',true);?>><?php _e('Nothing',$this->plugin_domain);?></option>
+                                                    <option value="on" <?php selected($o['hide_link_no_url_match'],'on',true);?>><?php _e('Hide Link',$this->plugin_domain);?></option>
+                                                    <option value="spam" <?php selected($o['hide_link_no_url_match'],'spam',true);?>><?php _e('Spam Comment',$this->plugin_domain);?></option>
+                                                    <option value="delete" <?php selected($o['hide_link_no_url_match'],'delete',true);?>><?php _e('Delete Comment',$this->plugin_domain);?></option>
+                                                </select>
+                                                <br/><label for="<?php echo $dbo;?>[hide_link_no_url_match]"><?php _e('Action to take if link does not match domain of author',$this->plugin_domain);?></label>
+                                                <br /><strong>(<?php _e('Prevents users from adding fake author URLs to get around Akismet',$this->plugin_domain);?>)</strong>
 
                                             </td>
                                         </tr>

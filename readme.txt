@@ -4,7 +4,7 @@ Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv, comment luv , commentlove, comment love
 Requires at least: 3.0
 Tested up to: 3.4
-Stable tag: 2.90.9.9.3
+Stable tag: 2.91
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -84,6 +84,15 @@ Please see the videos in the settings page for explanations of how they work.
 4. edit post comments
 
 == ChangeLog ==
+
+= 2.91 =
+* new changes implimented for author/category urls
+* remove ugly red box for upgrade notice. replace with calming yellow one with a convenient link to update the plugin.
+* fixed : prevent DOING_AJAX from being defined if is already defined
+* updated : clear output buffer before sending feed
+* updated : prevent simplepie deprecated notices from showing when fetching feed if php is set to show them
+* updated : add trailing slash to url for fetching feed (some sites that have errors bork without trailing slash)
+* updated : do first round of effecient action setting so ajax only functions are much better for memory
 
 = 2.90.9.9.3 =
 * changed : try no whitespace in send_feed_file
@@ -337,10 +346,10 @@ Please see the videos in the settings page for explanations of how they work.
 
 == Upgrade Notice ==
 
-= 2.90.9.9.3 =
+= 2.1 =
                                                                    
-Ability to process category and author URLs
-Better formatted XML and headers
+Lots of good error reporting stuff
+added efficiency to ajax actions
 
 == Configuration ==
 
