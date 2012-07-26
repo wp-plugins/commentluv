@@ -85,6 +85,9 @@ Please see the videos in the settings page for explanations of how they work.
 
 == ChangeLog ==
 
+= 2.91.1 =
+* minor mishap with ajax notify signup action. It was in the wrong place!
+
 = 2.91 =
 * new changes implimented for author/category urls
 * remove ugly red box for upgrade notice. replace with calming yellow one with a convenient link to update the plugin.
@@ -346,7 +349,7 @@ Please see the videos in the settings page for explanations of how they work.
 
 == Upgrade Notice ==
 
-= 2.1 =
+= 2.91.1 =
                                                                    
 Lots of good error reporting stuff
 added efficiency to ajax actions

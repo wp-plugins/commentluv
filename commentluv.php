@@ -2,7 +2,7 @@
     Plugin Name: CommentLuv
     Plugin URI: http://comluv.com/
     Description: Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
-    Version: 2.91
+    Version: 2.91.1
     Author: Andy Bailey
     Author URI: http://www.commentluv.com
     Copyright (C) <2011>  <Andy Bailey>
@@ -28,7 +28,7 @@
             var $plugin_url;
             var $plugin_dir;
             var $db_option = 'commentluv_options';
-            var $version = "2.91";
+            var $version = "2.91.1";
             var $slug = 'commentluv-options';
             var $localize;
             var $is_commentluv_request = false;
@@ -65,6 +65,7 @@
                 $this->plugin_dir = dirname(__FILE__);
                 if(defined('DOING_AJAX') && DOING_AJAX){
                     add_action ( 'wp_ajax_removeluv', array (&$this, 'ajax_remove_luv') ); // handle the call to the admin-ajax for removing luv
+                    add_action ( 'wp_ajax_notify_signup', array(&$this,'notify_signup')); // ajax handler for settings page subscribe button
                     add_action ( 'wp_ajax_nopriv_cl_ajax',array(&$this,'do_ajax'));
                     add_action ( 'wp_ajax_cl_ajax',array(&$this,'do_ajax'));
                 } else {
@@ -74,7 +75,6 @@
                     add_action ( 'admin_menu', array (&$this, 'admin_menu' ) ); // to setup menu link for settings page
                     add_action ( 'admin_print_scripts-settings_page_commentluv-options', array(&$this,'add_settings_page_script')); // script for settings page ajax function
                     add_action ( 'admin_print_styles-settings_page_commentluv-options', array(&$this,'add_settings_page_style')); // script for settings page ajax function
-                    add_action ( 'wp_ajax_notify_signup', array(&$this,'notify_signup')); // ajax handler for settings page subscribe button
                     add_action ( 'init', array(&$this,'detect_useragent'));
                 }
                 // filters
