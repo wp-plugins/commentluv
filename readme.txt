@@ -4,7 +4,7 @@ Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv, comment luv , commentlove, comment love
 Requires at least: 3.0
 Tested up to: 3.4
-Stable tag: 2.91.1
+Stable tag: 2.92
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -84,6 +84,11 @@ Please see the videos in the settings page for explanations of how they work.
 4. edit post comments
 
 == ChangeLog ==
+
+= 2.92 =
+
+* prevent jetpack comments module from being activated so comment is not affected by jetpack plugin upgrades.
+* updated : Italian translation
 
 = 2.91.1 =
 * minor mishap with ajax notify signup action. It was in the wrong place!
@@ -349,10 +354,9 @@ Please see the videos in the settings page for explanations of how they work.
 
 == Upgrade Notice ==
 
-= 2.91.1 =
+= 2.92 =
                                                                    
-Lots of good error reporting stuff
-added efficiency to ajax actions
+Fix jetpack plugin compatibility (dont enable comments module)  . Italian translation updated
 
 == Configuration ==
 
