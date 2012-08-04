@@ -4,7 +4,7 @@ Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv, comment luv , commentlove, comment love
 Requires at least: 3.0
 Tested up to: 3.4
-Stable tag: 2.92
+Stable tag: 2.92.1
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -84,6 +84,10 @@ Please see the videos in the settings page for explanations of how they work.
 4. edit post comments
 
 == ChangeLog ==
+
+= 2.92.1 =
+
+* added : ability to allow Jetpack comments to activate. (thought it best to still allow free choice, maybe someone wants the advantage they get with commentluv when they comment on other commentluv blogs?)
 
 = 2.92 =
 
