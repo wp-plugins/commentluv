@@ -88,6 +88,7 @@ Please see the videos in the settings page for explanations of how they work.
 = 2.92 =
 
 * prevent jetpack comments module from being activated so comment is not affected by jetpack plugin upgrades.
+* updated : Italian translation
 
 = 2.91.1 =
 * minor mishap with ajax notify signup action. It was in the wrong place!
@@ -355,7 +356,7 @@ Please see the videos in the settings page for explanations of how they work.
 
 = 2.92 =
                                                                    
-Fix jetpack plugin compatibility (dont enable comments module)
+Fix jetpack plugin compatibility (dont enable comments module)  . Italian translation updated
 
 == Configuration ==
 

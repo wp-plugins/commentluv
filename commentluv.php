@@ -38,7 +38,9 @@
             * Use this to set up hooks, filters, menus and language config
             */
             function __construct() {
-                global $wp_version, $pagenow;
+                global $wp_version, $pagenow, $wp_actions;
+                // try to add jetpack_module_loaded_comments action so it doesn't load
+                $wp_actions['jetpack_module_loaded_comments'] = 1;   
                 // pages where this plugin needs translation
                 $local_pages = array ('plugins.php', 'options-general.php' );
                 // check if translation needed on current page
