@@ -4,7 +4,7 @@ Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv, comment luv , commentlove, comment love
 Requires at least: 3.0
 Tested up to: 3.4
-Stable tag: 2.92.1
+Stable tag: 2.92.2
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -56,6 +56,7 @@ Hebrew [Tobi](http://makemoneyim.com/ "Hebrew Translation")
 Vietnamese [Xman](http://thegioimanguon.com "Vietnamese Translation")
 Hungarian [Bruno](http://no1tutorials.net/ "Hungarian Translation")
 Slovak [Viliam Brozman](http://www.brozman.sk/blog/ "Slovak Translation")
+Serbian [Diana](http://wpcouponshop.com/ "Serbian Translation")
 
 == Installation ==
 
@@ -84,6 +85,13 @@ Please see the videos in the settings page for explanations of how they work.
 4. edit post comments
 
 == ChangeLog ==
+
+= 2.92.2 =
+
+* updated : updated Italian translation (thanks Gianni!)
+* added : Serbian translation (thanks Diana!)
+* updated : version checking to show ionCube status
+* updated : add version number of plugin to version number of register script call
 
 = 2.92.1 =
 

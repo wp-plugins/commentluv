@@ -2,7 +2,7 @@
     Plugin Name: CommentLuv
     Plugin URI: http://comluv.com/
     Description: Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
-    Version: 2.92.1
+    Version: 2.92.2
     Author: Andy Bailey
     Author URI: http://www.commentluv.com
     Copyright (C) <2011>  <Andy Bailey>
@@ -28,7 +28,7 @@
             var $plugin_url;
             var $plugin_dir;
             var $db_option = 'commentluv_options';
-            var $version = "2.92.1";
+            var $version = "2.92.2";
             var $slug = 'commentluv-options';
             var $localize;
             var $is_commentluv_request = false;
@@ -344,10 +344,11 @@
                 $url = 'http://version.commentluv.com/';
                 $name = strip_tags(get_bloginfo('name'));
                 $description = strip_tags(get_bloginfo('description'));
+                $ioncube = extension_loaded('ionCube Loader')? 'yes' : 'no';
                 $numluv = $this->get_numluv();
                 $dofollow = $options['dofollow'];
                 $whogets = $options['whogets'];
-                $body = array('version'=>$version,'enabled'=>$options['enable'],'name'=>$name,'description'=>$description,'avatarmd5'=>md5(strtolower(get_bloginfo('admin_email'))),'numluv'=>$numluv,'dofollow'=>$dofollow,'whogets'=>$whogets);
+                $body = array('version'=>$version,'enabled'=>$options['enable'],'name'=>$name,'description'=>$description,'avatarmd5'=>md5(strtolower(get_bloginfo('admin_email'))),'numluv'=>$numluv,'dofollow'=>$dofollow,'whogets'=>$whogets,'ioncube'=>$ioncube);
                 $response = wp_remote_head($url,array('method'=>'POST','body'=>$body));
                 $latest = $this->php_version(wp_remote_retrieve_header($response,'version'));
                 $message = wp_remote_retrieve_header($response,'message');
@@ -806,8 +807,8 @@
                     define('DOING_AJAX',true);
                 }
                 // try to prevent deprecated notices
-                ini_set('display_errors',0);
-                error_reporting(E_ALL ^ E_NOTICE ^ E_DEPRECATED);
+                @ini_set('display_errors',0);
+                @error_reporting(0);
                 include_once(ABSPATH.WPINC.'/class-simplepie.php');
                 $options = $this->get_options();
                 $num = 1;
@@ -978,7 +979,7 @@
                 $this->handle_load_domain (); 
                 $default = array ('version'=>$this->version,'enable'=>'yes','enable_for'=>'both', 'default_on' => 'on', 'default_on_admin'=>'on',
                     'badge_choice' => 'drop_down', 'badge_type'=>'default', 'link'=>'off','infopanel'=>'on', 'infoback'=>'white', 'infotext'=>'black',
-                    'comment_text'=>'[name] '.__('recently posted',$this->plugin_domain).'..[lastpost]', 'whogets'=>'registered', 'dofollow' => 'registered',
+                    'comment_text'=>'[name] '.__('recently posted',$this->plugin_domain).'...[lastpost]', 'whogets'=>'registered', 'dofollow' => 'registered',
                     'unreg_user_text'=>__('If you register as a user on my site, you can get your 10 most recent blog posts to choose from in this box.',$this->plugin_domain).' '.$register_link,
                     'unreg_user_text_panel'=>__('If this user had registered to my site then they could get 10 last posts to choose from when they comment and you would be able to see a list of their recent posts in this panel',$this->plugin_domain),
                     'template_insert'=>'','minifying'=>'','api_url'=>admin_url('admin-ajax.php'),'author_name'=>'author','email_name'=>'email','url_name'=>'url','comment_name'=>'comment',
@@ -1014,8 +1015,8 @@
             * This function registers styles and scripts
             */
             function init(){
-                wp_register_style( 'commentluv_style',$this->plugin_url.'css/commentluv.css' );
-                wp_register_script( 'commentluv_script', $this->plugin_url.'js/commentluv.js',array('jquery') );
+                wp_register_style( 'commentluv_style',$this->plugin_url.'css/commentluv.css' , $this->version);
+                wp_register_script( 'commentluv_script', $this->plugin_url.'js/commentluv.js',array('jquery'),$this->version );
             }
             /** install
             * This function is called when the plugin activation hook is fired when
@@ -1322,9 +1323,11 @@
                 add_action ( 'wp_footer',array(&$this,'add_footer')); // add localize to footer
 
                 add_action ( 'wp_insert_comment', array (&$this, 'comment_posted'),1,2); // add member id and other data to comment meta priority 1, 2 vars
-
-                add_filter ( 'comments_array', array (&$this, 'do_shortcode' ), 1 ); // add last blog post data to comment content
-                add_filter ( 'comment_text', array (&$this, 'do_shortcode' ), 1 ); // add last blog post data to comment content on admin screen
+                if(!is_admin()){
+                    add_filter ( 'comments_array', array (&$this, 'do_shortcode' ), 1 ); // add last blog post data to comment content
+                } else {
+                    add_filter ( 'comment_text', array (&$this, 'do_shortcode' ), 1 ); // add last blog post data to comment content on admin screen
+                }                                                                                                                                   
                 add_filter ( 'comment_row_actions', array (&$this,'add_removeluv_link')); // adds a link to remove the luv from a comment on the comments admin screen
             }
             /**
@@ -1795,6 +1798,7 @@
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/vn.png"/> <?php _e('Vietnamese',$this->plugin_domain);?></td><td><a target="_blank" href="http://thegioimanguon.com/">Xman</a></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/hu.png"/> <?php _e('Hungarian',$this->plugin_domain);?></td><td><a target="_blank" href="http://no1tutorials.net/">Bruno</a></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/sk.png"/> <?php _e('Slovak',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.brozman.sk/blog">Viliam Brozman</a></td></tr>
+                                <tr><td><img src="<?php echo $this->plugin_url;?>images/rs.png"/> <?php _e('Serbian',$this->plugin_domain);?></td><td><a target="_blank" href="http://wpcouponshop.com/">Diana</a></td></tr>
 
 
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/sa.png"/> <?php _e('Arabic',$this->plugin_domain);?></td><td><!--<a target="_blank" href="http://www.melzarei.be/">Muhammad Elzarei</a>--></td></tr>
