@@ -2,7 +2,7 @@
     Plugin Name: CommentLuv
     Plugin URI: http://comluv.com/
     Description: Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
-    Version: 2.92.2
+    Version: 2.92.3
     Author: Andy Bailey
     Author URI: http://www.commentluv.com
     Copyright (C) <2011>  <Andy Bailey>
@@ -28,7 +28,7 @@
             var $plugin_url;
             var $plugin_dir;
             var $db_option = 'commentluv_options';
-            var $version = "2.92.2";
+            var $version = "2.92.3";
             var $slug = 'commentluv-options';
             var $localize;
             var $is_commentluv_request = false;
@@ -876,10 +876,21 @@
                     } 
                     $rss->set_feed_url($url);
                     $rss->init();
-                    if(stripos($ferror,'invalid')){
-                        //get raw file to show any errors
-                        $rawfile = new $rss->file_class($rss->feed_url, $rss->timeout, 5, null, $rss->useragent, $rss->force_fsockopen);
-                        $rawfile = $rawfile->body;
+                    $ferror = $rss->error();
+                    if($ferror || stripos($ferror,'invalid')){
+                        unset($rss);
+                        $rss = new SimplePie();
+                        $rss->set_useragent('Commentluv /'.$this->version.' (Feed Parser; http://www.commentluv.com; Allow like Gecko) Build/20110502' );
+                        $rss->enable_cache ( FALSE );                                                   
+                        $rss->set_feed_url($url);
+                        $rss->init();
+                        $ferror = $rss->error();
+                        // go back to original URL if error persisted
+                        if(stripos($ferror,'invalid')){
+                            //get raw file to show any errors
+                            $rawfile = new $rss->file_class($rss->feed_url, $rss->timeout, 5, null, $rss->useragent, $rss->force_fsockopen);
+                            $rawfile = $rawfile->body;
+                        }
                     }
                 }
                 $rss->handle_content_type();
@@ -1050,7 +1061,7 @@
                 }
                 // has the comment meta table?
                 global $wpdb;
-                $query = $wpdb->prepare("SHOW tables LIKE '{$wpdb->commentmeta}'");
+                $query = $wpdb->prepare("SHOW tables LIKE %s",$wpdb->commentmeta);
                 $dbtable = $wpdb->get_var($query);
                 //$o['dbtable'] = $dbtable;
                 if(!$dbtable){

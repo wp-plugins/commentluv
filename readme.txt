@@ -3,8 +3,8 @@ Contributors: commentluv, @hishaman (css additions)
 Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv, comment luv , commentlove, comment love
 Requires at least: 3.0
-Tested up to: 3.4
-Stable tag: 2.92.2
+Tested up to: 3.5
+Stable tag: 2.92.3
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -85,6 +85,11 @@ Please see the videos in the settings page for explanations of how they work.
 4. edit post comments
 
 == ChangeLog ==
+
+= 2.92.3 =
+
+* updated : fetch feed function updated to try 1 more alternative if all else fails
+* fixed : wpdb->prepare notice fix
 
 = 2.92.2 =
 
@@ -366,9 +371,9 @@ Please see the videos in the settings page for explanations of how they work.
 
 == Upgrade Notice ==
 
-= 2.92 =
+= 2.92.3 =
                                                                    
-Fix jetpack plugin compatibility (dont enable comments module)  . Italian translation updated
+Fix for wordpress 3.5 wpdb->prepare notice
 
 == Configuration ==
 
