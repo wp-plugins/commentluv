@@ -4,7 +4,7 @@ Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv, comment luv , commentlove, comment love
 Requires at least: 3.0
 Tested up to: 3.5
-Stable tag: 2.92.3
+Stable tag: 2.92.4
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -55,7 +55,7 @@ Bengali [Amrik Virdi](http://www.monetizeblogging.com/ "Bengali Translation")
 Hebrew [Tobi](http://makemoneyim.com/ "Hebrew Translation")
 Vietnamese [Xman](http://thegioimanguon.com "Vietnamese Translation")
 Hungarian [Bruno](http://no1tutorials.net/ "Hungarian Translation")
-Slovak [Viliam Brozman](http://www.brozman.sk/blog/ "Slovak Translation")
+Slovak [Branco Radenovich](http://webhostinggeeks.com/blog/ "Slovak Translation")
 Serbian [Diana](http://wpcouponshop.com/ "Serbian Translation")
 
 == Installation ==
@@ -85,6 +85,10 @@ Please see the videos in the settings page for explanations of how they work.
 4. edit post comments
 
 == ChangeLog ==
+
+= 2.92.4 =
+
+* updated : make ajax fetch more secure
 
 = 2.92.3 =
 
@@ -371,9 +375,9 @@ Please see the videos in the settings page for explanations of how they work.
 
 == Upgrade Notice ==
 
-= 2.92.3 =
+= 2.92.4 =
                                                                    
-Fix for wordpress 3.5 wpdb->prepare notice
+Important security fix
 
 == Configuration ==
 

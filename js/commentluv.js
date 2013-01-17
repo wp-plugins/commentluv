@@ -1,4 +1,4 @@
-// commentluv 2.90.9.1
+// commentluv 2.92.4
 jQuery(document).ready(function(){
     // get the form object and fields
     var formObj = jQuery('#cl_post_title').parents('form');
@@ -36,7 +36,7 @@ jQuery(document).ready(function(){
         jQuery.ajax({
             url: cl_settings['api_url'],
             type: 'POST',
-            data: {'action': 'cl_ajax','cid': data[1],'nonce':data[0],'cl_prem':jQuery(this).hasClass('p'),'url': jQuery(this).attr('href'),'do':'click'} 
+            data: {'action': 'cl_ajax','cid': data[1],'_ajax_nonce':data[0],'cl_prem':jQuery(this).hasClass('p'),'url': jQuery(this).attr('href'),'do':'click'} 
         });
         jQuery(this).attr('target','_blank');
         return true;

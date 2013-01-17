@@ -2,7 +2,7 @@
     Plugin Name: CommentLuv
     Plugin URI: http://comluv.com/
     Description: Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
-    Version: 2.92.3
+    Version: 2.92.4
     Author: Andy Bailey
     Author URI: http://www.commentluv.com
     Copyright (C) <2011>  <Andy Bailey>
@@ -28,7 +28,7 @@
             var $plugin_url;
             var $plugin_dir;
             var $db_option = 'commentluv_options';
-            var $version = "2.92.3";
+            var $version = "2.92.4";
             var $slug = 'commentluv-options';
             var $localize;
             var $is_commentluv_request = false;
@@ -87,7 +87,7 @@
                 add_filter ( 'plugin_action_links', array (&$this, 'plugin_action_link' ), - 10, 2 ); // add a settings page link to the plugin description. use 2 for allowed vars
                 // add_filter ( 'found_posts', array(&$this,'send_feed'),-1,2); // sends post titles and urls only - deprecated in 2.90.9.9
                 add_filter ( 'kindergarten_html', array(&$this,'kindergarten_html')); // for cleaning html 
-                
+
                 //$this->check_version();
                 if(!isset($options['enable']) || ( isset($options['enable']) && $options['enable'] != 'no')){
                     $this->setup_hooks();
@@ -533,7 +533,12 @@
             * handles all ajax requests, receives 'do' as POST var and calls relevant function
             * 
             */
-            function do_ajax(){                          
+            function do_ajax(){
+                $oldchecknonce = $_POST['_ajax_nonce'];
+                $newchecknonce = preg_replace("/[^A-Za-z0-9 ]/", '', $oldchecknonce);
+                if($oldchecknonce != $newchecknonce){
+                    die('error! nonce malformed');
+                }                            
                 switch($_POST['do']){
                     case 'fetch' :
                         $this->fetch_feed();
@@ -554,7 +559,7 @@
             */
             function do_click(){
                 $cid = intval($_POST['cid']);
-                $nonce = $_POST['nonce'];
+                $nonce = $_POST['_ajax_nonce'];
                 $url = $_POST['url'];
                 if(!wp_verify_nonce($nonce,$cid)){
                     exit;
@@ -801,7 +806,10 @@
                 // check nonce
                 $checknonce = check_ajax_referer('fetch',false,false);
                 if(!$checknonce){
-                    die(' error! not authorized '.$_REQUEST['_ajax_nonce']);
+                    die(' error! not authorized '.strip_tags($_REQUEST['_ajax_nonce']));
+                }
+                if(!$_POST['url']){
+                    die('no url');
                 }
                 if(!defined('DOING_AJAX')){
                     define('DOING_AJAX',true);
@@ -1685,7 +1693,7 @@
                                                 <br /><strong>(<?php _e('Prevents spammer abuse',$this->plugin_domain);?>)</strong>
 
                                             </td>
-                                           
+
                                             <td>
                                                 <select name="<?php echo $dbo;?>[hide_link_no_url_match]">
                                                     <option value="nothing" <?php selected($o['hide_link_no_url_match'],'nothing',true);?>><?php _e('Nothing',$this->plugin_domain);?></option>
@@ -1697,9 +1705,9 @@
                                                 <br /><strong>(<?php _e('Prevents users from adding fake author URLs to get around Akismet',$this->plugin_domain);?>)</strong>
 
                                             </td>
-                                            
-                                             <td>
-                                                 <input type="checkbox" name="<?php echo $dbo;?>[allow_jpc]" <?php if(isset($o['allow_jpc'])) checked($o['allow_jpc'],'on');?> value="on"/><label for="<?php echo $dbo;?>[allow_jpc]"> <?php _e('Allow Jetpack comments module to activate?',$pd);?></label>
+
+                                            <td>
+                                                <input type="checkbox" name="<?php echo $dbo;?>[allow_jpc]" <?php if(isset($o['allow_jpc'])) checked($o['allow_jpc'],'on');?> value="on"/><label for="<?php echo $dbo;?>[allow_jpc]"> <?php _e('Allow Jetpack comments module to activate?',$pd);?></label>
                                             </td>
                                         </tr>
                                         <tr>

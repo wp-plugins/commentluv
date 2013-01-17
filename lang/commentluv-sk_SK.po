@@ -1,807 +1,632 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: CommentLuv 2.8.9.8\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-06-12 18:43-0000\n"
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
-"Last-Translator: Andy Bailey <andrewgbailey@gmail.com>\n"
-"Language-Team: @commentluv, Gianni Diurno <admin@comluv.com>\n"
+"Last-Translator: \n"
+"Language-Team: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Poedit-Language: English\n"
-"X-Poedit-Country: UNITED KINGDOM\n"
-"X-Poedit-SourceCharset: utf-8\n"
-"X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;_n_noop:1,2;_c,_nc:4c,1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;\n"
-"X-Poedit-Basepath: .\n"
-"X-Poedit-Bookmarks: \n"
-"X-Poedit-SearchPath-0: ..\n"
-"X-Textdomain-Support: yes"
+"X-Generator: Poedit 1.5.4\n"
 
-#: commentluv.php:48
-#@ commentluv
+#: ../commentluv.php:48
 msgid "CommentLuv requires Wordpress 3.0 or newer."
-msgstr "CommentLuv vyžaduje Wordpress 3.0 alebo novší."
+msgstr "CommentLuv vyzaduje Wordpress 3.0 alebo novsi."
 
-#: commentluv.php:48
-#@ commentluv
+#: ../commentluv.php:48
 msgid "Please Update!"
-msgstr "Aktualizujte prosím!"
+msgstr "Aktualizujte prosim!"
 
-#: commentluv.php:230
-#@ commentluv
-msgid "Please enter a URL and then click the CommentLuv checkbox if you want to add your last blog post"
-msgstr "Zadajte URL a potom zaškrtnite CommentLuv políčko, ak chcete pridať váš posledný príspevok"
+#: ../commentluv.php:217
+msgid ""
+"Please enter a URL and then click the CommentLuv checkbox if you want to add "
+"your last blog post"
+msgstr ""
+"Zadajte prosim URL a kliknite na policko CommentLuv, ak chcete pridat svoj "
+"posledny prispevok do blogu"
 
-#: commentluv.php:231
-#@ commentluv
+#: ../commentluv.php:218
 msgid "Please use http:// in front of your url"
-msgstr "Použite http:// pred adresou"
+msgstr "Prosim, pouzite http:// v prednej casti vasho url"
 
-#: commentluv.php:232
-#@ commentluv
-msgid "You need to visit your profile in the dashboard and update your details with your site URL"
-msgstr "Prejdite na váš profil a aktualizujte údaje, vrátane url adresy"
+#: ../commentluv.php:219
+msgid ""
+"You need to visit your profile in the dashboard and update your details with "
+"your site URL"
+msgstr ""
+"Musite navstivit svoj profil v palubnej doske a aktualizovat svoje udaje s "
+"URL stranky"
 
-#: commentluv.php:233
-#@ commentluv
+#: ../commentluv.php:220
 msgid "No info was available or an error occured"
-msgstr "Žiadne informácie alebo nastala chyba"
+msgstr "Ziadne informacie neboli k dispozicii, alebo doslo k chybe"
 
-#: commentluv.php:257
-#@ commentluv
+#: ../commentluv.php:243
 msgid "Please wait"
-msgstr "Čakajte prosím"
+msgstr "Prosim cakajte"
 
-#: commentluv.php:257
-#@ commentluv
+#: ../commentluv.php:243
 msgid "Please check your inbox, an email will be sent to"
-msgstr "Skontrolujte vašu doručenú poštu, odošleme vám tam"
+msgstr "Skontrolujte prosim schranky, bude e-mail bude odoslany"
 
-#: commentluv.php:257
-#@ commentluv
+#: ../commentluv.php:243
 msgid "in the next few minutes with a confirmation link"
-msgstr "čo najskôr aj s potvrdzovacím odkazom"
+msgstr "V najblizsich niekolkych minutach s potvrdzovaci odkaz"
 
-#: commentluv.php:257
-#@ commentluv
+#: ../commentluv.php:243
 msgid "An error happened with the request. Try signing up at the site"
-msgstr "Nastala chyba. Skúste sa registrovať cez stránku"
+msgstr "doslo k chybe so ziadostou. Skuste sa prihlasit sa na mieste"
 
-#: commentluv.php:961
-#@ commentluv
-msgid "Your Wordpress install is missing the <strong>wp_commentmeta</strong> table!"
-msgstr "Váš Wordpress nemá <strong>wp_commentmeta</strong> tabuľku!"
+#: ../commentluv.php:272
+msgid ""
+"Your Wordpress install is missing the <strong>wp_commentmeta</strong> table!"
+msgstr ""
+"Vasa Wordpress instalacie chyba <strong> wp_commentmeta </ ??strong> stola!"
 
-#: commentluv.php:961
-#@ commentluv
-msgid " CommentLuv cannot work without this table please see this wordpress forum post to learn how to add one ->"
-msgstr "CommentLuv bez tejto tabuľky nemôže fungovať, navštívte wordpress fórum a zistite, ako ju pridať ->"
+#: ../commentluv.php:272
+msgid ""
+" CommentLuv cannot work without this table please see this wordpress forum "
+"post to learn how to add one ->"
+msgstr ""
+"CommentLuv nemoze fungovat bez tejto tabulke najdete na tejto wordpress fora "
+"prispevok sa dozviete, ako pridat jeden ->"
 
-#: commentluv.php:961
-#@ commentluv
+#: ../commentluv.php:272
 msgid "Missing wp_commentmeta table"
-msgstr "Chýba wp_commentmeta tabuľka"
+msgstr "Chybajuce wp_commentmeta tabulku"
 
-#: commentluv.php:378
-#@ default
+#: ../commentluv.php:365
 msgid "Twice Monthly"
-msgstr "2x mesačne"
+msgstr "Dvakrat mesacne"
 
-#: commentluv.php:436
-#@ commentluv
+#: ../commentluv.php:392
 msgid "CommentLuv is enabled"
-msgstr "CommentLuv je zapnutý"
+msgstr "CommentLuv je povolene"
 
-#: commentluv.php:479
-#@ commentluv
+#: ../commentluv.php:433
 msgid "Show more posts"
-msgstr "Zobraziť viac príspevkov"
+msgstr "Zobrazit dalsie prispevky"
 
-#: commentluv.php:575
-#@ commentluv
+#: ../commentluv.php:523
 msgid "I have only commented on this post"
-msgstr "Na tento príspevok som reagoval len ja"
+msgstr "som len komentar k tomuto prispevku"
 
-#: commentluv.php:578
-#@ commentluv
-msgid "If I had made more comments on this site, you would see more of my other posts here"
-msgstr "Ak som napísal viac komentárov, uvidíte ich tu"
+#: ../commentluv.php:526
+msgid ""
+"If I had made more comments on this site, you would see more of my other "
+"posts here"
+msgstr ""
+"Ak som urobil dalsie pripomienky k tejto stranke, mali by ste vidiet viac z "
+"mojich dalsich prispevkov tu"
 
-#: commentluv.php:603
-#@ commentluv
+#: ../commentluv.php:551
 msgid "User has not saved a description in their profile page"
-msgstr "Užívateľ neuložil popis v jeho profile"
+msgstr "Uzivatel nie je ulozeny popis vo svojom profile"
 
-#: commentluv.php:615
-#@ commentluv
+#: ../commentluv.php:563
 msgid "is the administrator of this site"
-msgstr "je administrátorom stránky"
+msgstr "je spravca tohto webu"
 
-#: commentluv.php:617
-#@ commentluv
+#: ../commentluv.php:565
 msgid "is a registered member of my site"
-msgstr "je registrovaným užívateľom stránky"
+msgstr "je registrovanym clenom mojej stranky"
 
-#: commentluv.php:620
-#: commentluv.php:639
-#@ commentluv
+#: ../commentluv.php:568 ../commentluv.php:587
 msgid "Clicks on this link on this comment"
-msgstr "Kliky na odkaz v komentári"
+msgstr "Kliknutie na tento odkaz na tento komentar"
 
-#: commentluv.php:620
-#: commentluv.php:640
-#@ commentluv
+#: ../commentluv.php:568 ../commentluv.php:588
 msgid "approved comments on this site"
-msgstr "schválené komentáre"
+msgstr "schvalene pripomienky k tejto stranke"
 
-#: commentluv.php:620
-#: commentluv.php:641
-#@ commentluv
+#: ../commentluv.php:568 ../commentluv.php:589
 msgid "Some other posts I have commented on"
-msgstr "Ďalšie príspevky, ktoré som komentoval"
+msgstr "Niektore ine prispevky, ktore som komentoval"
 
-#: commentluv.php:620
-#@ commentluv
+#: ../commentluv.php:568
 msgid "Some of my other posts"
-msgstr "Ďalšie moje príspevky"
+msgstr "Niektore z mojich dalsich prispevkov"
 
-#: commentluv.php:633
-#@ commentluv
+#: ../commentluv.php:581
 msgid "has not registered on this site"
-msgstr "nie je registrovaný/á na stránke"
+msgstr "nie je registrovany na tychto strankach"
 
-#: commentluv.php:768
-#@ commentluv
+#: ../commentluv.php:703
 msgid "Could not get posts for home blog"
-msgstr "Nepodarilo sa získať príspevky"
+msgstr "Nepodarilo sa ziskat prispevky pre domace blogu"
 
-#: commentluv.php:845
-#@ commentluv
-msgid "If you are registered, you need to log in to get 10 posts to choose from"
-msgstr "Ak ste registrovaný, musíte sa prihlásiť pre zobrazenie príspevkov"
+#: ../commentluv.php:759
+msgid ""
+"If you are registered, you need to log in to get 10 posts to choose from"
+msgstr ""
+"Ak ste registrovany, je nutne sa prihlasit do dostat 10 prispevkov z coho "
+"vyberat"
 
-#: commentluv.php:840
-#: commentluv.php:881
-#: commentluv.php:1377
-#@ default
+#: ../commentluv.php:783 ../commentluv.php:1235
 msgid "Register"
-msgstr "Registrovať"
+msgstr "Registracia"
 
-#: commentluv.php:887
-#@ commentluv
+#: ../commentluv.php:788
 msgid "recently posted"
-msgstr "posledne pridané"
+msgstr "nedavno vyslany"
 
-#: commentluv.php:888
-#@ commentluv
-msgid "If you register as a user on my site, you can get your 10 most recent blog posts to choose from in this box."
-msgstr "Ak sa zaregistrujete, získate tým 10 najnovších príspevkov, z ktorých si budete môcť vybrat v tomto boxe."
+#: ../commentluv.php:789
+msgid ""
+"If you register as a user on my site, you can get your 10 most recent blog "
+"posts to choose from in this box."
+msgstr ""
+"Ak sa zaregistrujete ako uzivatel na mojom webe, mozete dostat svoje 10 "
+"najnovsich prispevkov do blogu na vyber v tejto kolonke."
 
-#: commentluv.php:889
-#@ commentluv
-msgid "If this user had registered to my site then they could get 10 last posts to choose from when they comment and you would be able to see a list of their recent posts in this panel"
-msgstr "Ak sa tento užívateľ registroval, môže vidieť posledných 10 príspevkov a vy máte možnosť vidieť zoznam jeho posledných príspevkov v tomto paneli."
+#: ../commentluv.php:790
+msgid ""
+"If this user had registered to my site then they could get 10 last posts to "
+"choose from when they comment and you would be able to see a list of their "
+"recent posts in this panel"
+msgstr ""
+"Ak tento pouzivatel si zaregistroval na moje stranky a potom sa im podarilo "
+"dostat 10 posledne prispevky na vyber, ked komentovat a mali by ste byt "
+"schopni vidiet zoznam svojich nedavnych prispevkov v tomto paneli"
 
-#: commentluv.php:1091
-#@ commentluv
+#: ../commentluv.php:971
 msgid "Settings"
 msgstr "Nastavenia"
 
-#: commentluv.php:1150
-#@ commentluv
+#: ../commentluv.php:1010
 msgid "No Posts Were Found!"
-msgstr "Žiadne príspevky!"
+msgstr "Ziadne prispevky neboli najdene!"
 
-#: commentluv.php:1190
-#@ commentluv
-msgid "There is a new version of Commentluv available, please upgrade by visiting this site"
-msgstr "Vyšla nová verzia CommentLuv, aktualizujte prosím cez túto stránku"
+#: ../commentluv.php:1050
+msgid ""
+"There is a new version of Commentluv available, please upgrade by visiting "
+"this site"
+msgstr ""
+"K dispozicii je nova verzia k dispozicii CommentLuv, aktualizujte prosim "
+"navstevou tychto stranok"
 
-#: commentluv.php:1193
-#@ commentluv
+#: ../commentluv.php:1053
 msgid "Dismiss notice"
-msgstr "Skryť upozornenie"
+msgstr "Zavriet oznamenia"
 
-#: commentluv.php:1219
-#@ commentluv
+#: ../commentluv.php:1080
 msgid "CommentLuv Settings v"
-msgstr "CommentLuv nastavenia"
+msgstr "CommentLuv Nastavenie v"
 
-#: commentluv.php:1229
-#@ commentluv
+#: ../commentluv.php:1090
 msgid "Important!"
-msgstr "Dôležité!"
+msgstr "Dolezite!"
 
-#: commentluv.php:1229
-#@ commentluv
+#: ../commentluv.php:1090
 msgid "Subscription Information"
-msgstr "Informácie o odberoch"
+msgstr "Informacie predplatneho"
 
-#: commentluv.php:1235
-#@ commentluv
-msgid "I promise not to sell your details or send you spam. You will ONLY receive emails about plugin updates."
-msgstr "Nebudem vám posielať žiaden spam. Dostanete IBA info súvisiace s modulom."
+#: ../commentluv.php:1095
+msgid "CommentLuv 3.0 Premium is coming soon!"
+msgstr "CommentLuv 3,0 Premium sa blizi!"
 
-#: commentluv.php:1241
-#@ commentluv
-msgid "You have already subscribed, if you have not received the verification within 12 hours, please click the button to resend or try the form at"
-msgstr "Už ste odberateľom, ak ste nedostali overovací mail do 12 hodín, kliknite na tlačidlo pre znovu odoslanie alebo skúste formulár na"
+#: ../commentluv.php:1096
+msgid ""
+"I promise not to sell your details or send you spam. You will ONLY receive "
+"emails about plugin updates."
+msgstr ""
+"Slubujem, ze nebudem predavat svoje udaje alebo vam zasleme spamu. Budete "
+"iba dostavat e-maily o pluginov aktualizacie."
 
-#: commentluv.php:1241
-#@ commentluv
+#: ../commentluv.php:1099
+msgid ""
+"There is a premium version of CommentLuv coming that will have much more "
+"control of how the plugin works as well as exclusive features like keyword "
+"name, inline registration and much much more!. Signup to find out as soon as "
+"it is ready"
+msgstr ""
+"Je profesionalna verzia CommentLuv zasielane, ktora bude mat ovela vacsiu "
+"kontrolu toho, ako plugin funguje rovnako ako exkluzivne funkcie, ako je "
+"nazov klucoveho, inline registraciu a ovela ovela viac!. Prihlasenie zistit, "
+"akonahle je pripraveny"
+
+#: ../commentluv.php:1102
+msgid ""
+"You have already subscribed, if you have not received the verification "
+"within 12 hours, please click the button to resend or try the form at"
+msgstr ""
+"uz odobera, ak ste nedostali overenie do 12 hodin, kliknite na tlacidlo "
+"znova odoslat, alebo skuste formular na"
+
+#: ../commentluv.php:1102
 msgid "Resend Verification"
-msgstr "Znovu overiť"
+msgstr "Znovu odoslat overovaci"
 
-#: commentluv.php:1258
-#@ commentluv
+#: ../commentluv.php:1104
+msgid "Click to register now!"
+msgstr "Kliknite pre zaregistruj sa hned!"
+
+#: ../commentluv.php:1119
 msgid "Primary Setting"
-msgstr "Hlavné nastavenia"
+msgstr "Primarny nastavenia"
 
-#: commentluv.php:1258
-#: commentluv.php:1292
-#: commentluv.php:1352
-#: commentluv.php:1410
-#: commentluv.php:1441
-#@ commentluv
+#: ../commentluv.php:1119 ../commentluv.php:1153 ../commentluv.php:1212
+#: ../commentluv.php:1268 ../commentluv.php:1299
 msgid "Help Video"
-msgstr "Pomocné video"
+msgstr "Pomocnik Video"
 
-#: commentluv.php:1262
-#@ commentluv
+#: ../commentluv.php:1123
 msgid "Enable CommentLuv?"
-msgstr "Zapnúť CommentLuv?"
+msgstr "Povolit CommentLuv?"
 
-#: commentluv.php:1263
-#@ commentluv
+#: ../commentluv.php:1124
 msgid "Yes"
-msgstr "Áno"
+msgstr "Ano"
 
-#: commentluv.php:1264
-#@ commentluv
+#: ../commentluv.php:1125
 msgid "No"
 msgstr "Nie"
 
-#: commentluv.php:1269
-#@ commentluv
+#: ../commentluv.php:1130
 msgid "On Posts"
-msgstr "V článkoch"
+msgstr "On prispevky"
 
-#: commentluv.php:1270
-#@ commentluv
+#: ../commentluv.php:1131
 msgid "On Pages"
-msgstr "Na stránkach"
+msgstr "na strankach"
 
-#: commentluv.php:1271
-#@ commentluv
+#: ../commentluv.php:1132
 msgid "On Both"
-msgstr "Na oboch"
+msgstr "On Both"
 
-#: commentluv.php:1276
-#@ commentluv
+#: ../commentluv.php:1137
 msgid "On by default?"
-msgstr "Predvolene zapnuté?"
+msgstr "Zapnute v predvolenom nastaveni?"
 
-#: commentluv.php:1280
-#@ commentluv
+#: ../commentluv.php:1141
 msgid "On for admin?"
-msgstr "Zapnuté pre admina?"
+msgstr "On pre admin?"
 
-#: commentluv.php:1292
-#@ commentluv
+#: ../commentluv.php:1153
 msgid "Appearance"
-msgstr "Zobrazenie"
+msgstr "Vzhlad"
 
-#: commentluv.php:1296
-#@ commentluv
+#: ../commentluv.php:1157
 msgid "Badge"
-msgstr "Znak"
+msgstr "odznak"
 
-#: commentluv.php:1297
-#@ commentluv
+#: ../commentluv.php:1158
 msgid "Custom Image URL"
-msgstr "Vlastné URL obrázku"
+msgstr "Vlastne URL obrazku"
 
-#: commentluv.php:1298
-#@ commentluv
+#: ../commentluv.php:1159
 msgid "Use Text"
-msgstr "Použiť text"
+msgstr "Pouzit text"
 
-#: commentluv.php:1306
-#@ commentluv
+#: ../commentluv.php:1167
 msgid "Default"
-msgstr "Predvolené"
+msgstr "Predvoleny"
 
-#: commentluv.php:1307
-#@ commentluv
+#: ../commentluv.php:1168
 msgid "White"
-msgstr "Biele"
+msgstr "White"
 
-#: commentluv.php:1308
-#@ commentluv
+#: ../commentluv.php:1169
 msgid "Black"
-msgstr "Čierne"
+msgstr "Black"
 
-#: commentluv.php:1309
-#@ commentluv
+#: ../commentluv.php:1170
 msgid "None"
-msgstr "Žiadne"
+msgstr "Ziadne"
 
-#: commentluv.php:1327
-#@ commentluv
+#: ../commentluv.php:1187
 msgid "Link to Commentluv?"
 msgstr "Odkaz na CommentLuv?"
 
-#: commentluv.php:1334
-#@ commentluv
+#: ../commentluv.php:1194
 msgid "Enable info panel?"
-msgstr "Zapnúť info panel?"
+msgstr "Povolit info panel?"
 
-#: commentluv.php:1335
-#@ commentluv
+#: ../commentluv.php:1195
 msgid "Info panel background color"
-msgstr "Farba pozadia panelu"
+msgstr "Info panel Farba pozadia"
 
-#: commentluv.php:1336
-#@ commentluv
+#: ../commentluv.php:1196
 msgid "Info panel text color"
-msgstr "Farba textu panelu"
+msgstr "Info panel Farba textu"
 
-#: commentluv.php:1342
-#@ commentluv
+#: ../commentluv.php:1202
 msgid "Example text and background color"
-msgstr "Vzor farby textu a pozadia"
+msgstr "Priklad farba textu a pozadia"
 
-#: commentluv.php:1352
-#@ commentluv
+#: ../commentluv.php:1212
 msgid "Messages"
-msgstr "Správy"
+msgstr "Spravy"
 
-#: commentluv.php:1359
-#@ commentluv
+#: ../commentluv.php:1219
 msgid "Text to be displayed in the comment"
-msgstr "Text zobrazený v komentári"
+msgstr "Text, ktory sa zobrazi v komentari"
 
-#: commentluv.php:1362
-#@ commentluv
+#: ../commentluv.php:1222
 msgid "[name] = The users name"
-msgstr "[meno] = užívateľské meno"
+msgstr "[name] = The uzivatelov nazov"
 
-#: commentluv.php:1362
-#@ commentluv
+#: ../commentluv.php:1222
 msgid "[lastpost] = The last blog post link"
-msgstr "[posledný post] = odkaz na posledný príspevok"
+msgstr "[lastpost] = Posledny blog post link"
 
-#: commentluv.php:1369
-#@ commentluv
+#: ../commentluv.php:1229
 msgid "Message for unregistered user in the drop down box"
-msgstr "Správa pre neregistrovaných v rozbaľovacom boxe"
+msgstr "Sprava pre neregistrovanych uzivatelov v rozbalovacom zozname"
 
-#: commentluv.php:1370
-#: commentluv.php:1396
-#@ commentluv
+#: ../commentluv.php:1230 ../commentluv.php:1254
 msgid "Message will not be shown if you do not have registrations enabled"
-msgstr "Správa sa nezobrazí, ak máte zakázanú registráciu"
+msgstr "Sprava nebude zobrazene, ak nemate registracii povolene"
 
-#: commentluv.php:1374
-#@ commentluv
+#: ../commentluv.php:1234
 msgid "Your register link code"
-msgstr "Váš registračný kód"
+msgstr "Vas register kodu"
 
-#: commentluv.php:1386
-#@ commentluv
-msgid "You have NOT set your blog to allow registrations, you can do that in Settings/General"
-msgstr "Nemáte povolené registrácie, môžte ich zapnúť vo Všeobecných nastaveniach"
+#: ../commentluv.php:1244
+msgid ""
+"You have NOT set your blog to allow registrations, you can do that in "
+"Settings/General"
+msgstr ""
+"Nemate NIE JE nastaveny svoj blog, aby registracia, mozete to urobit v "
+"Nastavenia / Vseobecne"
 
-#: commentluv.php:1387
-#@ commentluv
+#: ../commentluv.php:1245
 msgid "here"
 msgstr "tu"
 
-#: commentluv.php:1395
-#@ commentluv
+#: ../commentluv.php:1253
 msgid "Message for unregistered user in the info panel"
-msgstr "Správa pre neregistrovaných v info paneli"
+msgstr "Sprava pre neregistrovanych uzivatelov v informacnom paneli"
 
-#: commentluv.php:1410
-#@ commentluv
+#: ../commentluv.php:1268
 msgid "Operational Settings"
-msgstr "Operačné nastavenia"
+msgstr "Operacny Settings"
 
-#: commentluv.php:1417
-#@ commentluv
+#: ../commentluv.php:1275
 msgid "Who to give 10 last posts to choose from when they comment?"
-msgstr "Kto môže vidieť posledných 10 príspevkov a komentovať ich?"
+msgstr "Kto dat 10 posledne prispevky na vyber, ked komentovat?"
 
-#: commentluv.php:1418
-#@ commentluv
+#: ../commentluv.php:1276
 msgid "Only Registered Members"
-msgstr "Len registrovaný"
+msgstr "Len Registrovani clenovia"
 
-#: commentluv.php:1419
-#@ commentluv
+#: ../commentluv.php:1277
 msgid "Everybody"
-msgstr "Každý"
+msgstr "Vsetci"
 
-#: commentluv.php:1420
-#@ commentluv
+#: ../commentluv.php:1278
 msgid "Nobody"
 msgstr "Nikto"
 
-#: commentluv.php:1427
-#@ commentluv
+#: ../commentluv.php:1285
 msgid "Whose links should be dofollow?"
-msgstr "Čie odkazy budú dofollow?"
+msgstr "Ci odkazy by mali byt DoFollow?"
 
-#: commentluv.php:1428
-#@ commentluv
+#: ../commentluv.php:1286
 msgid "Only Registered Members Links"
-msgstr "Len registrovaných"
+msgstr "Iba Registrovani clenovia odkazy"
 
-#: commentluv.php:1429
-#@ commentluv
+#: ../commentluv.php:1287
 msgid "Everybody gets dofollow links"
-msgstr "Každý získa dofollow odkazy"
+msgstr "Kazdy dostane DoFollow odkazy"
 
-#: commentluv.php:1430
-#@ commentluv
+#: ../commentluv.php:1288
 msgid "Nobody gets dofollow links"
-msgstr "Nikto nezíska dofollow"
+msgstr "Nikto sa DoFollow odkazy"
 
-#: commentluv.php:1441
-#@ commentluv
+#: ../commentluv.php:1299
 msgid "Technical Settings"
-msgstr "Technické nastavenia"
+msgstr "Technicke Settings"
 
-#: commentluv.php:1441
-#@ commentluv
+#: ../commentluv.php:1299
 msgid "Click to open technical settings"
-msgstr "Kliknite pre otvorenie týchto nastavení"
+msgstr "Otvorit technicke nastavenia"
 
-#: commentluv.php:1448
-#@ commentluv
+#: ../commentluv.php:1306
 msgid "Please check the help video for this section before changing settings"
-msgstr "Pozrite si pomocné video, než niečo prestavíte"
+msgstr ""
+"Skontrolujte prosim napovedu video k tejto casti pred zmenou nastavenia"
 
-#: commentluv.php:1449
-#@ commentluv
-msgid "In most cases, you will NOT need to change the settings in this box unless you have a custom comment form, template or you are using minifying or caching plugins"
-msgstr "Väčšinou nie je potrebné meniť nastavenia v tomto boxe. Iné je, ak máte vlastnú šablónu pre komentáre alebo používate minimalizačné či cache moduly"
+#: ../commentluv.php:1307
+msgid ""
+"In most cases, you will NOT need to change the settings in this box unless "
+"you have a custom comment form, template or you are using minifying or "
+"caching plugins"
+msgstr ""
+"Vo vacsine pripadov, nebudete musiet zmenit nastavenie v tomto poli, ak "
+"nemate vlastny komentar formulare, sablony, alebo pouzivate Minifikace alebo "
+"ukladanie do vyrovnavacej pamate pluginy"
 
-#: commentluv.php:1454
-#@ commentluv
+#: ../commentluv.php:1312
 msgid "Compatibility"
-msgstr "Kompatibilita"
+msgstr "kompatibilita"
 
-#: commentluv.php:1458
-#@ commentluv
+#: ../commentluv.php:1316
 msgid "Use manual insert of badge code?"
-msgstr "Použiť ručné vloženie kódu znaku?"
+msgstr "Pouzit rucne vlozku odznak kodu?"
 
-#: commentluv.php:1462
-#@ commentluv
+#: ../commentluv.php:1320
 msgid "Enable minifying compatibility?"
-msgstr "Zapnúť kompatibilitu minimalizácie?"
+msgstr "Povolit Minifikace kompatibility?"
 
-#: commentluv.php:1463
-#@ commentluv
+#: ../commentluv.php:1321
 msgid "For caching plugins (places localized code in footer)"
-msgstr "Pre cache moduly (umiestni kód do pätičky)"
+msgstr ""
+"Pre ukladanie do vyrovnavacej pamate pluginov (miesta lokalizovana kod do "
+"paty)"
 
-#: commentluv.php:1471
-#@ commentluv
+#: ../commentluv.php:1326
 msgid "API URL"
 msgstr "API URL"
 
-#: commentluv.php:1475
-#@ commentluv
+#: ../commentluv.php:1330
 msgid "URL to use for API"
-msgstr "URL, ktoré použije API"
+msgstr "URL pouzit pre API"
 
-#: commentluv.php:1479
-#@ commentluv
+#: ../commentluv.php:1334
 msgid "Comment Form Field Values"
-msgstr "Hodnota poľa s komentárom"
+msgstr "Komentar hodnoty tvoria pole"
 
-#: commentluv.php:1482
-#@ commentluv
+#: ../commentluv.php:1337
 msgid "Authors Name field name"
-msgstr "Pole s autorom"
+msgstr "Autori pola Nazov nazov"
 
-#: commentluv.php:1487
-#@ commentluv
+#: ../commentluv.php:1342
 msgid "Email field name"
-msgstr "Pole s emailom"
+msgstr "Email nazov pola"
 
-#: commentluv.php:1492
-#@ commentluv
+#: ../commentluv.php:1347
 msgid "Authors URL field name"
-msgstr "Pole s URL autora"
+msgstr "Autori URL nazov pola"
 
-#: commentluv.php:1497
-#@ commentluv
+#: ../commentluv.php:1352
 msgid "Comment Text Area name"
-msgstr "Názov textového poľa"
+msgstr "Komentar Text Area meno"
 
-#: commentluv.php:1510
-#@ commentluv
+#: ../commentluv.php:1357
 msgid "Diagnostics Info"
-msgstr "Diagnostické info"
+msgstr "Diagnostika Info"
 
-#: commentluv.php:1528
-#@ commentluv
+#: ../commentluv.php:1375
 msgid "You can copy this information and send it to me if I request it"
-msgstr "Môžte skopírovať tieto informácie a poslať mi ich, ak ich budem vyžadovať"
+msgstr "Mozete kopirovat tuto informaciu a poslat na mna, ci budem chciet"
 
-#: commentluv.php:1535
-#@ commentluv
+#: ../commentluv.php:1382
 msgid "Save Settings"
-msgstr "Uložiť nastavenia"
+msgstr "Ulozit nastavenia"
 
-#: commentluv.php:1537
-#@ commentluv
+#: ../commentluv.php:1384
 msgid "Reset Settings"
-msgstr "Reštartovať nastavenia"
+msgstr "Obnovit nastavenia"
 
-#: commentluv.php:1540
-#@ commentluv
+#: ../commentluv.php:1387
 msgid "Are you sure you want to reset your settings? Press OK to continue"
-msgstr "Naozaj chcete reštartovať vaše nastavenia? Kliknite na OK pre pokračovanie"
+msgstr "Ste si isti, ze chcete obnovit nastavenia? Stlacte OK pre pokracovanie"
 
-#: commentluv.php:1543
-#@ commentluv
+#: ../commentluv.php:1390
 msgid "Reset"
-msgstr "Reštartovať"
+msgstr "Reset"
 
-#: commentluv.php:1551
-#@ commentluv
+#: ../commentluv.php:1398
 msgid "Plugin Info"
-msgstr "Info o module"
+msgstr "Plugin Info"
 
-#: commentluv.php:1554
-#@ commentluv
+#: ../commentluv.php:1401
 msgid "Start Here"
-msgstr "Začnite tu"
+msgstr "Start Here"
 
-#: commentluv.php:1555
-#@ commentluv
+#: ../commentluv.php:1402
 msgid "Author"
 msgstr "Autor"
 
-#: commentluv.php:1556
-#@ commentluv
+#: ../commentluv.php:1403
 msgid "Home Page"
-msgstr "Domovská stránka"
+msgstr "Home Page"
 
-#: commentluv.php:1556
-#@ commentluv
+#: ../commentluv.php:1403
 msgid "Visit www.commentluv.com!"
-msgstr "Navštívte www.commentluv.com!"
+msgstr "Navstivit www.commentluv.com!"
 
-#: commentluv.php:1557
-#@ commentluv
+#: ../commentluv.php:1404
 msgid "Social"
-msgstr "Sociálne siete"
+msgstr "socialne"
 
-#: commentluv.php:1558
-#@ commentluv
+#: ../commentluv.php:1405
 msgid "Help"
-msgstr "Pomoc"
+msgstr "Pomocnik"
 
-#: commentluv.php:1558
-#@ commentluv
+#: ../commentluv.php:1405
 msgid "Help Desk"
-msgstr "Podpora"
+msgstr "Help Desk"
 
-#: commentluv.php:1559
-#@ commentluv
+#: ../commentluv.php:1406
 msgid "Do you like this plugin?"
-msgstr "Páči sa vám tento modul?"
+msgstr "Paci sa vam tento plugin?"
 
-#: commentluv.php:1561
-#@ commentluv
+#: ../commentluv.php:1408
 msgid "News"
-msgstr "Novinky"
+msgstr "Spravy"
 
-#: commentluv.php:1589
-#@ commentluv
+#: ../commentluv.php:1414
 msgid "Thanks to the following for translations"
-msgstr "Ďakujeme prekladateľom"
+msgstr "Vdaka nasledujucich pre preklady"
 
-#: commentluv.php:1590
-#@ commentluv
+#: ../commentluv.php:1415
 msgid "Italian"
-msgstr "Taliančina"
+msgstr "talianskej"
 
-#: commentluv.php:1591
-#@ commentluv
+#: ../commentluv.php:1416
 msgid "Dutch"
-msgstr "Holandčina"
+msgstr "Dutch"
 
-#: commentluv.php:1592
-#@ commentluv
+#: ../commentluv.php:1417
 msgid "Polish"
-msgstr "Poľština"
+msgstr "polska"
 
-#: commentluv.php:1593
-#@ commentluv
+#: ../commentluv.php:1418
 msgid "Georgian"
-msgstr "Gruzínčina"
+msgstr "gruzinskej"
 
-#: commentluv.php:1594
-#@ commentluv
+#: ../commentluv.php:1419
 msgid "Lithuanian"
-msgstr "Litovčina"
+msgstr "litovske"
 
-#: commentluv.php:1595
-#@ commentluv
+#: ../commentluv.php:1420
 msgid "Portuguese"
-msgstr "Portogalčina"
+msgstr "Portugalske"
 
-#: commentluv.php:1596
-#@ commentluv
+#: ../commentluv.php:1421
 msgid "Malaysian"
-msgstr "Malajčina"
+msgstr "Malajzia"
 
-#: commentluv.php:1597
-#@ commentluv
+#: ../commentluv.php:1422
 msgid "Hindi"
-msgstr "Hindčina"
+msgstr "Hindcina"
 
-#: commentluv.php:1610
-#@ commentluv
+#: ../commentluv.php:1423
 msgid "Russian"
-msgstr "Ruština"
+msgstr "rusky"
 
-#: commentluv.php:1612
-#@ commentluv
+#: ../commentluv.php:1424
+msgid "Chinese"
+msgstr "Cinan"
+
+#: ../commentluv.php:1425
 msgid "Hebrew"
-msgstr "Hebrejčina"
+msgstr "hebrejsky"
 
-#: commentluv.php:1608
-#@ commentluv
+#: ../commentluv.php:1426
 msgid "French"
-msgstr "Francúzština"
+msgstr "francuzsky"
 
-#: commentluv.php:1606
-#@ commentluv
+#: ../commentluv.php:1428
 msgid "Romanian"
-msgstr "Rumunčina"
+msgstr "rumunsky"
 
-#: commentluv.php:1601
-#@ commentluv
+#: ../commentluv.php:1429
 msgid "German"
-msgstr "Nemčina"
+msgstr "Nemec"
 
-#: commentluv.php:1615
-#@ commentluv
+#: ../commentluv.php:1430
 msgid "Arabic"
-msgstr "Arabčina"
+msgstr "arabsky"
 
-#: commentluv.php:1616
-#@ commentluv
+#: ../commentluv.php:1432
 msgid "Want your link here?"
-msgstr "Chcete tu mať odkaz?"
+msgstr "Chcete sem svoj odkaz?"
 
-#: commentluv.php:1616
-#@ commentluv
+#: ../commentluv.php:1432
 msgid "How To Submit A Translation"
-msgstr "Ako odoslať preklad"
+msgstr "Ako podat preklad"
 
-#: commentluv.php:1617
-#@ commentluv
+#: ../commentluv.php:1433
 msgid "Special thanks go to the following"
-msgstr "Špeciálna vďaka patrí nasledujúcim"
+msgstr "Zvlastne podakovanie patri nasledujucim"
 
-#: commentluv.php:1618
-#@ commentluv
+#: ../commentluv.php:1434
 msgid "CSS Help"
-msgstr "CSS Pomoc"
+msgstr "CSS Help"
 
-#: commentluv.php:1619
-#@ commentluv
+#: ../commentluv.php:1435
 msgid "Badge GFX"
-msgstr "Badge GFX"
-
-#: commentluv.php:774
-#: commentluv.php:1057
-#@ commentluv
-msgid "Warning! You have set to show 10 posts for registered users but you have not enabled user registrations on your site. You should change the operational settings in the CommentLuv settings page to show 10 posts for everyone or enable user registrations"
-msgstr "Upozornenie! Nastavili ste zobrazovanie 10 príspevkov pre registrovaných, ale nemáte zapnuté registrácie. Mali by ste zmeniť nastavenie a zobraziť tieto príspevky pre každého alebo zapnúť registrácie."
-
-#: commentluv.php:1234
-#@ commentluv
-msgid "CommentLuv 3.0 Premium is here!"
-msgstr "CommentLuv 3.0 prémium je TU!"
-
-#: commentluv.php:1238
-#@ commentluv
-msgid "Do you like CommentLuv? How about an even better version with much more control over dofollow and some awesome social enticements that will make your posts go viral by offering your readers more choice of posts if they +1, Like or tweet your post? Get CommentLuv Premium Today!"
-msgstr "Páči sa vám CommentLuv? A čo tak ešte lepšia verzia s väčšou kontrolou dofollow odkazov a exkluzívnymi vylepšeniami, ktoré urobia vaše príspevky virálne lúsknutím prsta. Platená verzia zahŕňa Google +1, Like a Tweet. Získajte CommentLuv prémium ešte dnes!"
-
-#: commentluv.php:1243
-#@ commentluv
-msgid "Click for a special offer!"
-msgstr "Nezmeškajte túto ponuku!"
-
-#: commentluv.php:1376
-#@ commentluv
-msgid "(this will be automatically added if you have not added it yourself to the textarea above)"
-msgstr "(toto bude automaticky pridaní, ak ste to nepridali sami vo formulári vyššie)"
-
-#: commentluv.php:1466
-#@ commentluv
-msgid "Disable Detection?"
-msgstr "Vypnúť zisťovanie?"
-
-#: commentluv.php:1467
-#@ commentluv
-msgid "For XML errors"
-msgstr "Pre XML chyby"
-
-#: commentluv.php:1502
-#@ commentluv
-msgid "Extras"
-msgstr "Doplnky"
-
-#: commentluv.php:1506
-#@ commentluv
-msgid "Do not show link if comment has no URL"
-msgstr "Nezobraziť odkaz, ak komentár neobsahuje URL"
-
-#: commentluv.php:1507
-#@ commentluv
-msgid "Prevents spammer abuse"
-msgstr "Ochrana pre spamom"
-
-#: commentluv.php:1598
-#@ commentluv
-msgid "Indonesian"
-msgstr "Indonézština"
-
-#: commentluv.php:1599
-#@ commentluv
-msgid "Chinese (s)"
-msgstr "Čínština"
-
-#: commentluv.php:1600
-#@ commentluv
-msgid "Spanish"
-msgstr "Španielčina"
-
-#: commentluv.php:1602
-#@ commentluv
-msgid "Persian"
-msgstr "Perzština"
-
-#: commentluv.php:1603
-#@ commentluv
-msgid "Tamil"
-msgstr "Tamilčina"
-
-#: commentluv.php:1604
-#@ commentluv
-msgid "Ukranian"
-msgstr "Ukrajinčina"
-
-#: commentluv.php:1605
-#@ commentluv
-msgid "Latvian"
-msgstr "Lotyština"
-
-#: commentluv.php:1607
-#@ commentluv
-msgid "Norwegian"
-msgstr "Nórčina"
-
-#: commentluv.php:1609
-#@ commentluv
-msgid "Danish"
-msgstr "Dánčina"
-
-#: commentluv.php:1611
-#@ commentluv
-msgid "Bengali"
-msgstr "Bengálčina"
-
+msgstr "Odznak GFX"
