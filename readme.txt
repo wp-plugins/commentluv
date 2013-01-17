@@ -375,9 +375,9 @@ Please see the videos in the settings page for explanations of how they work.
 
 == Upgrade Notice ==
 
-= 2.92.3 =
+= 2.92.4 =
                                                                    
-Fix for wordpress 3.5 wpdb->prepare notice
+Important security fix
 
 == Configuration ==
 
