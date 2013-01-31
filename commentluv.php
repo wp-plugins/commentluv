@@ -2,7 +2,7 @@
     Plugin Name: CommentLuv
     Plugin URI: http://comluv.com/
     Description: Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
-    Version: 2.92.4
+    Version: 2.92.5
     Author: Andy Bailey
     Author URI: http://www.commentluv.com
     Copyright (C) <2011>  <Andy Bailey>
@@ -28,7 +28,7 @@
             var $plugin_url;
             var $plugin_dir;
             var $db_option = 'commentluv_options';
-            var $version = "2.92.4";
+            var $version = "2.92.5";
             var $slug = 'commentluv-options';
             var $localize;
             var $is_commentluv_request = false;
@@ -804,6 +804,7 @@
             */
             function fetch_feed(){      
                 // check nonce
+                //debugbreak();
                 $checknonce = check_ajax_referer('fetch',false,false);
                 if(!$checknonce){
                     die(' error! not authorized '.strip_tags($_REQUEST['_ajax_nonce']));
@@ -820,7 +821,8 @@
                 include_once(ABSPATH.WPINC.'/class-simplepie.php');
                 $options = $this->get_options();
                 $num = 1;
-                $url = strip_tags($_POST['url']);
+                $url = esc_url($_POST['url']);
+                $orig_url = $url;
                 // add trailing slash (can help with some blogs)
                 if(!strpos($url,'?')){
                     $url = trailingslashit($url);
@@ -886,18 +888,28 @@
                     $rss->init();
                     $ferror = $rss->error();
                     if($ferror || stripos($ferror,'invalid')){
+                        $suburl = $rss->subscribe_url() ? $rss->subscribe_url() : $orig_url;
                         unset($rss);
                         $rss = new SimplePie();
                         $rss->set_useragent('Commentluv /'.$this->version.' (Feed Parser; http://www.commentluv.com; Allow like Gecko) Build/20110502' );
                         $rss->enable_cache ( FALSE );                                                   
-                        $rss->set_feed_url($url);
+                        $rss->set_feed_url($orig_url);
                         $rss->init();
                         $ferror = $rss->error();
                         // go back to original URL if error persisted
                         if(stripos($ferror,'invalid')){
                             //get raw file to show any errors
-                            $rawfile = new $rss->file_class($rss->feed_url, $rss->timeout, 5, null, $rss->useragent, $rss->force_fsockopen);
-                            $rawfile = $rawfile->body;
+                            @include_once(ABSPATH.WPINC.'/SimplePie/File.php');
+                            if(class_exists('SimplePie_File')){
+                                $rawfile = new SimplePie_File($suburl, $rss->timeout, 5, null, $rss->useragent, $rss->force_fsockopen);
+                            } elseif (class_exists($rss->file_class)){
+                                $rawfile = new $rss->file_class($suburl, $rss->timeout, 5, null, $rss->useragent, $rss->force_fsockopen);
+                            }
+                            if(isset($rawfile->body)){
+                                $rawfile = $rawfile->body;
+                            } else {
+                                $rawfile = __('Raw file could not be found',$this->plugin_domain);
+                            }
                         }
                     }
                 }
