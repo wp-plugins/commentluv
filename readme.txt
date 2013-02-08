@@ -4,7 +4,7 @@ Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv, comment luv , commentlove, comment love
 Requires at least: 3.0
 Tested up to: 3.5
-Stable tag: 2.92.5
+Stable tag: 2.92.6
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -85,6 +85,11 @@ Please see the videos in the settings page for explanations of how they work.
 4. edit post comments
 
 == ChangeLog ==
+
+= 2.92.6 =
+
+* fixed : special feed was showing special chars for hyphen and quotes in post titles
+* fixed : strip tags from feed before displaying in drop down
 
 = 2.92.5 =
 
@@ -380,9 +385,9 @@ Please see the videos in the settings page for explanations of how they work.
 
 == Upgrade Notice ==
 
-= 2.92.5 =
+= 2.92.6 =
                                                                    
-Better error checking and reporting
+Do not show html special character encoding in feed that commentluv sends
 
 == Configuration ==
 

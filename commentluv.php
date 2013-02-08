@@ -2,7 +2,7 @@
     Plugin Name: CommentLuv
     Plugin URI: http://comluv.com/
     Description: Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
-    Version: 2.92.5
+    Version: 2.92.6
     Author: Andy Bailey
     Author URI: http://www.commentluv.com
     Copyright (C) <2011>  <Andy Bailey>
@@ -28,7 +28,7 @@
             var $plugin_url;
             var $plugin_dir;
             var $db_option = 'commentluv_options';
-            var $version = "2.92.5";
+            var $version = "2.92.6";
             var $slug = 'commentluv-options';
             var $localize;
             var $is_commentluv_request = false;
@@ -843,7 +843,7 @@
                     $error = '';
                     if($posts){
                         foreach($posts as $post){
-                            $return[] = array('type'=>'blog','title'=>$post->post_title,'link'=>get_permalink($post->ID),'p'=>'u');
+                            $return[] = array('type'=>'blog','title'=>htmlspecialchars_decode(strip_tags($post->post_title)),'link'=>get_permalink($post->ID),'p'=>'u');
                         }
                     } else {
                         $error = __('Could not get posts for home blog',$this->plugin_domain);
@@ -952,7 +952,7 @@
                         if($itemtags){
                             $type = $itemtags[0]['data'];
                         }
-                        $arr[] = array('type'=>$type,'title'=>$item->get_title(),'link'=>$item->get_permalink(),'p'=>$p);
+                        $arr[] = array('type'=>$type,'title'=>htmlspecialchars_decode(strip_tags($item->get_title())),'link'=>$item->get_permalink(),'p'=>$p);
                         $g--;
                         if($g < 1){
                             break;
@@ -1325,7 +1325,9 @@
                 '<success>'.$error.'</success>';
                 if(is_array($posts)){ 
                     foreach($posts as $post){
-                        $feed .= '<item><title><![CDATA['.get_the_title($post->ID).']]></title>'.
+                        $title = get_the_title($post->ID);         
+                        //$feed .= '<item><title><![CDATA['.$title.']]></title>'.
+                        $feed .= '<item><title>'.strip_tags($title).'</title>'.
                         '<link>'.get_permalink($post->ID).'</link>'.
                         '<type>blog</type>'.
                         '</item>';
