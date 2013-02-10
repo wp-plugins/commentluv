@@ -2,7 +2,7 @@
     Plugin Name: CommentLuv
     Plugin URI: http://comluv.com/
     Description: Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
-    Version: 2.92.6
+    Version: 2.92.7
     Author: Andy Bailey
     Author URI: http://www.commentluv.com
     Copyright (C) <2011>  <Andy Bailey>
@@ -28,7 +28,7 @@
             var $plugin_url;
             var $plugin_dir;
             var $db_option = 'commentluv_options';
-            var $version = "2.92.6";
+            var $version = "2.92.7";
             var $slug = 'commentluv-options';
             var $localize;
             var $is_commentluv_request = false;
@@ -1326,8 +1326,8 @@
                 if(is_array($posts)){ 
                     foreach($posts as $post){
                         $title = get_the_title($post->ID);         
-                        //$feed .= '<item><title><![CDATA['.$title.']]></title>'.
-                        $feed .= '<item><title>'.strip_tags($title).'</title>'.
+                        //$feed .= '<item><title>'.strip_tags($title).'</title>'.
+                        $feed .= '<item><title><![CDATA['.$title.']]></title>'.
                         '<link>'.get_permalink($post->ID).'</link>'.
                         '<type>blog</type>'.
                         '</item>';
@@ -1338,7 +1338,7 @@
                     '</item>';
                 }
                 $feed .= '</channel></rss>';
-                ob_end_clean();
+                ob_end_clean();                                                       
                 header("Content-Type: application/atom+xml; charset=".get_bloginfo('charset'));
                 echo $feed;    
                 exit;                        
