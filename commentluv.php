@@ -2,7 +2,7 @@
     Plugin Name: CommentLuv
     Plugin URI: http://comluv.com/
     Description: Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
-    Version: 2.92.7
+    Version: 2.92.8
     Author: Andy Bailey
     Author URI: http://www.commentluv.com
     Copyright (C) <2011>  <Andy Bailey>
@@ -28,7 +28,7 @@
             var $plugin_url;
             var $plugin_dir;
             var $db_option = 'commentluv_options';
-            var $version = "2.92.7";
+            var $version = "2.92.8";
             var $slug = 'commentluv-options';
             var $localize;
             var $is_commentluv_request = false;
@@ -743,8 +743,8 @@
                             $ajaxnonce = wp_create_nonce($comment->comment_ID);
                             $class = ' class="'.$ajaxnonce.' '.$comment->comment_ID.$pclass.'"';
                             $luvlink = '<a'.$class.$nofollow.' href="'.$data['cl_post_url'].'">'.$data['cl_post_title'].'</a>';
-                            $search = array ('[name]', '[lastpost]' );
-                            $replace = array ($comment->comment_author, $luvlink );
+                            $search = array ('[name]', '[lastpost]','[type]' );
+                            $replace = array ($comment->comment_author, $luvlink,'blog post' );
                             $prepend_text = $options ['comment_text'];
                             $inserted = str_replace ( $search, $replace, $prepend_text );
                             // check if author has a url. do not add the link if user has set to hide links for comments with no url
@@ -1826,12 +1826,13 @@
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/fr.png"/> <?php _e('French',$this->plugin_domain);?></td><td><a target="_blank" href="http://etreheureux.fr/">Jean-Luc Matthys</a></td></tr>  
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/dk.png"/> <?php _e('Danish',$this->plugin_domain);?></td><td><a target="_blank" href="http://w3blog.dk/">Jimmy Sigenstroem</a></td></tr>  
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/ru.png"/> <?php _e('Russian',$this->plugin_domain);?></td><td><a target="_blank" href="http://lavo4nik.ru/">Max</a></td></tr>
-                                <tr><td><img src="<?php echo $this->plugin_url;?>images/bd.png"/> <?php _e('Bengali',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.monetizeblogging.com/">Amrik Virdi</a></td></tr>
+                                <tr><td><img src="<?php echo $this->plugin_url;?>images/bd.png"/> <?php _e('Bengali',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.techmoody.com">Amrik Virdi</a></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/il.png"/> <?php _e('Hebrew',$this->plugin_domain);?></td><td><a target="_blank" href="http://makemoneyim.com/">Tobi</a></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/vn.png"/> <?php _e('Vietnamese',$this->plugin_domain);?></td><td><a target="_blank" href="http://thegioimanguon.com/">Xman</a></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/hu.png"/> <?php _e('Hungarian',$this->plugin_domain);?></td><td><a target="_blank" href="http://no1tutorials.net/">Bruno</a></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/sk.png"/> <?php _e('Slovak',$this->plugin_domain);?></td><td><a target="_blank" href="http://www.brozman.sk/blog">Viliam Brozman</a></td></tr>
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/rs.png"/> <?php _e('Serbian',$this->plugin_domain);?></td><td><a target="_blank" href="http://wpcouponshop.com/">Diana</a></td></tr>
+                                <tr><td><img src="<?php echo $this->plugin_url;?>images/tr.png"/> <?php _e('Turkish',$this->plugin_domain);?></td><td><a target="_blank" href="http://hakanertr.wordpress.com/">Hakan</a></td></tr>
 
 
                                 <tr><td><img src="<?php echo $this->plugin_url;?>images/sa.png"/> <?php _e('Arabic',$this->plugin_domain);?></td><td><!--<a target="_blank" href="http://www.melzarei.be/">Muhammad Elzarei</a>--></td></tr>

@@ -3,8 +3,8 @@ Contributors: commentluv, @hishaman (css additions)
 Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv, comment luv , commentlove, comment love
 Requires at least: 3.0
-Tested up to: 3.5
-Stable tag: 2.92.7
+Tested up to: 3.6
+Stable tag: 2.92.8
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -51,12 +51,13 @@ Norwegian [Hanna](http://www.drommeland.com/ "Norwegian Translation")
 French [Jean-Luc Matthys](http://etreheureux.fr/ "French Translation")
 Danish [Jimmy Sigenstroem](http://w3blog.dk/ "Danish Translation")
 Russian [Max](http://lavo4nik.ru/ "Russian Translation")
-Bengali [Amrik Virdi](http://www.monetizeblogging.com/ "Bengali Translation")
+Bengali [Amrik Virdi](http://www.techmoody.com "Bengali Translation")
 Hebrew [Tobi](http://makemoneyim.com/ "Hebrew Translation")
 Vietnamese [Xman](http://thegioimanguon.com "Vietnamese Translation")
 Hungarian [Bruno](http://no1tutorials.net/ "Hungarian Translation")
 Slovak [Branco Radenovich](http://webhostinggeeks.com/blog/ "Slovak Translation")
 Serbian [Diana](http://wpcouponshop.com/ "Serbian Translation")
+Turkish [Hakan](http://hakanertr.wordpress.com/ "Turkish Translation")
 
 == Installation ==
 
@@ -85,6 +86,13 @@ Please see the videos in the settings page for explanations of how they work.
 4. edit post comments
 
 == ChangeLog ==
+
+= 2.92.8 =
+
+* updated : translation for Bengali
+* updated : translation for Turkish
+* added : allow swap of [type] with 'blog post' so old versions that are updated but not modified will look better
+
 = 2.92.7 =
 
 * fixed : enclose title in cdata tags in send feed file function to prevent invalid xml errors
