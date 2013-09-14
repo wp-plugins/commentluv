@@ -3,8 +3,8 @@ Contributors: commentluv, @hishaman (css additions)
 Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv, comment luv , commentlove, comment love
 Requires at least: 3.0
-Tested up to: 3.6
-Stable tag: 2.92.8
+Tested up to: 3.6.1
+Stable tag: 2.92.9
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -86,6 +86,11 @@ Please see the videos in the settings page for explanations of how they work.
 4. edit post comments
 
 == ChangeLog ==
+
+= 2.92.9 =
+
+* updated : settings page panel for ads
+* updated : compatibility setting
 
 = 2.92.8 =
 
@@ -396,9 +401,9 @@ Please see the videos in the settings page for explanations of how they work.
 
 == Upgrade Notice ==
 
-= 2.92.7 =
+= 2.92.9 =
                                                                    
-fix feed file so no xml errors are shown for hyphen type titles
+updated compatibility
 
 == Configuration ==
 
