@@ -63,7 +63,8 @@ jQuery(document).ready(function(){
     // add info panel to page
     jQuery("body").append('<span id="heart_tip_big" style="display: none;position:absolute; z-index: 1001; background-color: ' + cl_settings['infoback'] + '; color: ' + cl_settings['infotext'] + '; width: 62px;"></span>');
     // hover over to see raw file wrapper open
-    jQuery('.rawfilewrap').live('hover',function(){
+    //jQuery('.rawfilewrap').live('hover',function(){
+    jQuery('#commentluv').on('hover','.rawfilewrap',function(){
         jQuery('.rawfile').toggle();
     });
 
