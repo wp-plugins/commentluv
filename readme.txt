@@ -3,8 +3,8 @@ Contributors: commentluv, @hishaman (css additions)
 Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv, comment luv , commentlove, comment love
 Requires at least: 3.0
-Tested up to: 3.6.1
-Stable tag: 2.93
+Tested up to: 3.7
+Stable tag: 2.93.1
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -86,6 +86,10 @@ Please see the videos in the settings page for explanations of how they work.
 4. edit post comments
 
 == ChangeLog ==
+
+= 2.93.1 =
+
+* updated : prevent notice in admin for $authurl , check it is in $comment before trying to use it
 
 = 2.93 =
 

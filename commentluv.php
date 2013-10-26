@@ -28,7 +28,7 @@ if (! class_exists ( 'commentluv' )) {
         var $plugin_url;
         var $plugin_dir;
         var $db_option = 'commentluv_options';
-        var $version = "2.93";
+        var $version = "2.93.1";
         var $slug = 'commentluv-options';
         var $localize;
         var $is_commentluv_request = false;
@@ -747,8 +747,8 @@ if (! class_exists ( 'commentluv' )) {
                         $replace = array ($comment->comment_author, $luvlink,'blog post' );
                         $prepend_text = $options ['comment_text'];
                         $inserted = str_replace ( $search, $replace, $prepend_text );
-                        // check if author has a url. do not add the link if user has set to hide links for comments with no url
-                        $authurl = $comment->comment_author_url;
+                        // check if author has a url. do not add the link if user has set to hide links for comments with no url  
+                        $authurl = isset($comment->comment_author_url) ? $comment->comment_author_url : null;
                         $showlink = true;   
                         if($authurl == '' && isset($options['hide_link_no_url']) && $options['hide_link_no_url'] == 'on'){
                             $showlink = false;
@@ -1760,7 +1760,7 @@ if (! class_exists ( 'commentluv' )) {
                                                     $maxitems = $rss->get_item_quantity(2);
                                                     $rssitems = $rss->get_items(0,$maxitems);
                                                 }
-                                                foreach($rssitems as $item){
+                                                foreach($rssitems as $item){  
                                                     echo '<div><a href="'.esc_url( $item->get_permalink() ).'">'.esc_html($item->get_title()).'</a>';
                                                     echo '<p>'.$item->get_content().'</p></div>';
                                                 }
