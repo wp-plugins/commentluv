@@ -2,7 +2,7 @@
 Plugin Name: CommentLuv
 Plugin URI: http://comluv.com/
 Description: Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
-Version: 2.93.1
+Version: 2.93.2
 Author: Andy Bailey
 Author URI: http://www.commentluv.com
 Copyright (C) <2011>  <Andy Bailey>
@@ -593,7 +593,8 @@ if (! class_exists ( 'commentluv' )) {
             $link = $_POST['link'];
             // is registered user?
             $email = get_comment_author_email($cid);
-            $user = get_user_by_email($email);
+            //$user = get_user_by_email($email);
+            $user = get_user_by('email',$email);
             if($user){
                 $isreg = true;
             }
@@ -732,7 +733,8 @@ if (! class_exists ( 'commentluv' )) {
                     if($data['cl_post_url'] != '' && $data['cl_post_title'] != ''){ 
                         // luvlink was saved to meta, dofollow the link?
                         $nofollow = ' rel="nofollow"';
-                        $isreg = get_user_by_email($comment->comment_author_email);
+                        //$isreg = get_user_by_email($comment->comment_author_email);
+                        $isreg = get_user_by('email',$comment->comment_author_email);
                         if($options['dofollow'] == 'everybody'){
                             $nofollow = '';
                         } elseif ($options['dofollow'] == 'registered' && $isreg){
