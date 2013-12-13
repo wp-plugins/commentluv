@@ -2,9 +2,9 @@
 Contributors: commentluv, @hishaman (css additions)
 Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv, comment luv , commentlove, comment love
-Requires at least: 3.0
-Tested up to: 3.7.1
-Stable tag: 2.93.2
+Requires at least: 3.6
+Tested up to: 3.8
+Stable tag: 2.93.3
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -27,6 +27,14 @@ You can get a free companion plugin at http://www.commentluv.com
 [youtube http://www.youtube.com/watch?v=7wod9ZtiHaU]
 
 Now with updated function to allow you to delete or spam comments where the user has removed their url after getting a last blog post link (helps prevents spammer abuse)
+
+NOTE!
+
+The links that CommentLuv adds are valuable for the people that leave comments so you will need to make sure that spammers do not try to take advantage of your blog by filling it with useless comments just to get a link. Be a good blogger and prevent them from leaving their crap on your site by requiring moderation on first comments and do not accept 'great post thanks!' type of comments.
+
+There has been great success in beating spam by installing [G.A.S.P](http://wordpress.org/plugins/growmap-anti-spambot-plugin/ "Growmap Anti Spambot Plugin") . It will bring your blog back under your control and it's free!
+
+remember.. if you let anyone comment on your blog without restriction then you WILL get spammed whether you have CommentLuv or not. Be strict with your comment policy and be take responsibility for your own blog by being selective with the comments you accept and the internet will be a happier, spam free and useful place again! :-)
 
 Many thanks to the following who provided translations
 
@@ -86,6 +94,15 @@ Please see the videos in the settings page for explanations of how they work.
 4. edit post comments
 
 == ChangeLog ==
+
+= 2.93.3 =
+
+* updated : readme now says minimum wp 3.6 required
+* updated : add_removeluv_link now detects if $post is not available (prevents error on dashboard comments)
+* fixed : sidebar for wordpress 3.8 now shows properly (removed width setting on #poststuff div)
+* updated : sidebar facebook widget updated to use comluv.com version
+
+= 2.93.2 =
 
 * updated : get_user_by_email removed from functions.
 
@@ -413,7 +430,7 @@ Please see the videos in the settings page for explanations of how they work.
 
 = 2.93 =
                                                                    
-updated javascript compatibility
+updated javascript compatibility and wp3.8 compatibility
 
 == Configuration ==
 

@@ -2,7 +2,7 @@
 Plugin Name: CommentLuv
 Plugin URI: http://comluv.com/
 Description: Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
-Version: 2.93.2
+Version: 2.93.3
 Author: Andy Bailey
 Author URI: http://www.commentluv.com
 Copyright (C) <2011>  <Andy Bailey>
@@ -28,7 +28,7 @@ if (! class_exists ( 'commentluv' )) {
         var $plugin_url;
         var $plugin_dir;
         var $db_option = 'commentluv_options';
-        var $version = "2.93.1";
+        var $version = "2.93.3";
         var $slug = 'commentluv-options';
         var $localize;
         var $is_commentluv_request = false;
@@ -201,6 +201,10 @@ if (! class_exists ( 'commentluv' )) {
         */
         function add_removeluv_link($actions){
             global $post;
+            if(!$post){
+                // must be showing on the dashboard
+                return $actions;
+            }
             $user_can = current_user_can('edit_posts', $post->ID);
             $cid = get_comment_ID();
             $data = get_comment_meta($cid,'cl_data');
@@ -1408,8 +1412,8 @@ if (! class_exists ( 'commentluv' )) {
             ?>
             <div class="wrap">
                 <h2><?php _e('CommentLuv Settings v',$this->plugin_domain);?><?php echo $this->version;?></h2>
-                <div id="poststuff" style="margin-top:10px; width: 965px;">
-                    <div id="mainblock" style="float: left; width:710px">
+                <div id="poststuff" style="margin-top:10px; ">
+                    <div id="mainblock" style="float: left; width:78%">
                         <form method="post" action="options.php">
                             <?php settings_fields( 'commentluv_options_group' ); // the name given in admin init
                             // after here, put all the inputs and text fields needed
@@ -1797,7 +1801,7 @@ if (! class_exists ( 'commentluv' )) {
                                 <tr><td><strong><?php _e('Social',$this->plugin_domain);?>:</strong></td><td><a title="Follow CommentLuv on Twitter" href="http://twitter.com/commentluv/" target="_blank"><img src="<?php echo $this->plugin_url;?>images/twitter.png"/></a> <a title="Join me on LinkedIn" href="http://uk.linkedin.com/in/commentluv" target="_blank"><img src="<?php echo $this->plugin_url;?>images/linkedin.png"/></a> <a title="Join me on Facebook" href="http://www.facebook.com/CommentLuv" target="_blank"><img src="<?php echo $this->plugin_url;?>images/facebook.png"/></a></td></tr>
                                 <tr><td><strong><?php _e('Help',$this->plugin_domain);?>:</strong></td><td><a href="http://support.commentluv.com/" target="_blank"><?php _e('Help Desk',$this->plugin_domain);?></a></td></tr>
                                 <tr class="alt"><td colspan="2"><?php _e('Do you like this plugin?',$this->plugin_domain);?></td></tr>
-                                <tr><td colspan="2"><iframe src="http://www.facebook.com/plugins/like.php?app_id=156518444414150&amp;href=www.facebook.com%2Fcommentluv&amp;send=false&amp;layout=standard&amp;width=230&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font&amp;height=50" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:220px; height:50px;" allowTransparency="true"></iframe></td></tr>
+                                <tr><td colspan="2"><iframe src="http://www.facebook.com/plugins/likebox.php?href=http%3A%2F%2Fwww.facebook.com%2Fpages%2FCommentLuv%2F156438857738200&amp;width=210&amp;colorscheme=light&amp;show_faces=true&amp;stream=false&amp;header=false&amp;height=450" scrolling="no" frameborder="1" style="border:none; overflow:auto; width:210px; height:400px;" allowTransparency="true"></iframe></td></tr>
                                 <tr class="alt"><td colspan="2"><?php _e('News',$this->plugin_domain);?>:</td></tr>
                                 <tr><td colspan="2">
                                         <?php
