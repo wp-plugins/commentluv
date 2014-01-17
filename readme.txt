@@ -4,7 +4,7 @@ Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv, comment luv , commentlove, comment love
 Requires at least: 3.6
 Tested up to: 3.8
-Stable tag: 2.93.4
+Stable tag: 2.93.5
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -83,6 +83,10 @@ No. The link and associated data is saved to the comment meta table
 
 Please see the videos in the settings page for explanations of how they work.
 
+= Accents in my language are not showing correctly =
+
+Please tick the box marked "disable UTF8 encoding" in the technical settings area of the plugins settings page
+
 == Screenshots ==
 
 1. settings page
@@ -94,6 +98,10 @@ Please see the videos in the settings page for explanations of how they work.
 4. edit post comments
 
 == ChangeLog ==
+
+= 2.93.5 =
+
+* added : option to allow disable of utf8 encode on feed  (thanks Eli http://www.un-jardin-bio.com for testing)
 
 = 2.93.4 =
 

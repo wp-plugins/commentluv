@@ -2,7 +2,7 @@
 Plugin Name: CommentLuv
 Plugin URI: http://comluv.com/
 Description: Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
-Version: 2.93.4
+Version: 2.93.5
 Author: Andy Bailey
 Author URI: http://www.commentluv.com
 Copyright (C) <2011>  <Andy Bailey>
@@ -28,7 +28,7 @@ if (! class_exists ( 'commentluv' )) {
         var $plugin_url;
         var $plugin_dir;
         var $db_option = 'commentluv_options';
-        var $version = "2.93.4";
+        var $version = "2.93.5";
         var $slug = 'commentluv-options';
         var $localize;
         var $is_commentluv_request = false;
@@ -1300,6 +1300,7 @@ if (! class_exists ( 'commentluv' )) {
         */
         function send_feed_file(){
             //debugbreak();
+            $options = $this->get_options();
             $postquery = array('numberposts'=>10,'post_type'=>'post');     
             if(is_category()){
                 $cat = get_query_var('cat');
@@ -1346,7 +1347,11 @@ if (! class_exists ( 'commentluv' )) {
             $feed .= '</channel></rss>';
             ob_end_clean();  
             // force utf characters
-            $feed = utf8_encode($feed);                                                     
+            if(isset($options['utf8']) && $options['utf8'] == 'on'){
+                // do nothing if set to disable utf8 encoding   
+            } else {
+                $feed = utf8_encode($feed);                                                     
+            }                                                                                   
             header("Content-Type: application/atom+xml; charset=".get_bloginfo('charset'));
             echo $feed;    
             exit;                        
@@ -1660,9 +1665,13 @@ if (! class_exists ( 'commentluv' )) {
                                                 <input type="checkbox" name="<?php echo $dbo;?>[template_insert]" <?php if(isset($o['template_insert'])) checked($o['template_insert'],'on');?> value="on"/><label for="<?php echo $dbo;?>[template_insert]"> <?php _e('Use manual insert of badge code?',$pd);?></label>
                                                 <br>( <strong>&lt;?php cl_display_badge(); ?&gt;</strong> )
                                             </td>
-                                            <td colspan="2">
+                                            <td>
                                                 <input type="checkbox" name="<?php echo $dbo;?>[minifying]" <?php if(isset($o['minifying'])) checked($o['minifying'],'on');?> value="on"/><label for="<?php echo $dbo;?>[minifying]"> <?php _e('Enable minifying compatibility?',$pd);?></label>
                                                 <br><?php _e('For caching plugins (places localized code in footer)',$pd);?>
+                                            </td>
+                                            <td>
+                                                <input type="checkbox" name="<?php echo $dbo;?>[utf8]" <?php if(isset($o['utf8'])) checked($o['utf8'],'on');?> value="on"/><label for="<?php echo $dbo;?>[utf8]"> <?php _e('Disable UTF8 encoding?',$pd);?></label>
+                                                <br><?php _e('If you are having issues with accents not showing properly',$pd);?>
                                             </td> 
                                             <td>
                                                 <input type="checkbox" name="<?php echo $dbo;?>[disable_detect]" <?php if(isset($o['disable_detect'])) checked($o['disable_detect'],'on');?> value="on"/><label for="<?php echo $dbo;?>[disable_detect]"> <?php _e('Disable Detection?',$pd);?></label>
