@@ -2,7 +2,7 @@
 Plugin Name: CommentLuv
 Plugin URI: http://comluv.com/
 Description: Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
-Version: 2.93.5
+Version: 2.93.6
 Author: Andy Bailey
 Author URI: http://www.commentluv.com
 Copyright (C) <2011>  <Andy Bailey>
@@ -28,7 +28,7 @@ if (! class_exists ( 'commentluv' )) {
         var $plugin_url;
         var $plugin_dir;
         var $db_option = 'commentluv_options';
-        var $version = "2.93.5";
+        var $version = "2.93.6";
         var $slug = 'commentluv-options';
         var $localize;
         var $is_commentluv_request = false;
@@ -637,7 +637,7 @@ if (! class_exists ( 'commentluv' )) {
             }
             // get click count on local site
             $data = get_comment_meta($cid,'cl_data',true);
-            $clickcount = $data['clicks'] ? $data['clicks'] : 0;
+            $clickcount = isset($data['clicks']) ? $data['clicks'] : 0;
             //DebugBreak();
             // prem member, try remote fetch of info if not registered on this blog
             if($cl_prem == 'p' && $isreg == false){ 
@@ -1299,7 +1299,7 @@ if (! class_exists ( 'commentluv' )) {
         * 
         */
         function send_feed_file(){
-            //debugbreak();
+            //            /debugbreak();
             $options = $this->get_options();
             $postquery = array('numberposts'=>10,'post_type'=>'post');     
             if(is_category()){
@@ -1767,24 +1767,26 @@ if (! class_exists ( 'commentluv' )) {
                                 </table>
                                 <p></p>
                                 <table class="widefat">
-                                        <tr>
-                                            <td>
-                                                <?php
-                                                //debugbreak();
-                                                include_once(ABSPATH.WPINC.'/feed.php');
-                                                $rss = fetch_feed('http://comluv.com/category/ads/feed/');
-                                                if(!is_wp_error($rss)) {
-                                                    $maxitems = $rss->get_item_quantity(2);
-                                                    $rssitems = $rss->get_items(0,$maxitems);
-                                                }
+                                    <tr>
+                                        <td>
+                                            <?php
+                                            //debugbreak();
+                                            include_once(ABSPATH.WPINC.'/feed.php');
+                                            $rss = fetch_feed('http://comluv.com/category/ads/feed/');
+                                            if(!is_wp_error($rss)) {
+                                                $maxitems = $rss->get_item_quantity(2);
+                                                $rssitems = $rss->get_items(0,$maxitems);
+                                            }
+                                            if(is_array($rssitems)){
                                                 foreach($rssitems as $item){  
                                                     echo '<div><a href="'.esc_url( $item->get_permalink() ).'">'.esc_html($item->get_title()).'</a>';
                                                     echo '<p>'.$item->get_content().'</p></div>';
                                                 }
-                                                ?>
-                                            </td>
-                                        </tr>
-                                        </table>
+                                            }
+                                            ?>
+                                        </td>
+                                    </tr>
+                                </table>
 
                             </div>
                             <div class="submit"><input class="button-primary" id="clsubmit" type="submit" name="Submit" value="<?php _e('Save Settings',$this->plugin_domain);?>" /></div>
