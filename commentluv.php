@@ -2,7 +2,7 @@
 Plugin Name: CommentLuv
 Plugin URI: http://comluv.com/
 Description: Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
-Version: 2.93.6
+Version: 2.93.7
 Author: Andy Bailey
 Author URI: http://www.commentluv.com
 Copyright (C) <2011>  <Andy Bailey>
@@ -28,7 +28,7 @@ if (! class_exists ( 'commentluv' )) {
         var $plugin_url;
         var $plugin_dir;
         var $db_option = 'commentluv_options';
-        var $version = "2.93.6";
+        var $version = "2.93.7";
         var $slug = 'commentluv-options';
         var $localize;
         var $is_commentluv_request = false;
@@ -1138,19 +1138,24 @@ if (! class_exists ( 'commentluv' )) {
             global $current_user;
             $email = $current_user->user_email;
             $firstname = $current_user->first_name;
+            $url = 'http://contact.commentluv.com/subscribe';
+            $list = 'pdYIXefvLNL38bE3fDcB3Q';
+            // sendy
             if(!$firstname){
                 $firstname = $current_user->user_nicename;
             }
-            $message = "\n Email: ".$email."\n\n Name: ".$firstname."\n\n Meta: settings_page_289"."\n\n";
-            $to = 'cl_notify29@aweber.com';
-            $headers = 'From: '.$firstname.' <'.$email.'>'."\r\n\\";
-            $mail = wp_mail($to,'cl_notify',$message,$headers);
-            if($mail === true){
-                $options = $this->get_options();
-                $options['subscribed'] = true;
-                update_option($this->db_option,$options);
-            }
-            $return = array('success'=>$mail,'email'=>$email);
+            $response = wp_remote_post( $url, array(
+                'method' => 'POST',
+                'timeout' => 45,
+                'redirection' => 5,
+                'httpversion' => '1.0',
+                'blocking' => true,
+                'headers' => array(),
+                'body' => array( 'name' => $firstname, 'email' => $email ,'list'=>$list),
+                'cookies' => array()
+                )
+            );
+            $return = array('success'=>true,'email'=>$email);
             // return response
             $response = json_encode($return);
             // response output
