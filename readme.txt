@@ -3,8 +3,8 @@ Contributors: commentluv, @hishaman (css additions)
 Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv, comment luv , commentlove, comment love
 Requires at least: 3.6
-Tested up to: 4.0.1
-Stable tag: 2.93.7
+Tested up to: 4.1
+Stable tag: 2.93.8
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -98,6 +98,11 @@ Please tick the box marked "disable UTF8 encoding" in the technical settings are
 4. edit post comments
 
 == ChangeLog ==
+
+= 2.93.8 =
+
+*fixed : videos where not showing in popup (server move broke URLs)
+*updated : compatibility declaration
 
 = 2.93.6 =
 
