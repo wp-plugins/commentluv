@@ -3,8 +3,8 @@ Contributors: commentluv, @hishaman (css additions)
 Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv, comment luv , commentlove, comment love
 Requires at least: 3.6
-Tested up to: 4.1.2
-Stable tag: 2.93.8
+Tested up to: 4.2
+Stable tag: 2.94
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -79,6 +79,18 @@ If you're upgrading from an older version, please use the 'reset to default sett
 
 No. The link and associated data is saved to the comment meta table
 
+= My comments form does not show the name and url fields, just the textarea
+
+Make sure you log out of your blog and view the form as a user would. A logged in user does not see the name, email and url fields because your blog already knows them.
+
+= My comment replies are not showing as indented or the thread of the comment is not working
+
+This is entirely down to your theme. Commentluv does nothing to the display of the comments, it just adds the link
+
+= I installed the plugin but I don't see the comment form or the badge shows but commentluv is not working
+
+The plugin only works on wordpress comments systems, it does not work on Disqus or livefyre or jetpack or others. If you are using standard wordpress comments but do not see the form or it is asking you to register then make sure your theme supports comments or you have enabled comments in the settings of your blog or theme
+
 = I am having a problem getting it to work =
 
 Please see the videos in the settings page for explanations of how they work.
@@ -98,6 +110,15 @@ Please tick the box marked "disable UTF8 encoding" in the technical settings are
 4. edit post comments
 
 == ChangeLog ==
+
+= 2.94 = 
+
+* fixed : undefined index error on display of feed if can't found in settings page
+* added : you can now uncheck the option to use the security nonce for ajax calls (in cases where blogs are using a peristent cache)
+
+= 2.93.9 =
+
+* updated FAQ
 
 = 2.93.8 =
 

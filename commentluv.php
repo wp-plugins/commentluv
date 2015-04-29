@@ -2,7 +2,7 @@
 Plugin Name: CommentLuv
 Plugin URI: http://comluv.com/
 Description: Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
-Version: 2.93.8
+Version: 2.94
 Author: Andy Bailey
 Author URI: http://www.commentluv.com
 Copyright (C) <2011>  <Andy Bailey>
@@ -28,7 +28,7 @@ if (! class_exists ( 'commentluv' )) {
         var $plugin_url;
         var $plugin_dir;
         var $db_option = 'commentluv_options';
-        var $version = "2.93.8";
+        var $version = "2.94";
         var $slug = 'commentluv-options';
         var $localize;
         var $is_commentluv_request = false;
@@ -587,10 +587,12 @@ if (! class_exists ( 'commentluv' )) {
         * sends back json encoded string for the content of the panel 
         */
         function do_info(){
-
-            check_ajax_referer('info');
-            global $wpdb;
             $options = $this->get_options();
+            if(isset($options['use_nonce'])){
+                check_ajax_referer('info');
+            }
+            global $wpdb;
+
             $isreg = false;
             $cid = intval($_POST['cid']);
             $cl_prem = $_POST['cl_prem'];
@@ -811,9 +813,12 @@ if (! class_exists ( 'commentluv' )) {
         function fetch_feed(){      
             // check nonce
             //debugbreak();
-            $checknonce = check_ajax_referer('fetch',false,false);
-            if(!$checknonce){
-                die(' error! not authorized '.strip_tags($_REQUEST['_ajax_nonce']));
+            $options = $this->get_options();
+            if(isset($options['use_nonce'])){
+                $checknonce = check_ajax_referer('fetch',false,false);
+                if(!$checknonce){
+                    die(' error! not authorized '.strip_tags($_REQUEST['_ajax_nonce']));
+                }
             }
             if(!$_POST['url']){
                 die('no url');
@@ -825,7 +830,7 @@ if (! class_exists ( 'commentluv' )) {
             @ini_set('display_errors',0);
             @error_reporting(0);
             include_once(ABSPATH.WPINC.'/class-simplepie.php');
-            $options = $this->get_options();
+
             $num = 1;
             $url = esc_url($_POST['url']);
             $orig_url = $url;
@@ -1018,7 +1023,7 @@ if (! class_exists ( 'commentluv' )) {
                 'badge_choice' => 'drop_down', 'badge_type'=>'default', 'link'=>'off','infopanel'=>'on', 'infoback'=>'white', 'infotext'=>'black',
                 'comment_text'=>'[name] '.__('recently posted',$this->plugin_domain).'...[lastpost]', 'whogets'=>'registered', 'dofollow' => 'registered',
                 'unreg_user_text'=>__('If you register as a user on my site, you can get your 10 most recent blog posts to choose from in this box.',$this->plugin_domain).' '.$register_link,
-                'unreg_user_text_panel'=>__('If this user had registered to my site then they could get 10 last posts to choose from when they comment and you would be able to see a list of their recent posts in this panel',$this->plugin_domain),
+                'unreg_user_text_panel'=>__('If this user had registered to my site then they could get 10 last posts to choose from when they comment and you would be able to see a list of their recent posts in this panel',$this->plugin_domain),'use_nonce'=>'on',
                 'template_insert'=>'','minifying'=>'','api_url'=>admin_url('admin-ajax.php'),'author_name'=>'author','email_name'=>'email','url_name'=>'url','comment_name'=>'comment',
                 'hide_link_no_url'=>'nothing','hide_link_no_url_match'=>'nothing');
             $options = get_option ( $this->db_option, $default);
@@ -1080,6 +1085,11 @@ if (! class_exists ( 'commentluv' )) {
                 $options['api_url'] = admin_url('admin-ajax.php');
                 $options['enable'] = 'yes';
                 update_option($this->db_option,$options);   
+            }
+            // new check for use_nonce
+            if(version_compare($installed_version,'2.94','<')){
+                $options['use_nonce'] = 'on';
+                update_option($this->db_option,$options);
             }
             // update cl_version in db
             if($this->php_version($this->version) != $installed_version){
@@ -1744,6 +1754,8 @@ if (! class_exists ( 'commentluv' )) {
 
                                             <td>
                                                 <input type="checkbox" name="<?php echo $dbo;?>[allow_jpc]" <?php if(isset($o['allow_jpc'])) checked($o['allow_jpc'],'on');?> value="on"/><label for="<?php echo $dbo;?>[allow_jpc]"> <?php _e('Allow Jetpack comments module to activate?',$pd);?></label>
+                                                <br>
+                                                <input type="checkbox" name="<?php echo $dbo;?>[use_nonce]" <?php if(isset($o['use_nonce'])) checked($o['use_nonce'],'on');?> value="on"/><label for="<?php echo $dbo;?>[use_nonce]"> <?php _e('Use security nonce for ajax calls? <br>(disable if you get Parsing JSON Request failed. error! not authorized error)',$pd);?></label>
                                             </td>
                                         </tr>
                                         <tr>
@@ -1782,7 +1794,7 @@ if (! class_exists ( 'commentluv' )) {
                                                 $maxitems = $rss->get_item_quantity(2);
                                                 $rssitems = $rss->get_items(0,$maxitems);
                                             }
-                                            if(is_array($rssitems)){
+                                            if(isset($rssitems) && is_array($rssitems)){
                                                 foreach($rssitems as $item){  
                                                     echo '<div><a href="'.esc_url( $item->get_permalink() ).'">'.esc_html($item->get_title()).'</a>';
                                                     echo '<p>'.$item->get_content().'</p></div>';
