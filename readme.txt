@@ -3,8 +3,8 @@ Contributors: commentluv, @hishaman (css additions)
 Donate link:http://comluv.com/about/donate
 Tags: commentluv, comments, last blog post, linkluv, comment luv , commentlove, comment love
 Requires at least: 3.6
-Tested up to: 4.2
-Stable tag: 2.94
+Tested up to: 4.2.1
+Stable tag: 2.94.1
 	
 Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
 
@@ -13,6 +13,9 @@ Reward your readers by automatically placing a link to their last blog post at t
 [Upgrade to CommentLuv Pro](http://www.commentluv.com "Upgrade to CommentLuv Pro")
 
 CommentLuv Pro has even more amazing features that can bring even more traffic and comments to your blog by giving you the ability to fight spam, add keywords, integrate twitterlink, add a top commentators widget, social enticements and by having it installed on your site, you get advanced backlink features on EVERY CommentLuv blog when you comment (there are 10's of thousands of CommentLuv blogs)
+
+**New**
+Get a free 10 week blogging course, premium content with no charge at all. See why I'm giving this away on the first email, click the button in the settings page to start your course (and find out why I'm giving it away)
 
 [About](http://www.commentluv.com/get-more-comments-and-traffic-with-commentluv-premium/ "About") | [Features](http://www.commentluv.com "Features") | [Pricing](http://www.commentluv.com "Pricing")
 
@@ -110,6 +113,10 @@ Please tick the box marked "disable UTF8 encoding" in the technical settings are
 4. edit post comments
 
 == ChangeLog ==
+
+= 2.94.1 =
+* updated : added message about free 10 week course.
+* updated : compatibility notice
 
 = 2.94 = 
 

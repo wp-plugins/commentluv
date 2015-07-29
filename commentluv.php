@@ -2,7 +2,7 @@
 Plugin Name: CommentLuv
 Plugin URI: http://comluv.com/
 Description: Reward your readers by automatically placing a link to their last blog post at the end of their comment. Encourage a community and discover new posts.
-Version: 2.94
+Version: 2.94.1
 Author: Andy Bailey
 Author URI: http://www.commentluv.com
 Copyright (C) <2011>  <Andy Bailey>
@@ -28,7 +28,7 @@ if (! class_exists ( 'commentluv' )) {
         var $plugin_url;
         var $plugin_dir;
         var $db_option = 'commentluv_options';
-        var $version = "2.94";
+        var $version = "2.94.1";
         var $slug = 'commentluv-options';
         var $localize;
         var $is_commentluv_request = false;
@@ -1449,10 +1449,10 @@ if (! class_exists ( 'commentluv' )) {
                                         <tr>
                                             <td width="250">
                                                 <h2 style="margin: 0 0 10px 0;"><?php _e('CommentLuv 3.0 Premium is here!',$pd);?> <a style="font-size:0.8em" title="Premium has some excellent features! try it out today. Full 30 day gaurantee" target="_blank" href="http://ql2.me/upgradetopremium">Upgrade to Premium</a></h2>
-                                                <img align="left" src="<?php echo $this->plugin_url;?>images/privacy-guarantee.png"/><?php _e('I promise not to sell your details or send you spam. You will ONLY receive emails about plugin updates.',$pd);?>
+                                                <img align="left" src="<?php echo $this->plugin_url;?>images/privacy-guarantee.png"/><?php _e('I promise not to sell your details or send you spam. You will ONLY receive emails about plugin updates and the 10 week free course.',$pd);?>
                                             </td>
                                             <td>
-                                                <p><?php _e('Do you like CommentLuv? How about an even better version with much more control over dofollow and some awesome social enticements that will make your posts go viral by offering your readers more choice of posts if they +1, Like or tweet your post? Get CommentLuv Premium Today!',$pd);?></p>
+                                                <p><?php _e('Do you like CommentLuv? How about an even better version with much more control over dofollow and some awesome social enticements that will make your posts go viral by offering your readers more choice of posts if they +1, Like or tweet your post? Get CommentLuv Premium Today! Free plugin and 10 week blogging course delivered by email. (10 week course is free of charge,it is no obligation premium content. It was supposed to be a premium product but I decided to give it away for free. (see why in the first email).)',$pd);?></p>
                                                 <?php 
                                                 if(isset($o['subscribed'])){
                                                     echo '<div class="submit">'.__('You have already subscribed, if you have not received the verification within 12 hours, please click the button to resend or try the form at',$pd).' <a target="_blank" href="http://www.commentluv.com/">www.commentluv.com</a><br><input style="margin:0 auto; display: block;" type="button" id="cl_notify" value="'.__('Resend Verification',$pd).'"/></div>';
