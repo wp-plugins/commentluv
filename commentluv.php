@@ -243,10 +243,10 @@ if (! class_exists ( 'commentluv' )) {
                 '_fetch' => wp_create_nonce('fetch'), '_info' => wp_create_nonce('info'), 
                 'infoback' => $infoback, 'infotext'=>$infotext,'template_insert'=>$template_insert, 'logged_in'=>is_user_logged_in(),
                 'refer' => get_permalink(),
-                'no_url_message'=>__('Please enter a URL and then click the CommentLuv checkbox if you want to add your last blog post',$this->plugin_domain),
-                'no_http_message'=>__('Please use http:// in front of your url',$this->plugin_domain),
-                'no_url_logged_in_message'=>__('You need to visit your profile in the dashboard and update your details with your site URL',$this->plugin_domain),
-                'no_info_message'=>__('No info was available or an error occured',$this->plugin_domain));
+                'no_url_message'=>__('Please enter a URL and then click the CommentLuv checkbox if you want to add your last blog post.',$this->plugin_domain),
+                'no_http_message'=>__('Please use http:// in front of your url.',$this->plugin_domain),
+                'no_url_logged_in_message'=>__('You need to visit your profile in the dashboard and update your details with your site URL.',$this->plugin_domain),
+                'no_info_message'=>__('No info was available or an error occured.',$this->plugin_domain));
             if($minifying != 'on'){
                 wp_localize_script('commentluv_script','cl_settings',$this->localize);
             }
@@ -1101,7 +1101,7 @@ if (! class_exists ( 'commentluv' )) {
             $dbtable = $wpdb->get_var($query);
             //$o['dbtable'] = $dbtable;
             if(!$dbtable){
-                add_action('admin_notices',create_function('','echo "<div class=\"error\">'.__('Your Wordpress install is missing the <strong>wp_commentmeta</strong> table!',$pd).'<br>'.__(' CommentLuv cannot work without this table please see this wordpress forum post to learn how to add one ->',$pd).'<a target=\"_blank\" href=\"http://wordpress.org/support/topic/wp_commentmeta-table-a39xxxx2_blogwp_commentmeta-doesnt-exist?replies=7#post-1378281\">'.__('Missing wp_commentmeta table',$pd).'</a></div>";'));
+                add_action('admin_notices',create_function('','echo "<div class=\"error\">'.__('Your WordPress install is missing the <strong>wp_commentmeta</strong> table!',$pd).'<br>'.__(' CommentLuv cannot work without this table. Please see this WordPress forum post to learn how to add one. ->',$pd).'<a target=\"_blank\" href=\"http://wordpress.org/support/topic/wp_commentmeta-table-a39xxxx2_blogwp_commentmeta-doesnt-exist?replies=7#post-1378281\">'.__('Missing wp_commentmeta table',$pd).'</a></div>";'));
             }
         }
         /**
@@ -1404,7 +1404,7 @@ if (! class_exists ( 'commentluv' )) {
                 $details_link = '<br /><a href="'.admin_url().'plugin-install.php?tab=plugin-information&amp;plugin=commentluv&amp;TB_iframe=true&amp;width=640&amp;height=350" class="thickbox" title="commentluv"> View new version details</a>';
                 printf( __('%s or <a href="%s">update now</a>.', $this->plugin_domain),  $details_link, $update_url ) ;
             } else {
-                echo __('There is a new version of Commentluv available, please upgrade by visiting this site',$this->plugin_domain);
+                echo __('There is a new version of Commentluv available, please upgrade by visiting this site.',$this->plugin_domain);
                 echo '<br><a href="http://www.commentluv.com" target="_blank">www.commentluv.com</a>';
             }
             //echo '<span style="float:right"><a href="'.admin_url('options-general.php?page='.$this->slug.'&dismiss=true').'">'.__('Dismiss notice',$this->plugin_domain).'</a></span>';
@@ -1452,7 +1452,7 @@ if (! class_exists ( 'commentluv' )) {
                                                 <img align="left" src="<?php echo $this->plugin_url;?>images/privacy-guarantee.png"/><?php _e('I promise not to sell your details or send you spam. You will ONLY receive emails about plugin updates and the 10 week free course.',$pd);?>
                                             </td>
                                             <td>
-                                                <p><?php _e('Do you like CommentLuv? How about an even better version with much more control over dofollow and some awesome social enticements that will make your posts go viral by offering your readers more choice of posts if they +1, Like or tweet your post? Get CommentLuv Premium Today! Free plugin and 10 week blogging course delivered by email. (10 week course is free of charge,it is no obligation premium content. It was supposed to be a premium product but I decided to give it away for free. (see why in the first email).)',$pd);?></p>
+                                                <p><?php _e('Do you like CommentLuv? How about an even better version with much more control over dofollow and some awesome social enticements that will make your posts go viral by offering your readers more choice of posts if they +1, Like or tweet your post? Get CommentLuv Premium Today! Free plugin and 10 week blogging course delivered by email. (10-week course is free of charge; it is no obligation premium content. It was supposed to be a premium product but I decided to give it away for free. See why in the first email.)',$pd);?></p>
                                                 <?php 
                                                 if(isset($o['subscribed'])){
                                                     echo '<div class="submit">'.__('You have already subscribed, if you have not received the verification within 12 hours, please click the button to resend or try the form at',$pd).' <a target="_blank" href="http://www.commentluv.com/">www.commentluv.com</a><br><input style="margin:0 auto; display: block;" type="button" id="cl_notify" value="'.__('Resend Verification',$pd).'"/></div>';
@@ -1465,7 +1465,7 @@ if (! class_exists ( 'commentluv' )) {
                                         </tr>
                                         <tr>
                                             <td colspan="2">
-                                                <?php _e('<b>Are you getting targeted by spammers?</b> CommentLuv links are valuable which is why it promotes comments but some nasty spammers try to take advantage of this by leaving spam just to get the link. Don\'t worry, there is answer!... you can get CommentLuv Premium which has advanced anti-spam features which has been proven to almost eliminate spam on users blogs. You can upgrade by clicking the link above. <p><b>Not ready to buy premium yet?</b> that\'s ok too! Why not try GASP which is a lite version of the anti spam plugin that CommentLuv Premium uses. You can get it for FREE by searching for GASP in your "add new" section of your plugins page in your dashboard.',$pd);?>
+                                                <?php _e('<b>Are you getting targeted by spammers?</b> CommentLuv links are valuable which is why it promotes comments but some nasty spammers try to take advantage of this by leaving spam just to get the link. Don\'t worry, there is answer! ... you can get CommentLuv Premium which has advanced anti-spam features which has been proven to almost eliminate spam on users blogs. You can upgrade by clicking the link above. <p><b>Not ready to buy premium yet?</b> that\'s ok too! Why not try GASP which is a lite version of the anti spam plugin that CommentLuv Premium uses. You can get it for FREE by searching for GASP in your "add new" section of your plugins page in your dashboard.',$pd);?>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -1667,8 +1667,8 @@ if (! class_exists ( 'commentluv' )) {
                                     <tbody id="techbody" style="display:none">
                                         <tr>
                                             <td colspan="4">
-                                                <h3><?php _e('Please check the help video for this section before changing settings',$pd);?></h3>
-                                                <?php _e('In most cases, you will NOT need to change the settings in this box unless you have a custom comment form, template or you are using minifying or caching plugins',$pd);?>
+                                                <h3><?php _e('Please check the help video for this section before changing settings.',$pd);?></h3>
+                                                <?php _e('In most cases, you will NOT need to change the settings in this box unless you have a custom comment form, template or you are using minifying or caching plugins.',$pd);?>
                                             </td>
                                             <td style="text-align: center; border: 2px dotted; width:125px"><a onclick="return false;" href="<?php echo $this->plugin_url . 'videos/'; ?>technicalsettings.php?KeepThis=true&amp;TB_iframe=true&amp;height=355&width=545" class="thickbox"><img src="<?php echo $this->plugin_url;?>images/playbuttonsmall.png"/></a></td>
                                         </tr>
